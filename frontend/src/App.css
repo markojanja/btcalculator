@@ -1,0 +1,13 @@
+#root {
+  display: flex;
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
+  flex: 1;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
