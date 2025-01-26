@@ -1,0 +1,15 @@
+.header {
+  display: flex;
+  width: 100%;
+}
+.nav {
+  display: flex;
+  width: 100%;
+  min-width: 320px;
+  padding: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  font-weight: 900;
+}

@@ -1,10 +1,16 @@
-import { useState } from "react";
 import "./App.css";
+import Footer from "./components/Footer";
+import Form from "./components/Form";
+import Header from "./components/Header";
 
 function App() {
   return (
     <>
-      <main className="main">hello btcalculator</main>
+      <Header />
+      <main className="main">
+        <Form />
+      </main>
+      <Footer />
     </>
   );
 }

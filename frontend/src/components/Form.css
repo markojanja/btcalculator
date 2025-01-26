@@ -1,0 +1,35 @@
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.5rem;
+  width: 30%;
+  margin: 0 auto;
+}
+.input-group {
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  gap: 0.5rem;
+}
+input {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.25rem;
+  font-size: 1rem;
+}
+
+.flex1 {
+  flex: 1;
+}
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
