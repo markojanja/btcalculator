@@ -1,4 +1,4 @@
-form {
+.calculator {
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -21,15 +21,9 @@ input {
   font-size: 1rem;
 }
 
-.flex1 {
-  flex: 1;
+.w-auto {
+  width: auto;
 }
-.flex-col {
-  flex-direction: column;
-}
-
-.flex-col {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+.active {
+  background: red;
 }
