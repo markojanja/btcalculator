@@ -14,7 +14,8 @@
   width: 100%;
   gap: 0.5rem;
 }
-input {
+input,
+select {
   width: 100%;
   max-width: 100%;
   padding: 0.25rem;

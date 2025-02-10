@@ -5,15 +5,19 @@ const PipCalculator = () => {
   const [positionSize, setPositionSize] = useState(100000);
   const [pipSize, setPipSize] = useState(0.0001);
   const [exchangeRate, setExchangeRate] = useState(1);
+  const [prevExchangerate, setPrevExRate] = useState(1);
   const [pipValue, setPipValue] = useState(null);
   const [showConversion, setShowConversion] = useState(false);
   const [conversionRate, setConversionRate] = useState(null);
+  const [isJPY, setIsJPY] = useState(false);
 
   useEffect(() => {
     if (showConversion) {
       setExchangeRate(1);
+    } else {
+      setExchangeRate(prevExchangerate);
     }
-  }, [showConversion]);
+  }, [showConversion, prevExchangerate]);
 
   const calculatePipValue = () => {
     const res = (pipSize * positionSize) / exchangeRate;
@@ -22,7 +26,7 @@ const PipCalculator = () => {
 
   const pipValueWithConversion = () => {
     const calculatedPipvalue = calculatePipValue();
-    if (showConversion) {
+    if (showConversion && isJPY) {
       return parseFloat((calculatedPipvalue * conversionRate).toFixed(6));
     } else {
       return parseFloat((calculatedPipvalue / conversionRate).toFixed(6));
@@ -38,12 +42,21 @@ const PipCalculator = () => {
       <div className="calculator">
         <h2>Pip value calculator</h2>
         <div className="input-group flex-col">
-          <label htmlFor="price">exchangeRate</label>
+          <label htmlFor="currencyType">Deposit currency type</label>
+          <select id="currencyType" onChange={(e) => setIsJPY(e.target.value === "JPY")}>
+            <option value="Other">Other</option>
+            <option value="JPY">JPY</option>
+          </select>
+        </div>
+        <div className="input-group flex-col">
+          <label htmlFor="price">exchange rate</label>
           <input
             type="number"
             defaultValue={exchangeRate}
             placeholder="e.g 1.1234"
-            onChange={(e) => setExchangeRate(parseFloat(e.target.value))}
+            onChange={(e) => {
+              setExchangeRate(parseFloat(e.target.value)), setPrevExRate(e.target.value);
+            }}
             name="price"
             id="price"
             disabled={showConversion}
