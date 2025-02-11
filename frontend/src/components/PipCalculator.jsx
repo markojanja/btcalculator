@@ -11,37 +11,48 @@ const PipCalculator = () => {
   const [quote, setQuote] = useState(null);
   const [positionSize, setPositionSize] = useState(100000);
   const [pipSize, setPipSize] = useState(0.0001);
-  const [exchangeRate, setExchangeRate] = useState();
-  const [prevExchangerate, setPrevExRate] = useState();
+  const [exchangeRate, setExchangeRate] = useState(1);
+  const [prevExchangerate, setPrevExRate] = useState(1);
   const [pipValue, setPipValue] = useState(null);
   const [showConversion, setShowConversion] = useState(false);
-  const [conversionRate, setConversionRate] = useState(null);
+  const [conversionRate, setConversionRate] = useState(1);
   const [isJPY, setIsJPY] = useState(false);
 
   const API_KEY = import.meta.env.VITE_API_KEY;
 
   useEffect(() => {
     const [baseCurrency, quoteCurrency] = currencyPair.split("/");
-    setBase(baseCurrency);
-    setQuote(quoteCurrency);
-  }, [base, quote]);
+
+    if (baseCurrency !== base || quoteCurrency !== quote) {
+      setBase(baseCurrency);
+      setQuote(quoteCurrency);
+      setShowConversion(false);
+    }
+  }, [currencyPair]);
 
   useEffect(() => {
     const fetchData = async () => {
+      let pair = `${quote}/${depositCurrency}`;
+
+      if (!allCurrencyPairs.includes(pair)) {
+        pair = `${depositCurrency}/${quote}`;
+      }
       const res = await axios.get(
-        `https://api.twelvedata.com/exchange_rate?symbol=${quote}/${depositCurrency}&apikey=${API_KEY}`
+        `https://api.twelvedata.com/exchange_rate?symbol=${pair}&apikey=${API_KEY}`
       );
       if (res.data.rate) {
         setExchangeRate(1);
         setConversionRate(res.data.rate);
       }
     };
+    if (base === depositCurrency) return;
     if (showConversion) {
       fetchData();
+      console.log("fired");
     } else {
       setExchangeRate(prevExchangerate);
     }
-  }, [showConversion, prevExchangerate, conversionRate]);
+  }, [showConversion, prevExchangerate, conversionRate, base, depositCurrency, quote]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,12 +85,30 @@ const PipCalculator = () => {
     const [baseCurrency, quoteCurrency] = e.target.value.split("/");
     setBase(baseCurrency);
     setQuote(quoteCurrency);
-  };
-  const handleDepostiCurrency = (e) => {
-    setDepositCurrency(e.target.value);
-    setIsJPY(e.target.value === "JPY");
-  };
+    setDepositCurrency(baseCurrency);
 
+    if (quoteCurrency.includes("JPY")) {
+      setPipSize(0.01);
+    } else {
+      setPipSize(0.0001);
+    }
+    if (depositCurrency === base || depositCurrency === quote) {
+      setShowConversion(false);
+    } else {
+      setShowConversion(true);
+    }
+  };
+  const handleDepositCurrency = (e) => {
+    const newDepositCurrency = e.target.value;
+    setDepositCurrency(newDepositCurrency);
+    setIsJPY(newDepositCurrency === "JPY");
+
+    if (base === newDepositCurrency || quote === newDepositCurrency) {
+      setShowConversion(false);
+    } else {
+      setShowConversion(true);
+    }
+  };
   const calculatePipValue = () => {
     const res = (pipSize * positionSize) / exchangeRate;
     return res % 1 === 0 ? res : parseFloat(res.toFixed(6));
@@ -102,16 +131,7 @@ const PipCalculator = () => {
     <>
       <div className="calculator">
         <h2>Pip value calculator</h2>
-        <div className="input-group flex-col">
-          <label htmlFor="currencyType">Deposit currency</label>
-          <select defaultValue={depositCurrency} id="currencyType" onChange={handleDepostiCurrency}>
-            {uniqueCurrencies.map((curr) => (
-              <option key={curr} value={curr}>
-                {curr}
-              </option>
-            ))}
-          </select>
-        </div>
+
         <div className="input-group flex-col">
           <label htmlFor="curr_pair">currency pair</label>
           <select id="curr_pair" onChange={handleCurrencySelect}>
@@ -126,7 +146,7 @@ const PipCalculator = () => {
           <label htmlFor="price">exchange rate</label>
           <input
             type="number"
-            defaultValue={exchangeRate}
+            value={exchangeRate || ""}
             placeholder="e.g 1.1234"
             onChange={(e) => {
               setExchangeRate(parseFloat(e.target.value)), setPrevExRate(e.target.value);
@@ -140,7 +160,7 @@ const PipCalculator = () => {
           <label htmlFor="position_size">position size</label>
           <input
             type="number"
-            defaultValue={positionSize}
+            value={positionSize}
             placeholder="e.g 100,000"
             onChange={(e) => setPositionSize(parseInt(e.target.value))}
             name="position_size"
@@ -151,12 +171,22 @@ const PipCalculator = () => {
           <label htmlFor="account_currency">pip size</label>
           <input
             type="number"
-            defaultValue={pipSize}
+            value={pipSize}
             placeholder="e.g 0.0001"
             onChange={(e) => setPipSize(parseFloat(e.target.value))}
             name="account_currency"
             id="account_currency"
           />
+        </div>
+        <div className="input-group flex-col">
+          <label htmlFor="currencyType">Deposit currency</label>
+          <select id="currencyType" onChange={handleDepositCurrency} value={depositCurrency}>
+            {uniqueCurrencies.map((curr) => (
+              <option key={curr} value={curr}>
+                {curr}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="input-group flex-col">
           <label htmlFor="checkbox">show conversion rate</label>
@@ -166,6 +196,7 @@ const PipCalculator = () => {
             checked={showConversion}
             onChange={(e) => setShowConversion(e.target.checked)}
             className="w-auto"
+            disabled={depositCurrency === base || depositCurrency === quote}
           />
         </div>
         {showConversion && (
@@ -179,7 +210,7 @@ const PipCalculator = () => {
               onChange={(e) => setConversionRate(parseFloat(e.target.value))}
               name="cprice"
               id="cprice"
-              defaultValue={conversionRate}
+              value={conversionRate || ""}
             />
           </div>
         )}
