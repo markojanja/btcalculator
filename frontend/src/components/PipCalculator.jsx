@@ -7,33 +7,37 @@ import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
 const PipCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
   const [depositCurrency, setDepositCurrency] = useState("EUR");
-  const [base, setBase] = useState(null);
-  const [quote, setQuote] = useState(null);
+  const [base, setBase] = useState("EUR");
+  const [quote, setQuote] = useState("USD");
   const [positionSize, setPositionSize] = useState(100000);
   const [pipSize, setPipSize] = useState(0.0001);
   const [exchangeRate, setExchangeRate] = useState(1);
-  const [prevExchangerate, setPrevExRate] = useState(1);
+  const [prevExchangeRate, setPrevExchangeRate] = useState(1);
   const [pipValue, setPipValue] = useState(null);
   const [showConversion, setShowConversion] = useState(false);
   const [conversionRate, setConversionRate] = useState(1);
   const [isJPY, setIsJPY] = useState(false);
+  const [toggleCheckbox, setToggleCheckBox] = useState(true);
 
   const API_KEY = import.meta.env.VITE_API_KEY;
 
   useEffect(() => {
-    const [baseCurrency, quoteCurrency] = currencyPair.split("/");
-
-    if (baseCurrency !== base || quoteCurrency !== quote) {
-      setBase(baseCurrency);
-      setQuote(quoteCurrency);
-      setShowConversion(false);
-    }
-  }, [currencyPair]);
-
-  useEffect(() => {
     const fetchData = async () => {
-      let pair = `${quote}/${depositCurrency}`;
+      try {
+        const res = await axios.get(
+          `https://api.twelvedata.com/exchange_rate?symbol=${currencyPair}&apikey=${API_KEY}`
+        );
+        if (res.data.rate) {
+          setExchangeRate(parseFloat(res.data.rate));
+          setPrevExchangeRate(parseFloat(res.data.rate));
+        }
+      } catch (error) {
+        console.error("Error fetching exchange rate:", error);
+      }
+    };
 
+    const fetchDataForConversion = async () => {
+      let pair = `${quote}/${depositCurrency}`;
       if (!allCurrencyPairs.includes(pair)) {
         pair = `${depositCurrency}/${quote}`;
       }
@@ -45,40 +49,24 @@ const PipCalculator = () => {
         setConversionRate(res.data.rate);
       }
     };
-    if (base === depositCurrency) return;
+
+    if (quote === depositCurrency) return;
+
     if (showConversion) {
-      fetchData();
-      console.log("fired");
+      fetchDataForConversion();
     } else {
-      setExchangeRate(prevExchangerate);
+      setExchangeRate(prevExchangeRate);
+      fetchData();
     }
-  }, [showConversion, prevExchangerate, conversionRate, base, depositCurrency, quote]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(
-          `https://api.twelvedata.com/exchange_rate?symbol=${currencyPair}&apikey=${API_KEY}`
-        );
-        if (res.data.rate) {
-          setExchangeRate(parseFloat(res.data.rate));
-          setPrevExRate(parseFloat(res.data.rate));
-        }
-      } catch (error) {
-        console.error("Error fetching exchange rate:", error);
-      }
-    };
-
-    fetchData();
-  }, [currencyPair]);
+  }, [showConversion, prevExchangeRate, base, depositCurrency, quote]);
 
   useEffect(() => {
     if (depositCurrency === quote) {
       setExchangeRate(1);
     } else {
-      setExchangeRate(prevExchangerate);
+      setExchangeRate(prevExchangeRate);
     }
-  }, [depositCurrency, quote, prevExchangerate]);
+  }, [depositCurrency, quote, prevExchangeRate]);
 
   const handleCurrencySelect = (e) => {
     setCurrnecyPair(e.target.value);
@@ -89,13 +77,18 @@ const PipCalculator = () => {
 
     if (quoteCurrency.includes("JPY")) {
       setPipSize(0.01);
+      setToggleCheckBox(true);
     } else {
       setPipSize(0.0001);
+      setToggleCheckBox(false);
     }
+
     if (depositCurrency === base || depositCurrency === quote) {
       setShowConversion(false);
+      setToggleCheckBox(true);
     } else {
       setShowConversion(true);
+      setToggleCheckBox(false);
     }
   };
   const handleDepositCurrency = (e) => {
@@ -105,8 +98,11 @@ const PipCalculator = () => {
 
     if (base === newDepositCurrency || quote === newDepositCurrency) {
       setShowConversion(false);
+      setToggleCheckBox(true);
+      console.log(base, quote, depositCurrency);
     } else {
       setShowConversion(true);
+      setToggleCheckBox(false);
     }
   };
   const calculatePipValue = () => {
@@ -149,7 +145,7 @@ const PipCalculator = () => {
             value={exchangeRate || ""}
             placeholder="e.g 1.1234"
             onChange={(e) => {
-              setExchangeRate(parseFloat(e.target.value)), setPrevExRate(e.target.value);
+              setExchangeRate(parseFloat(e.target.value)), setPrevExchangeRate(e.target.value);
             }}
             name="price"
             id="price"
@@ -196,7 +192,7 @@ const PipCalculator = () => {
             checked={showConversion}
             onChange={(e) => setShowConversion(e.target.checked)}
             className="w-auto"
-            disabled={depositCurrency === base || depositCurrency === quote}
+            disabled={toggleCheckbox}
           />
         </div>
         {showConversion && (
@@ -226,9 +222,6 @@ const PipCalculator = () => {
           </h2>
         )}
       </div>
-      <p>
-        {base}/{quote}
-      </p>
     </>
   );
 };
