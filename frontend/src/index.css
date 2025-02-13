@@ -84,7 +84,6 @@ input[type="checkbox"]:checked {
   border: 2px solid oklch(0.777 0.152 181.912);
 }
 
-/* Add a checkmark */
 input[type="checkbox"]::after {
   content: "✔";
   font-size: 16px;
