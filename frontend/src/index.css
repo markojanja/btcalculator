@@ -21,6 +21,7 @@
 a {
   font-weight: 500;
   text-decoration: none;
+  color: #ffffff !important;
 }
 a:hover {
   color: #535bf2;
@@ -47,16 +48,12 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: oklch(0.777 0.152 181.912);
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  border-color: oklch(0.777 0.152 181.912);
 }
 
 .flex1 {
@@ -70,6 +67,37 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #333;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+input[type="checkbox"]:checked {
+  background-color: oklch(0.777 0.152 181.912);
+  border: 2px solid oklch(0.777 0.152 181.912);
+}
+
+/* Add a checkmark */
+input[type="checkbox"]::after {
+  content: "✔";
+  font-size: 16px;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+
+input[type="checkbox"]:checked::after {
+  display: block;
 }
 
 @media (prefers-color-scheme: light) {

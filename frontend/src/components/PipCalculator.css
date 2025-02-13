@@ -1,10 +1,19 @@
-.calculator {
+.calculator,
+.results-display {
   display: flex;
   flex-direction: column;
   align-items: start;
   gap: 0.5rem;
   width: 30%;
   margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.87);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: oklch(0.205 0 0);
+}
+.results-display {
+  margin-top: 2rem;
+  padding: 2rem 1rem;
 }
 .input-group {
   display: flex;
@@ -21,7 +30,6 @@ select {
   padding: 0.25rem;
   font-size: 1rem;
 }
-
 .w-auto {
   width: auto;
 }

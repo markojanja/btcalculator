@@ -18,6 +18,7 @@ const PipCalculator = () => {
   const [conversionRate, setConversionRate] = useState(1);
   const [isJPY, setIsJPY] = useState(false);
   const [toggleCheckbox, setToggleCheckBox] = useState(true);
+  const [conversionPair, setConversionPair] = useState("");
 
   const API_KEY = import.meta.env.VITE_API_KEY;
 
@@ -38,8 +39,10 @@ const PipCalculator = () => {
 
     const fetchDataForConversion = async () => {
       let pair = `${quote}/${depositCurrency}`;
+      setConversionPair(pair);
       if (!allCurrencyPairs.includes(pair)) {
         pair = `${depositCurrency}/${quote}`;
+        setConversionPair(pair);
       }
       const res = await axios.get(
         `https://api.twelvedata.com/exchange_rate?symbol=${pair}&apikey=${API_KEY}`
@@ -197,9 +200,7 @@ const PipCalculator = () => {
         </div>
         {showConversion && (
           <div className="input-group flex-col">
-            <label htmlFor="cprice">
-              conversion rate {quote}/{depositCurrency}
-            </label>
+            <label htmlFor="cprice">conversion rate {conversionPair}</label>
             <input
               type="number"
               placeholder="e.g 1.1234"
@@ -215,13 +216,14 @@ const PipCalculator = () => {
           Calculate
         </button>
       </div>
-      <div>
-        {pipValue && (
+
+      {pipValue && (
+        <div className="results-display">
           <h2>
             Pip value: {pipValue} {depositCurrency}
           </h2>
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 };
