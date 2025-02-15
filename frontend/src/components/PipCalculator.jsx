@@ -77,6 +77,7 @@ const PipCalculator = () => {
     setBase(baseCurrency);
     setQuote(quoteCurrency);
     setDepositCurrency(baseCurrency);
+    setPipValue(null);
 
     if (quoteCurrency.includes("JPY")) {
       setPipSize(0.01);
@@ -98,6 +99,7 @@ const PipCalculator = () => {
     const newDepositCurrency = e.target.value;
     setDepositCurrency(newDepositCurrency);
     setIsJPY(newDepositCurrency === "JPY");
+    setPipValue(null);
 
     if (base === newDepositCurrency || quote === newDepositCurrency) {
       setShowConversion(false);
