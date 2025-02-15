@@ -135,7 +135,7 @@ const PipCalculator = () => {
 
         <div className="input-group flex-col">
           <label htmlFor="curr_pair">currency pair</label>
-          <select id="curr_pair" onChange={handleCurrencySelect}>
+          <select id="curr_pair" value={currencyPair} onChange={handleCurrencySelect}>
             {allCurrencyPairs.map((pair) => (
               <option key={pair} value={pair}>
                 {pair}

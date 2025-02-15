@@ -55,6 +55,11 @@ button {
 button:hover {
   border-color: oklch(0.777 0.152 181.912);
 }
+ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
 
 .flex1 {
   flex: 1;
