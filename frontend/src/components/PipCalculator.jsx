@@ -17,7 +17,8 @@ const PipCalculator = () => {
   const [showConversion, setShowConversion] = useState(false);
   const [conversionRate, setConversionRate] = useState(1);
   const [isJPY, setIsJPY] = useState(false);
-  const [toggleCheckbox, setToggleCheckBox] = useState(true);
+  const [checkboxDisabled, setCheckboxDisabled] = useState(true);
+  const [checkBoxChecked, setCheckBoxChecked] = useState(false);
   const [conversionPair, setConversionPair] = useState("");
 
   const API_KEY = import.meta.env.VITE_API_KEY;
@@ -66,8 +67,13 @@ const PipCalculator = () => {
   useEffect(() => {
     if (depositCurrency === quote) {
       setExchangeRate(1);
+    } else if (depositCurrency === base) {
+      setCheckBoxChecked(false);
+      setCheckboxDisabled(true);
     } else {
       setExchangeRate(prevExchangeRate);
+      setCheckBoxChecked(true);
+      setCheckboxDisabled(false);
     }
   }, [depositCurrency, quote, prevExchangeRate]);
 
@@ -81,18 +87,20 @@ const PipCalculator = () => {
 
     if (quoteCurrency.includes("JPY")) {
       setPipSize(0.01);
-      setToggleCheckBox(true);
+      setCheckBoxChecked(true);
     } else {
       setPipSize(0.0001);
-      setToggleCheckBox(false);
+      setCheckBoxChecked(false);
     }
 
     if (depositCurrency === base || depositCurrency === quote) {
       setShowConversion(false);
-      setToggleCheckBox(true);
+      setCheckBoxChecked(false);
+      setCheckboxDisabled(false);
     } else {
       setShowConversion(true);
-      setToggleCheckBox(false);
+      setCheckBoxChecked(true);
+      setCheckboxDisabled(true);
     }
   };
   const handleDepositCurrency = (e) => {
@@ -100,14 +108,20 @@ const PipCalculator = () => {
     setDepositCurrency(newDepositCurrency);
     setIsJPY(newDepositCurrency === "JPY");
     setPipValue(null);
-
-    if (base === newDepositCurrency || quote === newDepositCurrency) {
+    console.log(depositCurrency);
+    if (
+      base === newDepositCurrency ||
+      quote === newDepositCurrency ||
+      newDepositCurrency === base ||
+      depositCurrency === quote
+    ) {
       setShowConversion(false);
-      setToggleCheckBox(true);
-      console.log(base, quote, depositCurrency);
+      setCheckBoxChecked(false);
+      setCheckboxDisabled(true);
     } else {
       setShowConversion(true);
-      setToggleCheckBox(false);
+      setCheckBoxChecked(true);
+      setCheckboxDisabled(false);
     }
   };
   const calculatePipValue = () => {
@@ -194,10 +208,12 @@ const PipCalculator = () => {
           <input
             id="checkbox"
             type="checkbox"
-            checked={showConversion}
-            onChange={(e) => setShowConversion(e.target.checked)}
+            checked={checkBoxChecked}
+            disabled={checkboxDisabled}
+            onChange={(e) => {
+              setShowConversion(e.target.checked), setCheckBoxChecked(!checkBoxChecked);
+            }}
             className="w-auto"
-            disabled={toggleCheckbox}
           />
         </div>
         {showConversion && (
