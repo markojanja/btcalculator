@@ -8,7 +8,7 @@ const PnlCalculator = () => {
   const [openPrice, setOpenPrice] = useState(null);
   const [closePrice, setClosePrice] = useState(null);
   const [tradeSize, setTradeSize] = useState(1);
-  const [tradeType, setTradeType] = useState("SELL");
+  const [tradeType, setTradeType] = useState("BUY");
   const [pnl, setPnl] = useState(null);
 
   const API_KEY = import.meta.env.VITE_API_KEY;
@@ -122,7 +122,13 @@ const PnlCalculator = () => {
         </div>
         <button onClick={calculatePnl}>Calculate</button>
       </div>
-      <div>{pnl}</div>
+      {pnl && (
+        <div className="results-display">
+          <h2>
+            PNL: {pnl} {depositCurrency}
+          </h2>
+        </div>
+      )}
     </>
   );
 };
