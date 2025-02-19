@@ -3,6 +3,9 @@ import axios from "axios";
 import "./PipCalculator.css";
 import { useState, useEffect } from "react";
 import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
+import Input from "./Input";
+import ResultsDisplay from "./ResultsDisplay";
+import Select from "./Select";
 
 const PipCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
@@ -21,6 +24,7 @@ const PipCalculator = () => {
   const [checkBoxChecked, setCheckBoxChecked] = useState(false);
   const [conversionPair, setConversionPair] = useState("");
   const [prevDepositCurrency, setPrevDepositCurrency] = useState("EUR");
+  const [editMode, setEditMode] = useState(false);
 
   const API_KEY = import.meta.env.VITE_API_KEY;
 
@@ -55,13 +59,15 @@ const PipCalculator = () => {
       }
     };
 
-    if (quote === depositCurrency) return;
+    if (!editMode) {
+      if (quote === depositCurrency) return;
 
-    if (showConversion) {
-      fetchDataForConversion();
-    } else {
-      setExchangeRate(prevExchangeRate);
-      fetchData();
+      if (showConversion) {
+        fetchDataForConversion();
+      } else {
+        setExchangeRate(prevExchangeRate);
+        fetchData();
+      }
     }
   }, [showConversion, prevExchangeRate, base, depositCurrency, quote]);
 
@@ -152,67 +158,58 @@ const PipCalculator = () => {
     setDepositCurrency(prevDepositCurrency);
   };
 
+  const handleExchangeRateInput = (e) => {
+    setExchangeRate(parseFloat(e.target.value));
+    setPrevExchangeRate(e.target.value);
+  };
+
+  const handlePositionSizeInput = (e) => {
+    setPositionSize(parseInt(e.target.value));
+  };
+  const handlePipSizeInput = (e) => {
+    setPipSize(parseFloat(e.target.value));
+  };
+  const handleConverisonInput = (e) => {
+    setConversionRate(parseFloat(e.target.value));
+  };
+
   return (
     <>
       <div className="calculator">
         <h2>Pip value calculator</h2>
-
-        <div className="input-group flex-col">
-          <label htmlFor="curr_pair">currency pair</label>
-          <select id="curr_pair" value={currencyPair} onChange={handleCurrencySelect}>
-            {allCurrencyPairs.map((pair) => (
-              <option key={pair} value={pair}>
-                {pair}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="input-group flex-col">
-          <label htmlFor="price">exchange rate</label>
-          <input
-            type="number"
-            value={exchangeRate || ""}
-            placeholder="e.g 1.1234"
-            onChange={(e) => {
-              setExchangeRate(parseFloat(e.target.value)), setPrevExchangeRate(e.target.value);
-            }}
-            name="price"
-            id="price"
-            disabled={showConversion}
-          />
-        </div>
-        <div className="input-group flex-col">
-          <label htmlFor="position_size">position size</label>
-          <input
-            type="number"
-            value={positionSize}
-            placeholder="e.g 100,000"
-            onChange={(e) => setPositionSize(parseInt(e.target.value))}
-            name="position_size"
-            id="position_size"
-          />
-        </div>
-        <div className="input-group flex-col">
-          <label htmlFor="account_currency">pip size</label>
-          <input
-            type="number"
-            value={pipSize}
-            placeholder="e.g 0.0001"
-            onChange={(e) => setPipSize(parseFloat(e.target.value))}
-            name="account_currency"
-            id="account_currency"
-          />
-        </div>
-        <div className="input-group flex-col">
-          <label htmlFor="currencyType">Deposit currency</label>
-          <select id="currencyType" onChange={handleDepositCurrency} value={depositCurrency}>
-            {uniqueCurrencies.map((curr) => (
-              <option key={curr} value={curr}>
-                {curr}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          label={"currency pair"}
+          value={currencyPair}
+          onChange={handleCurrencySelect}
+          array={allCurrencyPairs}
+        />
+        <Input
+          label={"exchange rate"}
+          placeholder={"e.g. 1.1008"}
+          value={exchangeRate}
+          onChange={handleExchangeRateInput}
+          disabled={showConversion}
+        />
+        <Input
+          label={"position size"}
+          placeholder={"e.g 100,000"}
+          value={positionSize}
+          onChange={handlePositionSizeInput}
+          disabled={showConversion}
+        />
+        <Input
+          label={"pip size"}
+          placeholder={"e.g 0.0001"}
+          value={pipSize}
+          onChange={handlePipSizeInput}
+          disabled={showConversion}
+        />
+        <Select
+          label={depositCurrency}
+          value={depositCurrency}
+          onChange={handleDepositCurrency}
+          array={uniqueCurrencies}
+        />
         <div className="input-group flex-col">
           <label htmlFor="checkbox">show conversion rate</label>
           <input
@@ -225,30 +222,21 @@ const PipCalculator = () => {
           />
         </div>
         {showConversion && (
-          <div className="input-group flex-col">
-            <label htmlFor="cprice">conversion rate {conversionPair}</label>
-            <input
-              type="number"
-              placeholder="e.g 1.1234"
-              onChange={(e) => setConversionRate(parseFloat(e.target.value))}
-              name="cprice"
-              id="cprice"
-              value={conversionRate || ""}
-            />
-          </div>
+          <Input
+            label={`conversion rate ${conversionPair}`}
+            placeholder={"e.g 1.10018"}
+            value={conversionRate}
+            onChange={handleConverisonInput}
+            disabled={false}
+          />
         )}
-
         <button className="btn" onClick={handleClick}>
           Calculate
         </button>
       </div>
 
       {pipValue && (
-        <div className="results-display">
-          <h2>
-            Pip value: {pipValue} {depositCurrency}
-          </h2>
-        </div>
+        <ResultsDisplay text={"Pip value"} value={pipValue} depositCurrency={depositCurrency} />
       )}
     </>
   );
