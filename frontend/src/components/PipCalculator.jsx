@@ -147,15 +147,15 @@ const PipCalculator = () => {
   };
 
   const handleExchangeRateInput = (e) => {
-    setExchangeRate(parseFloat(e.target.value));
+    setExchangeRate(e.target.value ? parseFloat(e.target.value) : "");
     setPrevExchangeRate(e.target.value);
   };
 
   const handlePositionSizeInput = (e) => {
-    setPositionSize(parseInt(e.target.value));
+    setPositionSize(e.target.value ? parseFloat(e.target.value) : "");
   };
   const handlePipSizeInput = (e) => {
-    setPipSize(parseFloat(e.target.value));
+    setPipSize(e.target.value ? parseFloat(e.target.value) : "");
   };
   const handleConverisonInput = (e) => {
     setConversionRate(parseFloat(e.target.value));

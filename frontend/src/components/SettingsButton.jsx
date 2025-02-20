@@ -4,7 +4,6 @@ import { MdOutlineSettingsInputComposite } from "react-icons/md";
 const SettingsButton = ({ editMode, setEditMode }) => {
   const handleClick = () => {
     setEditMode(!editMode);
-    console.log("click");
   };
   return (
     <button className="settings-btn" onClick={handleClick}>

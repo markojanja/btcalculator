@@ -5,13 +5,14 @@ const Input = ({ label, placeholder, value, onChange, disabled }) => {
       <label htmlFor="input">{label}</label>
       <input
         type="number"
-        value={value || ""}
+        value={value}
         placeholder={placeholder}
         onChange={onChange}
         name="input"
         id="input"
         disabled={disabled}
         min={"0"}
+        step={"0.0001"}
       />
     </div>
   );
