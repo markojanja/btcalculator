@@ -11,7 +11,7 @@ const Header = () => {
             <NavLink to="/">Pip Calculator</NavLink>
           </li>
           <li>
-            <NavLink to="/pnl">PNL Calculator</NavLink>
+            <NavLink to="pnl">PNL Calculator</NavLink>
           </li>
         </ul>
       </nav>
