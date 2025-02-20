@@ -11,7 +11,6 @@ const Input = ({ label, placeholder, value, onChange, disabled }) => {
         name="input"
         id="input"
         disabled={disabled}
-        step={"0.00001"}
         min={"0"}
       />
     </div>
