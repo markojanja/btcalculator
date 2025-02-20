@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import axios from "axios";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 import "./PipCalculator.css";
 import { useState, useEffect } from "react";
 import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
 import Input from "./Input";
 import ResultsDisplay from "./ResultsDisplay";
 import Select from "./Select";
-
+import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";
+import SettingsButton from "./SettingsButton";
 const PipCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
   const [depositCurrency, setDepositCurrency] = useState("EUR");
@@ -29,47 +30,34 @@ const PipCalculator = () => {
   const API_KEY = import.meta.env.VITE_API_KEY;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(
-          `https://api.twelvedata.com/exchange_rate?symbol=${currencyPair}&apikey=${API_KEY}`
-        );
-        if (res.data.rate) {
-          setExchangeRate(parseFloat(res.data.rate));
-          setPrevExchangeRate(parseFloat(res.data.rate));
+    const handleFetchData = async () => {
+      if (!editMode) {
+        if (quote === depositCurrency) return;
+
+        if (showConversion) {
+          let pair = `${quote}/${depositCurrency}`;
+          if (!allCurrencyPairs.includes(pair)) {
+            pair = `${depositCurrency}/${quote}`;
+          }
+          setConversionPair(pair);
+          const rate = await fetchConversionRate(pair, API_KEY);
+          if (rate !== null) {
+            setExchangeRate(1);
+            setConversionRate(rate);
+          }
+        } else {
+          setExchangeRate(prevExchangeRate);
+          const rate = await fetchExchangeRate(currencyPair, API_KEY, prevExchangeRate);
+          if (rate !== null) {
+            setExchangeRate(rate);
+            setPrevExchangeRate(rate);
+          }
         }
-      } catch (error) {
-        console.error("Error fetching exchange rate:", error);
       }
     };
 
-    const fetchDataForConversion = async () => {
-      let pair = `${quote}/${depositCurrency}`;
-      setConversionPair(pair);
-      if (!allCurrencyPairs.includes(pair)) {
-        pair = `${depositCurrency}/${quote}`;
-        setConversionPair(pair);
-      }
-      const res = await axios.get(
-        `https://api.twelvedata.com/exchange_rate?symbol=${pair}&apikey=${API_KEY}`
-      );
-      if (res.data.rate) {
-        setExchangeRate(1);
-        setConversionRate(res.data.rate);
-      }
-    };
-
-    if (!editMode) {
-      if (quote === depositCurrency) return;
-
-      if (showConversion) {
-        fetchDataForConversion();
-      } else {
-        setExchangeRate(prevExchangeRate);
-        fetchData();
-      }
-    }
-  }, [showConversion, prevExchangeRate, base, depositCurrency, quote]);
+    handleFetchData();
+  }, [showConversion, prevExchangeRate, base, depositCurrency, quote, editMode]);
 
   useEffect(() => {
     if (depositCurrency === quote) {
@@ -175,8 +163,24 @@ const PipCalculator = () => {
 
   return (
     <>
+      {editMode ? (
+        <div className="info">
+          <IoMdInformationCircleOutline size={"16"} />
+          <p>Edit mode is on, enter required fields</p>
+        </div>
+      ) : (
+        <div className="info">
+          <IoMdInformationCircleOutline size={"16"} />
+          <p>Edit mode is off, prices are fetched from the internet.</p>
+        </div>
+      )}
+
       <div className="calculator">
-        <h2>Pip value calculator</h2>
+        <div className="calculator-heading">
+          <h2>Pip value calculator</h2>
+          <SettingsButton editMode={editMode} setEditMode={setEditMode} />
+        </div>
+
         <Select
           label={"currency pair"}
           value={currencyPair}
@@ -188,7 +192,7 @@ const PipCalculator = () => {
           placeholder={"e.g. 1.1008"}
           value={exchangeRate}
           onChange={handleExchangeRateInput}
-          disabled={showConversion}
+          disabled={!editMode}
         />
         <Input
           label={"position size"}
@@ -227,7 +231,7 @@ const PipCalculator = () => {
             placeholder={"e.g 1.10018"}
             value={conversionRate}
             onChange={handleConverisonInput}
-            disabled={false}
+            disabled={!editMode}
           />
         )}
         <button className="btn" onClick={handleClick}>
