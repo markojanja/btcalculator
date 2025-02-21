@@ -1,4 +1,5 @@
 import "./PipCalculator.css";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
 import ResultsDisplay from "./ResultsDisplay";
 import { useState } from "react";
@@ -88,7 +89,18 @@ const PnlCalculator = () => {
   };
   return (
     <>
-      <div className="calculator">
+      {editMode ? (
+        <div className="info">
+          <IoMdInformationCircleOutline size={"20"} />
+          <p>Edit mode is on, fill in the required fields.</p>
+        </div>
+      ) : (
+        <div className="info">
+          <IoMdInformationCircleOutline size={"20"} />
+          <p>Edit mode is off, prices are fetched online.</p>
+        </div>
+      )}
+      <div className={`calculator ${editMode ? "active-border" : ""}`}>
         <CalculatorHeading title={"PnL Calculator"} editMode={editMode} setEditMode={setEditMode} />
         <div className="input-group flex-col">
           <label htmlFor="">currency pair</label>

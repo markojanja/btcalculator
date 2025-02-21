@@ -88,3 +88,7 @@ select {
 .info p {
   flex: 1;
 }
+
+.active-border {
+  border-color: oklch(0.777 0.152 181.912);
+}

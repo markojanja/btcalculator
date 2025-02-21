@@ -175,10 +175,7 @@ const PipCalculator = () => {
         </div>
       )}
 
-      <div
-        className="calculator"
-        style={editMode ? { borderColor: "oklch(0.777 0.152 181.912)" } : {}}
-      >
+      <div className={`calculator ${editMode ? "active-border" : ""}`}>
         <CalculatorHeading
           title={"Pip Value Calculator"}
           editMode={editMode}
