@@ -7,7 +7,7 @@ import Input from "./Input";
 import ResultsDisplay from "./ResultsDisplay";
 import Select from "./Select";
 import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";
-import SettingsButton from "./SettingsButton";
+import CalculatorHeading from "./CalculatorHeading";
 const PipCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
   const [depositCurrency, setDepositCurrency] = useState("EUR");
@@ -165,22 +165,25 @@ const PipCalculator = () => {
     <>
       {editMode ? (
         <div className="info">
-          <IoMdInformationCircleOutline size={"16"} />
-          <p>Edit mode is on, enter required fields</p>
+          <IoMdInformationCircleOutline size={"20"} />
+          <p>Edit mode is on, fill in the required fields.</p>
         </div>
       ) : (
         <div className="info">
-          <IoMdInformationCircleOutline size={"16"} />
-          <p>Edit mode is off, prices are fetched from the internet.</p>
+          <IoMdInformationCircleOutline size={"20"} />
+          <p>Edit mode is off, prices are fetched online.</p>
         </div>
       )}
 
-      <div className="calculator">
-        <div className="calculator-heading">
-          <h2>Pip value calculator</h2>
-          <SettingsButton editMode={editMode} setEditMode={setEditMode} />
-        </div>
-
+      <div
+        className="calculator"
+        style={editMode ? { borderColor: "oklch(0.777 0.152 181.912)" } : {}}
+      >
+        <CalculatorHeading
+          title={"Pip Value Calculator"}
+          editMode={editMode}
+          setEditMode={setEditMode}
+        />
         <Select
           label={"currency pair"}
           value={currencyPair}

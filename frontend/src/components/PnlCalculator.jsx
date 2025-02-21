@@ -1,7 +1,10 @@
 import "./PipCalculator.css";
 import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
+import ResultsDisplay from "./ResultsDisplay";
 import { useState } from "react";
 import axios from "axios";
+import CalculatorHeading from "./CalculatorHeading";
+import Input from "./Input";
 const PnlCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
   const [depositCurrency, setDepositCurrency] = useState("USD");
@@ -10,6 +13,8 @@ const PnlCalculator = () => {
   const [tradeSize, setTradeSize] = useState(1);
   const [tradeType, setTradeType] = useState("BUY");
   const [pnl, setPnl] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [conversionRate, setConverisonRate] = useState("");
 
   const API_KEY = import.meta.env.VITE_API_KEY;
 
@@ -42,10 +47,12 @@ const PnlCalculator = () => {
   const handleTradeType = (e) => {
     setTradeType(e.target.value);
   };
-
+  const handleConverisonPrice = (e) => {
+    setConverisonRate(e.target.value);
+  };
   const calculatePnl = async () => {
     let contractSize = 100000;
-    let conversionRate = null;
+    let conversion = null;
     const [, quote] = currencyPair.split("/");
 
     let result;
@@ -66,7 +73,9 @@ const PnlCalculator = () => {
       if (!allCurrencyPairs.includes(pair)) {
         pair = `${depositCurrency}/${quote}`;
       }
-      conversionRate = await fetchData(pair);
+      conversion = await fetchData(pair);
+
+      setConverisonRate(conversion);
 
       if (depositCurrency === "JPY") {
         result = result * conversionRate;
@@ -80,7 +89,7 @@ const PnlCalculator = () => {
   return (
     <>
       <div className="calculator">
-        <h2>PnL calculator</h2>
+        <CalculatorHeading title={"PnL Calculator"} editMode={editMode} setEditMode={setEditMode} />
         <div className="input-group flex-col">
           <label htmlFor="">currency pair</label>
           <select type="text" value={currencyPair} onChange={handleCurrencySelect}>
@@ -120,15 +129,17 @@ const PnlCalculator = () => {
             ))}
           </select>
         </div>
+        {editMode && (
+          <Input
+            label={"currency conversion pair price"}
+            placeholder={"e.g. price of USD/JPY"}
+            onChange={handleConverisonPrice}
+            disabled={false}
+          />
+        )}
         <button onClick={calculatePnl}>Calculate</button>
       </div>
-      {pnl && (
-        <div className="results-display">
-          <h2>
-            PNL: {pnl} {depositCurrency}
-          </h2>
-        </div>
-      )}
+      {pnl && <ResultsDisplay text={"PNL"} value={pnl} depositCurrency={depositCurrency} />}
     </>
   );
 };
