@@ -1,11 +1,11 @@
 import "./PipCalculator.css";
-import { IoMdInformationCircleOutline } from "react-icons/io";
 import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
 import ResultsDisplay from "./ResultsDisplay";
 import { useState } from "react";
 import axios from "axios";
 import CalculatorHeading from "./CalculatorHeading";
 import Input from "./Input";
+import Info from "./Info";
 const PnlCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
   const [depositCurrency, setDepositCurrency] = useState("USD");
@@ -89,17 +89,7 @@ const PnlCalculator = () => {
   };
   return (
     <>
-      {editMode ? (
-        <div className="info">
-          <IoMdInformationCircleOutline size={"20"} />
-          <p>Edit mode is on, fill in the required fields.</p>
-        </div>
-      ) : (
-        <div className="info">
-          <IoMdInformationCircleOutline size={"20"} />
-          <p>Edit mode is off, prices are fetched online.</p>
-        </div>
-      )}
+      <Info editMode={editMode} />
       <div className={`calculator ${editMode ? "active-border" : ""}`}>
         <CalculatorHeading title={"PnL Calculator"} editMode={editMode} setEditMode={setEditMode} />
         <div className="input-group flex-col">

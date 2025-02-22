@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { IoMdInformationCircleOutline } from "react-icons/io";
 import "./PipCalculator.css";
 import { useState, useEffect } from "react";
 import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
@@ -8,6 +6,7 @@ import ResultsDisplay from "./ResultsDisplay";
 import Select from "./Select";
 import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";
 import CalculatorHeading from "./CalculatorHeading";
+import Info from "./Info";
 const PipCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
   const [depositCurrency, setDepositCurrency] = useState("EUR");
@@ -163,18 +162,7 @@ const PipCalculator = () => {
 
   return (
     <>
-      {editMode ? (
-        <div className="info">
-          <IoMdInformationCircleOutline size={"20"} />
-          <p>Edit mode is on, fill in the required fields.</p>
-        </div>
-      ) : (
-        <div className="info">
-          <IoMdInformationCircleOutline size={"20"} />
-          <p>Edit mode is off, prices are fetched online.</p>
-        </div>
-      )}
-
+      <Info editMode={editMode} />
       <div className={`calculator ${editMode ? "active-border" : ""}`}>
         <CalculatorHeading
           title={"Pip Value Calculator"}

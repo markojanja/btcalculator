@@ -13,6 +13,9 @@ const Header = () => {
           <li>
             <NavLink to="pnl">PNL Calculator</NavLink>
           </li>
+          <li>
+            <NavLink to="margin">Margin Calculator</NavLink>
+          </li>
         </ul>
       </nav>
     </header>

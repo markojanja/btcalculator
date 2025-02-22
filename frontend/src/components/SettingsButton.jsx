@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { MdOutlineSettingsInputComposite } from "react-icons/md";
 
 const SettingsButton = ({ editMode, setEditMode }) => {

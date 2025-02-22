@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 const ResultsDisplay = ({ text, value, depositCurrency }) => {
   return (
     <div className="results-display">

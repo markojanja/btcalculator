@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import SettingsButton from "./SettingsButton";
 
 const CalculatorHeading = ({ title, editMode, setEditMode }) => {
