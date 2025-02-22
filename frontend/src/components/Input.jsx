@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 const Input = ({ label, placeholder, value, onChange, disabled }) => {
   return (
     <div className="input-group flex-col">

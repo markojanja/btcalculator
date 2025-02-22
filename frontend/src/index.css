@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: oklch(0.21 0.034 264.665);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -72,6 +72,49 @@ ul {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+
+input,
+select,
+option {
+  background-color: oklch(0.21 0.034 264.665);
+  border: inherit;
+  outline: inherit;
+  box-shadow: inherit;
+  color: inherit;
+}
+input:focus,
+select:focus {
+  border: 1px solid white;
+  box-shadow: inset 0 0 0 2px inherit;
+  outline: none;
+  border-radius: 4px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+input[type="number"]::-moz-number-spin-box {
+  background: oklch(0.21 0.034 264.665);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: oklch(0.777 0.152 181.912);
+  border-radius: 10px;
+  border: 2px solid oklch(0.21 0.034 264.665);
+}
+
+::-webkit-scrollbar-track {
+  background-color: oklch(0.21 0.034 264.665);
+  border-radius: 10px;
 }
 
 input[type="checkbox"] {

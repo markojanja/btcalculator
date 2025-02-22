@@ -9,7 +9,7 @@
   border: 1px solid rgba(255, 255, 255, 0.87);
   border-radius: 0.5rem;
   padding: 1rem;
-  background-color: oklch(0.205 0 0);
+  background-color: oklch(0.129 0.042 264.695);
 
   @media (max-width: 1440px) {
     width: 50%;
