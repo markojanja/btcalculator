@@ -6,6 +6,7 @@ import axios from "axios";
 import CalculatorHeading from "./CalculatorHeading";
 import Input from "./Input";
 import Info from "./Info";
+
 const PnlCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
   const [depositCurrency, setDepositCurrency] = useState("USD");
@@ -91,7 +92,12 @@ const PnlCalculator = () => {
     <>
       <Info editMode={editMode} />
       <div className={`calculator ${editMode ? "active-border" : ""}`}>
-        <CalculatorHeading title={"PnL Calculator"} editMode={editMode} setEditMode={setEditMode} />
+        <CalculatorHeading
+          title={"PnL Calculator"}
+          editMode={editMode}
+          setEditMode={setEditMode}
+          visible={true}
+        />
         <div className="input-group flex-col">
           <label htmlFor="">currency pair</label>
           <select type="text" value={currencyPair} onChange={handleCurrencySelect}>

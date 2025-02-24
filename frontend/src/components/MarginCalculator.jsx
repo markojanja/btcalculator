@@ -1,9 +1,11 @@
 import Input from "./Input";
+import Select from "./Select";
 import CalculatorHeading from "./CalculatorHeading";
 import "./PipCalculator.css";
 import ButtonGroup from "./ButtonGroup";
 import { useState } from "react";
 import { marginCalculationCFD, marginCalculationForex } from "../utils/calculations";
+import { allCurrencyPairs } from "../utils/helpers";
 
 const MarginCalculator = () => {
   const [activeType, setActveType] = useState("forex");
@@ -13,6 +15,8 @@ const MarginCalculator = () => {
   const [price, setPrice] = useState("");
   const [leverage, setLeverage] = useState("");
   const [margin, setMargin] = useState("");
+  const [pair, setPair] = useState("EUR/AUD");
+  const [tradeType, setTradeType] = useState("BUY");
 
   const handleTypeSelect = (e) => {
     setActveType(e.target.value);
@@ -35,6 +39,12 @@ const MarginCalculator = () => {
     setMargin(e.target.value);
   };
 
+  const handlePairSelect = (e) => {
+    setPair(e.target.value);
+  };
+  const handleTradeTypeSelect = (e) => {
+    setTradeType(e.target.value);
+  };
   const handleCalculate = () => {
     let res;
     let newPair;
@@ -43,6 +53,8 @@ const MarginCalculator = () => {
       setMargin("-");
       res = marginCalculationForex(contractSize, lotSize, price, leverage);
       newPair = {
+        pair,
+        tradeType,
         contractSize,
         lotSize,
         price,
@@ -54,6 +66,8 @@ const MarginCalculator = () => {
       setLeverage("-");
       res = marginCalculationCFD(contractSize, lotSize, price, margin);
       newPair = {
+        pair,
+        tradeType,
         contractSize,
         lotSize,
         price,
@@ -66,56 +80,79 @@ const MarginCalculator = () => {
       return;
     }
 
-    setCalculations([...calculations, newPair]); // Correct state update
-    console.log([...calculations, newPair]); // Logs updated state
+    setCalculations([...calculations, newPair]);
   };
 
   const calcType = ["forex", "cfd"];
+  const tradeTypeList = ["BUY", "SELL"];
 
   return (
     <>
       <div className="calculator">
-        <CalculatorHeading title={"Margin Calculator"} editMode={false} setEditMode={null} />
+        <CalculatorHeading
+          title={"Margin Calculator"}
+          editMode={false}
+          setEditMode={null}
+          visible={false}
+        />
         <ButtonGroup array={calcType} activeType={activeType} onClick={handleTypeSelect} />
-        <Input
-          label={"contract size"}
-          placeholder={"1000"}
-          value={contractSize}
-          onChange={handleContractSize}
-          disabled={false}
-        />
-        <Input
-          label={"lot size"}
-          placeholder={"e.g 0.01"}
-          value={lotSize}
-          onChange={handleLotSize}
-          disabled={false}
-        />
-        <Input
-          label={"price"}
-          placeholder={"price of instrument"}
-          value={price}
-          onChange={handlePrice}
-          disabled={false}
-        />
-        {activeType === "forex" && (
+        <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>
+          <Select
+            label={"symbol"}
+            value={pair}
+            onChange={handlePairSelect}
+            array={allCurrencyPairs}
+          />
+          <Select
+            label={"type"}
+            value={tradeType}
+            onChange={handleTradeTypeSelect}
+            array={tradeTypeList}
+          />
+        </div>
+        <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>
           <Input
-            label={"leverage"}
-            placeholder={"e.g 100"}
-            value={leverage}
-            onChange={handleLeverage}
+            label={"contract size"}
+            placeholder={"e.g. 100000"}
+            value={contractSize}
+            onChange={handleContractSize}
             disabled={false}
           />
-        )}
-        {activeType === "cfd" && (
           <Input
-            label={"margin (%)"}
-            placeholder={"e.g 5"}
-            value={margin}
-            onChange={handleMargin}
+            label={"lot size"}
+            placeholder={"e.g 0.01"}
+            value={lotSize}
+            onChange={handleLotSize}
             disabled={false}
           />
-        )}
+        </div>
+        <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>
+          <Input
+            label={"price"}
+            placeholder={"price of instrument"}
+            value={price}
+            onChange={handlePrice}
+            disabled={false}
+          />
+          {activeType === "forex" && (
+            <Input
+              label={"leverage"}
+              placeholder={"e.g 100"}
+              value={leverage}
+              onChange={handleLeverage}
+              disabled={false}
+            />
+          )}
+          {activeType === "cfd" && (
+            <Input
+              label={"margin (%)"}
+              placeholder={"e.g 5"}
+              value={margin}
+              onChange={handleMargin}
+              disabled={false}
+            />
+          )}
+        </div>
         <button onClick={handleCalculate}>Calculate</button>
       </div>
       {calculations.length > 0 && (
@@ -123,6 +160,8 @@ const MarginCalculator = () => {
           <table className="calculation-table">
             <thead>
               <tr>
+                <th>Symbol</th>
+                <th>type</th>
                 <th>Contract Size</th>
                 <th>Lot Size</th>
                 <th>Price</th>
@@ -134,6 +173,8 @@ const MarginCalculator = () => {
             <tbody>
               {calculations.map((calc, index) => (
                 <tr key={index}>
+                  <td>{calc.pair}</td>
+                  <td>{calc.tradeType}</td>
                   <td>{calc.contractSize}</td>
                   <td>{calc.lotSize}</td>
                   <td>{calc.price}</td>

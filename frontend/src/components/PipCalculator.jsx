@@ -168,6 +168,7 @@ const PipCalculator = () => {
           title={"Pip Value Calculator"}
           editMode={editMode}
           setEditMode={setEditMode}
+          visible={true}
         />
         <Select
           label={"currency pair"}
