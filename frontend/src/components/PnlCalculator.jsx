@@ -69,7 +69,6 @@ const PnlCalculator = () => {
       setPnl(parseFloat(result).toFixed(2));
     }
     if (quote !== depositCurrency) {
-      //   console.log("apply conversion");
       setPnl("");
       let pair = `${quote}/${depositCurrency}`;
       if (!allCurrencyPairs.includes(pair)) {
