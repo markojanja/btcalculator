@@ -44,6 +44,7 @@ export const allCurrencyPairs = [
   "NZD/ZAR",
   "NZD/SEK",
   "NZD/PLN",
+  "BTC/USD",
 ];
 
 export const uniqueCurrencies = [

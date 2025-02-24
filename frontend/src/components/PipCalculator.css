@@ -93,3 +93,49 @@ select {
 .active-border {
   border-color: oklch(0.777 0.152 181.912);
 }
+.group-inline {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: start;
+  max-height: 50px;
+}
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.label {
+  text-align: left;
+  color: oklch(0.777 0.152 181.912);
+}
+
+.btn-outline {
+  cursor: pointer;
+  display: inline-block;
+  border: 1px solid oklch(0.777 0.152 181.912);
+  color: #ffffff;
+  background: transparent;
+  padding: 0.3rem 0.6rem;
+}
+
+.selected {
+  background: oklch(0.777 0.152 181.912);
+  transition: all 0.2s ease;
+}
+.calculation-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.calculation-table th,
+.calculation-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.calculation-table th {
+  background-color: inherit;
+}
