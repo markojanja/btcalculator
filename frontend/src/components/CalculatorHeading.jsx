@@ -1,10 +1,10 @@
 import SettingsButton from "./SettingsButton";
 
-const CalculatorHeading = ({ title, editMode, setEditMode }) => {
+const CalculatorHeading = ({ title, editMode, setEditMode, visible }) => {
   return (
     <div className="calculator-heading">
       <h2>{title}</h2>
-      <SettingsButton editMode={editMode} setEditMode={setEditMode} />
+      {visible && <SettingsButton editMode={editMode} setEditMode={setEditMode} />}
     </div>
   );
 };
