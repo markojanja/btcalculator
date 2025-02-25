@@ -33,6 +33,7 @@ export const allCurrencyPairs = [
   "USD/SEK",
   "USD/PLN",
   "AUD/TRY",
+  "AUD/CAD",
   "AUD/ZAR",
   "AUD/SEK",
   "AUD/PLN",
@@ -44,7 +45,7 @@ export const allCurrencyPairs = [
   "NZD/ZAR",
   "NZD/SEK",
   "NZD/PLN",
-  "BTC/USD",
+  "XAU/USD",
 ];
 
 export const uniqueCurrencies = [

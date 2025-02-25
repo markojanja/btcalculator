@@ -60,7 +60,7 @@ const MarginCalculator = () => {
         price,
         margin: "-",
         leverage,
-        marginRequired: parseFloat(res.toFixed(2)),
+        marginRequired: parseFloat(res),
       };
     } else if (activeType === "cfd") {
       setLeverage("-");
@@ -73,7 +73,7 @@ const MarginCalculator = () => {
         price,
         margin,
         leverage: "-",
-        marginRequired: parseFloat(res.toFixed(2)),
+        marginRequired: parseFloat(res),
       };
     } else {
       console.log("error");
@@ -85,6 +85,10 @@ const MarginCalculator = () => {
 
   const calcType = ["forex", "cfd"];
   const tradeTypeList = ["BUY", "SELL"];
+
+  const totalPrice = calculations
+    .map((item) => item.marginRequired)
+    .reduce((sum, margin) => sum + margin, 0);
 
   return (
     <>
@@ -156,13 +160,12 @@ const MarginCalculator = () => {
         <button onClick={handleCalculate}>Calculate</button>
       </div>
       {calculations.length > 0 && (
-        <div className="results-display" style={{ width: "50%" }}>
+        <div style={{ width: "60%", margin: "0 auto" }}>
           <table className="calculation-table">
             <thead>
               <tr>
                 <th>Symbol</th>
                 <th>type</th>
-                <th>Contract Size</th>
                 <th>Lot Size</th>
                 <th>Price</th>
                 <th>Margin(%)</th>
@@ -175,16 +178,18 @@ const MarginCalculator = () => {
                 <tr key={index}>
                   <td>{calc.pair}</td>
                   <td>{calc.tradeType}</td>
-                  <td>{calc.contractSize}</td>
                   <td>{calc.lotSize}</td>
                   <td>{calc.price}</td>
                   <td>{calc.margin}</td>
                   <td>{calc.leverage}</td>
-                  <td>{calc.marginRequired}</td>
+                  <td>{parseFloat(calc.marginRequired.toFixed(2))}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <h5 style={{ marginInline: "auto 0" }}>
+            Total margin: {parseFloat(totalPrice).toFixed(2)}
+          </h5>
         </div>
       )}
     </>

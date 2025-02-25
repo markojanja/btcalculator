@@ -137,5 +137,13 @@ select {
 }
 
 .calculation-table th {
-  background-color: inherit;
+  background-color: oklch(0.129 0.042 264.695);
+}
+.calculation-table tr:nth-child(even) {
+  background-color: oklch(0.129 0.042 264.695);
+}
+
+.calculation-table tr:hover {
+  background: oklch(0.777 0.152 181.912);
+  transition: all 0.2s ease-in-out;
 }
