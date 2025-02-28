@@ -54,7 +54,7 @@ const PnlCalculator = () => {
   };
   const calculatePnl = async () => {
     let contractSize = 100000;
-    let conversion = null;
+
     const [, quote] = currencyPair.split("/");
 
     let result;
@@ -71,18 +71,21 @@ const PnlCalculator = () => {
     if (quote !== depositCurrency) {
       setPnl("");
       let pair = `${quote}/${depositCurrency}`;
+
       if (!allCurrencyPairs.includes(pair)) {
         pair = `${depositCurrency}/${quote}`;
       }
-      conversion = await fetchData(pair);
+      let conversion = await fetchData(pair);
 
-      setConverisonRate(conversion);
+      if (conversionRate) {
+        conversion = conversionRate;
+      }
 
       if (depositCurrency === "JPY") {
-        result = result * conversionRate;
+        result = result * conversion;
         setPnl(parseFloat(result).toFixed(2));
       } else {
-        result = result / conversionRate;
+        result = result / conversion;
         setPnl(parseFloat(result).toFixed(2));
       }
     }
