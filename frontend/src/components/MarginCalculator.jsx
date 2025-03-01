@@ -11,10 +11,10 @@ import { MdDeleteForever } from "react-icons/md";
 const MarginCalculator = () => {
   const [activeType, setActveType] = useState("forex");
   const [calculations, setCalculations] = useState([]);
-  const [contractSize, setContractSize] = useState("");
-  const [lotSize, setLotSize] = useState("");
+  const [contractSize, setContractSize] = useState(100000);
+  const [lotSize, setLotSize] = useState(1);
   const [price, setPrice] = useState("");
-  const [leverage, setLeverage] = useState("");
+  const [leverage, setLeverage] = useState(100);
   const [margin, setMargin] = useState("");
   const [pair, setPair] = useState("EUR/USD");
   const [tradeType, setTradeType] = useState("BUY");
@@ -232,9 +232,14 @@ const MarginCalculator = () => {
               ))}
             </tbody>
           </table>
-          <h5 style={{ marginInline: "auto 0", textAlign: "right", padding: "0.5rem 0" }}>
-            Total margin: {parseFloat(totalPrice).toFixed(2)}
-          </h5>
+          <h4 style={{ marginInline: "auto 0", textAlign: "right", padding: "0.5rem 0" }}>
+            Total margin:{" "}
+            <span
+              style={{ fontWeight: "900", color: "oklch(0.723 0.219 149.579)", fontSize: "1.3em" }}
+            >
+              {parseFloat(totalPrice).toFixed(2)}
+            </span>
+          </h4>
         </div>
       )}
     </>
