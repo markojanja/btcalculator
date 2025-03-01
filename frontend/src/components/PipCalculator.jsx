@@ -198,7 +198,7 @@ const PipCalculator = () => {
           disabled={showConversion}
         />
         <Select
-          label={depositCurrency}
+          label={"account currency"}
           value={depositCurrency}
           onChange={handleDepositCurrency}
           array={uniqueCurrencies}

@@ -6,17 +6,20 @@ import ButtonGroup from "./ButtonGroup";
 import { useState } from "react";
 import { marginCalculationCFD, marginCalculationForex } from "../utils/calculations";
 import { allCurrencyPairs } from "../utils/helpers";
+import { MdDeleteForever } from "react-icons/md";
 
 const MarginCalculator = () => {
   const [activeType, setActveType] = useState("forex");
   const [calculations, setCalculations] = useState([]);
-  const [contractSize, setContractSize] = useState("");
-  const [lotSize, setLotSize] = useState("");
+  const [contractSize, setContractSize] = useState(100000);
+  const [lotSize, setLotSize] = useState(1);
   const [price, setPrice] = useState("");
-  const [leverage, setLeverage] = useState("");
+  const [leverage, setLeverage] = useState(100);
   const [margin, setMargin] = useState("");
-  const [pair, setPair] = useState("EUR/AUD");
+  const [pair, setPair] = useState("EUR/USD");
   const [tradeType, setTradeType] = useState("BUY");
+  const [showConversion, setShowConversion] = useState(false);
+  const [conversion, setConversion] = useState("");
 
   const handleTypeSelect = (e) => {
     setActveType(e.target.value);
@@ -53,6 +56,7 @@ const MarginCalculator = () => {
       setMargin("-");
       res = marginCalculationForex(contractSize, lotSize, price, leverage);
       newPair = {
+        id: Date.now(),
         pair,
         tradeType,
         contractSize,
@@ -60,12 +64,13 @@ const MarginCalculator = () => {
         price,
         margin: "-",
         leverage,
-        marginRequired: parseFloat(res),
+        marginRequired: showConversion ? parseFloat(res) * conversion : parseFloat(res),
       };
     } else if (activeType === "cfd") {
       setLeverage("-");
       res = marginCalculationCFD(contractSize, lotSize, price, margin);
       newPair = {
+        id: Date.now(),
         pair,
         tradeType,
         contractSize,
@@ -73,7 +78,7 @@ const MarginCalculator = () => {
         price,
         margin,
         leverage: "-",
-        marginRequired: parseFloat(res),
+        marginRequired: showConversion ? parseFloat(res) * conversion : parseFloat(res),
       };
     } else {
       console.log("error");
@@ -81,6 +86,19 @@ const MarginCalculator = () => {
     }
 
     setCalculations([...calculations, newPair]);
+  };
+
+  const handleCoversion = (e) => {
+    setConversion(e.target.value);
+  };
+
+  const handleCheckbox = () => {
+    setShowConversion(!showConversion);
+  };
+
+  const handleDelete = (id) => {
+    const newCalc = calculations.filter((item) => item.id !== id);
+    setCalculations(newCalc);
   };
 
   const calcType = ["forex", "cfd"];
@@ -157,6 +175,26 @@ const MarginCalculator = () => {
             />
           )}
         </div>
+        <div className="input-group flex-col">
+          <label htmlFor="checkbox">show conversion rate</label>
+          <input
+            id="checkbox"
+            type="checkbox"
+            checked={showConversion}
+            disabled={false}
+            onChange={handleCheckbox}
+            className="w-auto"
+          />
+        </div>
+        {showConversion && (
+          <Input
+            label={"converison rate"}
+            placeholder={"base/deposit e.q EUR/AUD"}
+            value={conversion}
+            onChange={handleCoversion}
+            disabled={false}
+          />
+        )}
         <button onClick={handleCalculate}>Calculate</button>
       </div>
       {calculations.length > 0 && (
@@ -171,6 +209,7 @@ const MarginCalculator = () => {
                 <th>Margin(%)</th>
                 <th>Leverage</th>
                 <th>Margin Required</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -183,13 +222,24 @@ const MarginCalculator = () => {
                   <td>{calc.margin}</td>
                   <td>{calc.leverage}</td>
                   <td>{parseFloat(calc.marginRequired.toFixed(2))}</td>
+                  <td>
+                    <MdDeleteForever
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleDelete(calc.id)}
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <h5 style={{ marginInline: "auto 0" }}>
-            Total margin: {parseFloat(totalPrice).toFixed(2)}
-          </h5>
+          <h4 style={{ marginInline: "auto 0", textAlign: "right", padding: "0.5rem 0" }}>
+            Total margin:{" "}
+            <span
+              style={{ fontWeight: "900", color: "oklch(0.723 0.219 149.579)", fontSize: "1.3em" }}
+            >
+              {parseFloat(totalPrice).toFixed(2)}
+            </span>
+          </h4>
         </div>
       )}
     </>
