@@ -5,7 +5,9 @@ const Header = () => {
   return (
     <header className="header">
       <nav className="nav">
-        <div className="logo">BTCalculator</div>
+        <div className="logo">
+          <NavLink to="/">BTCalaculator</NavLink>
+        </div>
         <ul>
           <li>
             <NavLink to="/">Pip Calculator</NavLink>
@@ -15,6 +17,9 @@ const Header = () => {
           </li>
           <li>
             <NavLink to="margin">Margin Calculator</NavLink>
+          </li>
+          <li>
+            <NavLink to="swap">Swap Calculator</NavLink>
           </li>
         </ul>
       </nav>
