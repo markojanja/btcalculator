@@ -171,11 +171,11 @@ const SwapCalculator = () => {
           <h4>Asset Price{result.assetPrice}</h4>
           <h4>Lots: {result.lotsTraded}</h4>
           <h4>
-            Daily swap {result.dailySwap.toFixed(3)}{" "}
+            Daily swap {parseFloat(result.dailySwap).toFixed(3)}{" "}
             {result.dailySwap < 0 ? "is charged" : "is paid"}
           </h4>
           <h4>
-            TotalSwaps:{test.toFixed(3)} {`from ${openDate} to ${closeDate} `}{" "}
+            TotalSwaps:{parseFloat(test).toFixed(3)} {`from ${openDate} to ${closeDate} `}{" "}
             {test < 0 ? "is being charged" : "is paid"}
           </h4>
         </div>
