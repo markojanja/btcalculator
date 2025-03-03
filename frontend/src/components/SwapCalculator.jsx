@@ -165,13 +165,19 @@ const SwapCalculator = () => {
       </div>
       {result && (
         <div className="results-display">
-          <h4>{result.symbol}</h4>
-          <h4>{result.activeCalculation}</h4>
-          <h4>{result.swapDay}</h4>
-          <h4>{result.assetPrice}</h4>
-          <h4>{result.lotsTraded}</h4>
-          <h4>{result.dailySwap}</h4>
-          <h4>TotalSwaps:{test}</h4>
+          <h4>Symbol: {result.symbol}</h4>
+          <h4>Calculation Type: {result.activeCalculation}</h4>
+          <h4>3-day Swap: {result.swapDay}</h4>
+          <h4>Asset Price{result.assetPrice}</h4>
+          <h4>Lots: {result.lotsTraded}</h4>
+          <h4>
+            Daily swap {result.dailySwap.toFixed(3)}{" "}
+            {result.dailySwap < 0 ? "is charged" : "is paid"}
+          </h4>
+          <h4>
+            TotalSwaps:{test.toFixed(3)} {`from ${openDate} to ${closeDate} `}{" "}
+            {test < 0 ? "is being charged" : "is paid"}
+          </h4>
         </div>
       )}
     </>
