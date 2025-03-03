@@ -19,17 +19,18 @@ const calculateSwapByPoints = (contractSize, pipSize, long, short, lots) => {
   };
 };
 
-const calculateSwapByPercentage = (contractSize, long, short, price) => {
+const calculateSwapByPercentage = (contractSize, lots, long, short, price) => {
   return {
-    long: parseFloat((long * contractSize * price) / (100 * 360)),
-    short: parseFloat((short * contractSize * price) / (100 * 360)),
+    long: parseFloat(((long * contractSize * price) / (100 * 360)) * lots),
+    short: parseFloat(((short * contractSize * price) / (100 * 360)) * lots),
   };
 };
 
 export const calculateDailySwap = (calctype, contractSize, pipSize, long, short, lots, price) => {
   if (calctype === "money") return calculateSwapByMoney(long, short, lots);
   if (calctype === "points") return calculateSwapByPoints(contractSize, pipSize, long, short, lots);
-  if (calctype === "percentage") return calculateSwapByPercentage(contractSize, long, short, price);
+  if (calctype === "percentage")
+    return calculateSwapByPercentage(contractSize, lots, long, short, price);
 };
 
 export const getDatesInRange = (startDate, endDate, swapDay) => {
