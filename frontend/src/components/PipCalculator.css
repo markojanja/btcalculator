@@ -28,6 +28,9 @@
   margin-top: 1rem;
   padding: 2rem 1rem;
 }
+.results-display {
+  text-align: left;
+}
 .input-group {
   display: flex;
   align-items: start;
