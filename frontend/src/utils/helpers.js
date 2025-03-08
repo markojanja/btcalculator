@@ -91,5 +91,5 @@ export const uniqueCurrencies = [
 ];
 
 export const formatPipValue = (value) => {
-  return Math.abs(value - Math.round(value)) < 1e-6 ? Math.round(value) : Number(value.toFixed(6));
+  return Math.abs(value - Math.round(value)) < 1e-5 ? Math.round(value) : Number(value.toFixed(5));
 };
