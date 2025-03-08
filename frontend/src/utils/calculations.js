@@ -1,3 +1,25 @@
+import { formatPipValue } from "./helpers";
+
+export const calculatePipValue = (
+  pipSize,
+  positionSize,
+  exchangeRate,
+  conversionRate,
+  showConversion,
+  isJPY
+) => {
+  let pipValue = (pipSize * positionSize) / exchangeRate;
+  pipValue = pipValue % 1 === 0 ? pipValue : parseFloat(pipValue.toFixed(6));
+
+  if (showConversion) {
+    pipValue = isJPY
+      ? parseFloat((pipValue * conversionRate).toFixed(6))
+      : parseFloat((pipValue / conversionRate).toFixed(6));
+  }
+
+  return formatPipValue(pipValue);
+};
+
 export const marginCalculationForex = (contractSize, lotSize, price, leverage) => {
   return parseFloat((contractSize * lotSize * price) / leverage);
 };
