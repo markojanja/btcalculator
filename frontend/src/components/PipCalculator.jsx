@@ -43,14 +43,14 @@ const PipCalculator = () => {
           const rate = await fetchConversionRate(pair, API_KEY);
           if (rate !== null) {
             setExchangeRate(1);
-            setConversionRate(parseFloat(rate).toFixed(6));
+            setConversionRate(parseFloat(rate.toFixed(5)));
           }
         } else {
           setExchangeRate(parseFloat(prevExchangeRate));
           const rate = await fetchExchangeRate(currencyPair, API_KEY, prevExchangeRate);
           if (rate !== null) {
-            setExchangeRate(parseFloat(rate));
-            setPrevExchangeRate(parseFloat(rate));
+            setExchangeRate(parseFloat(rate.toFixed(5)));
+            setPrevExchangeRate(parseFloat(rate.toFixed(5)));
           }
         }
       }
@@ -62,6 +62,8 @@ const PipCalculator = () => {
   useEffect(() => {
     if (depositCurrency === quote) {
       setExchangeRate(1);
+      setCheckBoxChecked(false);
+      setCheckboxDisabled(true);
     } else if (depositCurrency === base) {
       setCheckBoxChecked(false);
       setCheckboxDisabled(true);

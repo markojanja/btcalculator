@@ -9,12 +9,12 @@ export const calculatePipValue = (
   isJPY
 ) => {
   let pipValue = (pipSize * positionSize) / exchangeRate;
-  pipValue = pipValue % 1 === 0 ? pipValue : parseFloat(pipValue.toFixed(6));
+  pipValue = formatPipValue(parseFloat(pipValue));
 
   if (showConversion) {
     pipValue = isJPY
-      ? parseFloat((pipValue * conversionRate).toFixed(6))
-      : parseFloat((pipValue / conversionRate).toFixed(6));
+      ? parseFloat(pipValue * conversionRate)
+      : parseFloat(pipValue / conversionRate);
   }
 
   return formatPipValue(pipValue);
