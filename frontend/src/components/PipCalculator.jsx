@@ -7,6 +7,7 @@ import Select from "./Select";
 import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";
 import CalculatorHeading from "./CalculatorHeading";
 import Info from "./Info";
+import { calculatePipValue } from "../utils/calculations";
 const PipCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
   const [depositCurrency, setDepositCurrency] = useState("EUR");
@@ -34,22 +35,22 @@ const PipCalculator = () => {
         if (quote === depositCurrency) return;
 
         if (showConversion) {
-          let pair = `${quote}/${depositCurrency}`;
-          if (!allCurrencyPairs.includes(pair)) {
-            pair = `${depositCurrency}/${quote}`;
+          let pair = `${depositCurrency}/${quote}`;
+          if (depositCurrency === "JPY") {
+            pair = `${quote}/${depositCurrency}`;
           }
           setConversionPair(pair);
           const rate = await fetchConversionRate(pair, API_KEY);
           if (rate !== null) {
             setExchangeRate(1);
-            setConversionRate(rate);
+            setConversionRate(parseFloat(rate).toFixed(6));
           }
         } else {
-          setExchangeRate(prevExchangeRate);
+          setExchangeRate(parseFloat(prevExchangeRate));
           const rate = await fetchExchangeRate(currencyPair, API_KEY, prevExchangeRate);
           if (rate !== null) {
-            setExchangeRate(rate);
-            setPrevExchangeRate(rate);
+            setExchangeRate(parseFloat(rate));
+            setPrevExchangeRate(parseFloat(rate));
           }
         }
       }
@@ -120,22 +121,17 @@ const PipCalculator = () => {
       setCheckboxDisabled(false);
     }
   };
-  const calculatePipValue = () => {
-    const res = (pipSize * positionSize) / exchangeRate;
-    return res % 1 === 0 ? res : parseFloat(res.toFixed(6));
-  };
-
-  const pipValueWithConversion = () => {
-    const calculatedPipvalue = calculatePipValue();
-    if (showConversion && isJPY) {
-      return parseFloat((calculatedPipvalue * conversionRate).toFixed(6));
-    } else {
-      return parseFloat((calculatedPipvalue / conversionRate).toFixed(6));
-    }
-  };
 
   const handleClick = () => {
-    showConversion ? setPipValue(pipValueWithConversion()) : setPipValue(calculatePipValue());
+    const res = calculatePipValue(
+      pipSize,
+      positionSize,
+      exchangeRate,
+      conversionRate,
+      showConversion,
+      isJPY
+    );
+    setPipValue(res);
   };
 
   const handleCheckbox = (e) => {
