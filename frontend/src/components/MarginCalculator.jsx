@@ -23,7 +23,6 @@ const MarginCalculator = () => {
 
   const handleTypeSelect = (e) => {
     setActveType(e.target.value);
-    console.log(activeType);
   };
 
   const handleContractSize = (e) => {
@@ -51,7 +50,7 @@ const MarginCalculator = () => {
   const handleCalculate = () => {
     let res;
     let newPair;
-
+    //test
     if (activeType === "forex") {
       setMargin("-");
       res = marginCalculationForex(contractSize, lotSize, price, leverage);
