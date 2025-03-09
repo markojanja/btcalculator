@@ -168,7 +168,7 @@ const SwapCalculator = () => {
           <h4>Symbol: {result.symbol}</h4>
           <h4>Calculation Type: {result.activeCalculation}</h4>
           <h4>3-day Swap: {result.swapDay}</h4>
-          <h4>Asset Price{result.assetPrice}</h4>
+          <h4>Asset Price: {result.assetPrice}</h4>
           <h4>Lots: {result.lotsTraded}</h4>
           <h4>
             Daily swap {parseFloat(result.dailySwap).toFixed(3)}{" "}

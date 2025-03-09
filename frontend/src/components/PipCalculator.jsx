@@ -33,7 +33,6 @@ const PipCalculator = () => {
     const handleFetchData = async () => {
       if (!editMode) {
         if (quote === depositCurrency) return;
-
         if (showConversion) {
           let pair = `${depositCurrency}/${quote}`;
           if (depositCurrency === "JPY") {
@@ -72,7 +71,7 @@ const PipCalculator = () => {
       setCheckBoxChecked(true);
       setCheckboxDisabled(false);
     }
-  }, [depositCurrency, quote, prevExchangeRate]);
+  }, [depositCurrency, quote, prevExchangeRate, editMode]);
 
   const handleCurrencySelect = (e) => {
     setCurrnecyPair(e.target.value);
@@ -85,10 +84,8 @@ const PipCalculator = () => {
 
     if (quoteCurrency.includes("JPY")) {
       setPipSize(0.01);
-      setCheckBoxChecked(true);
     } else {
       setPipSize(0.0001);
-      setCheckBoxChecked(false);
     }
 
     if (depositCurrency === base || depositCurrency === quote) {
@@ -144,8 +141,8 @@ const PipCalculator = () => {
   };
 
   const handleExchangeRateInput = (e) => {
-    setExchangeRate(e.target.value ? parseFloat(e.target.value) : "");
-    setPrevExchangeRate(e.target.value);
+    const newRate = e.target.value ? parseFloat(e.target.value) : "";
+    setExchangeRate(newRate);
   };
 
   const handlePositionSizeInput = (e) => {
