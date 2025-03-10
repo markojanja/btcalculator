@@ -5,8 +5,9 @@ import "./PipCalculator.css";
 import ButtonGroup from "./ButtonGroup";
 import { useState } from "react";
 import { marginCalculationCFD, marginCalculationForex } from "../utils/calculations";
-import { allCurrencyPairs } from "../utils/helpers";
+import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
 import { MdDeleteForever } from "react-icons/md";
+import { fetchExchangeRate } from "../utils/fetchData";
 
 const MarginCalculator = () => {
   const [activeType, setActveType] = useState("forex");
@@ -20,6 +21,9 @@ const MarginCalculator = () => {
   const [tradeType, setTradeType] = useState("BUY");
   const [showConversion, setShowConversion] = useState(false);
   const [conversion, setConversion] = useState("");
+  const [deposit, setDeposit] = useState("EUR");
+
+  const API_KEY = import.meta.env.VITE_API_KEY;
 
   const handleTypeSelect = (e) => {
     setActveType(e.target.value);
@@ -53,7 +57,15 @@ const MarginCalculator = () => {
     //test
     if (activeType === "forex") {
       setMargin("-");
-      res = marginCalculationForex(contractSize, lotSize, price, leverage);
+      res = marginCalculationForex(
+        contractSize,
+        lotSize,
+        price,
+        leverage,
+        pair,
+        deposit,
+        conversion
+      );
       newPair = {
         id: Date.now(),
         pair,
@@ -63,11 +75,11 @@ const MarginCalculator = () => {
         price,
         margin: "-",
         leverage,
-        marginRequired: showConversion ? parseFloat(res) * conversion : parseFloat(res),
+        marginRequired: parseFloat(res),
       };
     } else if (activeType === "cfd") {
       setLeverage("-");
-      res = marginCalculationCFD(contractSize, lotSize, price, margin);
+      res = marginCalculationCFD(contractSize, lotSize, price, margin, pair, deposit, conversion);
       newPair = {
         id: Date.now(),
         pair,
@@ -77,7 +89,7 @@ const MarginCalculator = () => {
         price,
         margin,
         leverage: "-",
-        marginRequired: showConversion ? parseFloat(res) * conversion : parseFloat(res),
+        marginRequired: parseFloat(res) * conversion,
       };
     } else {
       console.log("error");
@@ -98,6 +110,15 @@ const MarginCalculator = () => {
   const handleDelete = (id) => {
     const newCalc = calculations.filter((item) => item.id !== id);
     setCalculations(newCalc);
+  };
+
+  const handleDepositSelect = async (e) => {
+    const newDeposit = e.target.value;
+    const [base] = pair.split("/");
+    const newPair = `${base}/${newDeposit}`;
+    const conversionPrice = await fetchExchangeRate(newPair, API_KEY);
+    setConversion(conversionPrice);
+    setDeposit(newDeposit);
   };
 
   const calcType = ["forex", "cfd"];
@@ -174,6 +195,12 @@ const MarginCalculator = () => {
             />
           )}
         </div>
+        <Select
+          label={"account currency"}
+          value={deposit}
+          onChange={handleDepositSelect}
+          array={uniqueCurrencies}
+        />
         <div className="input-group flex-col">
           <label htmlFor="checkbox">show conversion rate</label>
           <input
