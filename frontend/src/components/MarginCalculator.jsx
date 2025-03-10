@@ -5,8 +5,9 @@ import "./PipCalculator.css";
 import ButtonGroup from "./ButtonGroup";
 import { useState } from "react";
 import { marginCalculationCFD, marginCalculationForex } from "../utils/calculations";
-import { allCurrencyPairs } from "../utils/helpers";
+import { allCurrencyPairs, uniqueCurrencies, calcType, tradeTypeList } from "../utils/helpers";
 import { MdDeleteForever } from "react-icons/md";
+import { fetchExchangeRate } from "../utils/fetchData";
 
 const MarginCalculator = () => {
   const [activeType, setActveType] = useState("forex");
@@ -20,32 +21,15 @@ const MarginCalculator = () => {
   const [tradeType, setTradeType] = useState("BUY");
   const [showConversion, setShowConversion] = useState(false);
   const [conversion, setConversion] = useState("");
+  const [deposit, setDeposit] = useState("EUR");
 
+  const API_KEY = import.meta.env.VITE_API_KEY;
+
+  const handleChange = (setter) => (e) => {
+    setter(e);
+  };
   const handleTypeSelect = (e) => {
     setActveType(e.target.value);
-  };
-
-  const handleContractSize = (e) => {
-    setContractSize(e.target.value);
-  };
-  const handleLotSize = (e) => {
-    setLotSize(e.target.value);
-  };
-  const handlePrice = (e) => {
-    setPrice(e.target.value);
-  };
-  const handleLeverage = (e) => {
-    setLeverage(e.target.value);
-  };
-  const handleMargin = (e) => {
-    setMargin(e.target.value);
-  };
-
-  const handlePairSelect = (e) => {
-    setPair(e.target.value);
-  };
-  const handleTradeTypeSelect = (e) => {
-    setTradeType(e.target.value);
   };
   const handleCalculate = () => {
     let res;
@@ -53,7 +37,15 @@ const MarginCalculator = () => {
     //test
     if (activeType === "forex") {
       setMargin("-");
-      res = marginCalculationForex(contractSize, lotSize, price, leverage);
+      res = marginCalculationForex(
+        contractSize,
+        lotSize,
+        price,
+        leverage,
+        pair,
+        deposit,
+        conversion
+      );
       newPair = {
         id: Date.now(),
         pair,
@@ -63,11 +55,11 @@ const MarginCalculator = () => {
         price,
         margin: "-",
         leverage,
-        marginRequired: showConversion ? parseFloat(res) * conversion : parseFloat(res),
+        marginRequired: parseFloat(res),
       };
     } else if (activeType === "cfd") {
       setLeverage("-");
-      res = marginCalculationCFD(contractSize, lotSize, price, margin);
+      res = marginCalculationCFD(contractSize, lotSize, price, margin, pair, deposit, conversion);
       newPair = {
         id: Date.now(),
         pair,
@@ -77,7 +69,7 @@ const MarginCalculator = () => {
         price,
         margin,
         leverage: "-",
-        marginRequired: showConversion ? parseFloat(res) * conversion : parseFloat(res),
+        marginRequired: parseFloat(res) * conversion,
       };
     } else {
       console.log("error");
@@ -85,10 +77,6 @@ const MarginCalculator = () => {
     }
 
     setCalculations([...calculations, newPair]);
-  };
-
-  const handleCoversion = (e) => {
-    setConversion(e.target.value);
   };
 
   const handleCheckbox = () => {
@@ -100,8 +88,14 @@ const MarginCalculator = () => {
     setCalculations(newCalc);
   };
 
-  const calcType = ["forex", "cfd"];
-  const tradeTypeList = ["BUY", "SELL"];
+  const handleDepositSelect = async (e) => {
+    const newDeposit = e.target.value;
+    const [base] = pair.split("/");
+    const newPair = `${base}/${newDeposit}`;
+    const conversionPrice = await fetchExchangeRate(newPair, API_KEY);
+    setConversion(conversionPrice);
+    setDeposit(newDeposit);
+  };
 
   const totalPrice = calculations
     .map((item) => item.marginRequired)
@@ -121,13 +115,13 @@ const MarginCalculator = () => {
           <Select
             label={"symbol"}
             value={pair}
-            onChange={handlePairSelect}
+            onChange={handleChange(setPair)}
             array={allCurrencyPairs}
           />
           <Select
             label={"type"}
             value={tradeType}
-            onChange={handleTradeTypeSelect}
+            onChange={handleChange(setTradeType)}
             array={tradeTypeList}
           />
         </div>
@@ -136,14 +130,14 @@ const MarginCalculator = () => {
             label={"contract size"}
             placeholder={"e.g. 100000"}
             value={contractSize}
-            onChange={handleContractSize}
+            onChange={handleChange(setContractSize)}
             disabled={false}
           />
           <Input
             label={"lot size"}
             placeholder={"e.g 0.01"}
             value={lotSize}
-            onChange={handleLotSize}
+            onChange={handleChange(setLotSize)}
             disabled={false}
           />
         </div>
@@ -152,7 +146,7 @@ const MarginCalculator = () => {
             label={"price"}
             placeholder={"price of instrument"}
             value={price}
-            onChange={handlePrice}
+            onChange={handleChange(setPrice)}
             disabled={false}
           />
           {activeType === "forex" && (
@@ -160,7 +154,7 @@ const MarginCalculator = () => {
               label={"leverage"}
               placeholder={"e.g 100"}
               value={leverage}
-              onChange={handleLeverage}
+              onChange={handleChange(setLeverage)}
               disabled={false}
             />
           )}
@@ -169,11 +163,17 @@ const MarginCalculator = () => {
               label={"margin (%)"}
               placeholder={"e.g 5"}
               value={margin}
-              onChange={handleMargin}
+              onChange={handleChange(setMargin)}
               disabled={false}
             />
           )}
         </div>
+        <Select
+          label={"account currency"}
+          value={deposit}
+          onChange={handleDepositSelect}
+          array={uniqueCurrencies}
+        />
         <div className="input-group flex-col">
           <label htmlFor="checkbox">show conversion rate</label>
           <input
@@ -190,7 +190,7 @@ const MarginCalculator = () => {
             label={"converison rate"}
             placeholder={"base/deposit e.q EUR/AUD"}
             value={conversion}
-            onChange={handleCoversion}
+            onChange={handleChange(setConversion)}
             disabled={false}
           />
         )}
@@ -237,7 +237,8 @@ const MarginCalculator = () => {
               style={{ fontWeight: "900", color: "oklch(0.723 0.219 149.579)", fontSize: "1.3em" }}
             >
               {parseFloat(totalPrice).toFixed(2)}
-            </span>
+            </span>{" "}
+            {deposit}
           </h4>
         </div>
       )}

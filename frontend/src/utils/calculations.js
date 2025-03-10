@@ -20,11 +20,47 @@ export const calculatePipValue = (
   return formatPipValue(pipValue);
 };
 
-export const marginCalculationForex = (contractSize, lotSize, price, leverage) => {
-  return parseFloat((contractSize * lotSize * price) / leverage);
+export const marginCalculationForex = (
+  contractSize,
+  lotSize,
+  price,
+  leverage,
+  pair,
+  deposit,
+  conversion
+) => {
+  const [base, quote] = pair.split("/");
+
+  let marginBase = (contractSize * lotSize) / leverage;
+
+  if (base === deposit) {
+    return marginBase;
+  }
+
+  if (quote === deposit) {
+    return marginBase * price;
+  }
+  return marginBase * conversion;
 };
-export const marginCalculationCFD = (contractSize, lotSize, price, margin) => {
-  return parseFloat(contractSize * lotSize * price * (margin / 100));
+
+export const marginCalculationCFD = (
+  contractSize,
+  lotSize,
+  price,
+  margin,
+  pair,
+  deposit,
+  conversion
+) => {
+  const [base, quote] = pair.split("/");
+  if (base === deposit) {
+    return parseFloat(contractSize * lotSize * (margin / 100));
+  }
+  if (quote === deposit) {
+    return parseFloat(contractSize * lotSize * price * (margin / 100));
+  }
+  console.log("T");
+  return parseFloat(contractSize * lotSize * price * (margin / 100)) * conversion;
 };
 
 const calculateSwapByMoney = (long, short, lots) => {

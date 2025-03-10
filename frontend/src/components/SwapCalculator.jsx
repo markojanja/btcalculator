@@ -22,7 +22,7 @@ const SwapCalculator = () => {
   const [tradeType, setTradeType] = useState("BUY");
   const [openDate, setOpenDate] = useState("");
   const [closeDate, setCloseDate] = useState("");
-  const [result, setResult] = useState({});
+  const [result, setResult] = useState();
   const [test, setTest] = useState(0);
 
   const handleChange = (setter) => (e) => {

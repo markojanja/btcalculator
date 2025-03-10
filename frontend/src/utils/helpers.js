@@ -89,6 +89,8 @@ export const uniqueCurrencies = [
   "USD",
   "ZAR",
 ];
+export const calcType = ["forex", "cfd"];
+export const tradeTypeList = ["BUY", "SELL"];
 
 export const formatPipValue = (value) => {
   return Math.abs(value - Math.round(value)) < 1e-5 ? Math.round(value) : Number(value.toFixed(5));
