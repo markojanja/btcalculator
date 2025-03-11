@@ -13,3 +13,8 @@
 .logo {
   font-weight: 900;
 }
+
+.is-active {
+  color: oklch(0.777 0.152 181.912) !important;
+  transition: color 0.2s ease;
+}

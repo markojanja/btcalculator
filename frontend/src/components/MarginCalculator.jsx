@@ -26,7 +26,7 @@ const MarginCalculator = () => {
   const API_KEY = import.meta.env.VITE_API_KEY;
 
   const handleChange = (setter) => (e) => {
-    setter(e);
+    setter(e.target.value);
   };
   const handleTypeSelect = (e) => {
     setActveType(e.target.value);

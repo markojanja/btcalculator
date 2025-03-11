@@ -6,20 +6,30 @@ const Header = () => {
     <header className="header">
       <nav className="nav">
         <div className="logo">
-          <NavLink to="/">BTCalaculator</NavLink>
+          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/">
+            BTCalaculator
+          </NavLink>
         </div>
         <ul>
           <li>
-            <NavLink to="/">Pip Calculator</NavLink>
+            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/">
+              Pip Calculator
+            </NavLink>
           </li>
           <li>
-            <NavLink to="pnl">PNL Calculator</NavLink>
+            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="pnl">
+              PNL Calculator
+            </NavLink>
           </li>
           <li>
-            <NavLink to="margin">Margin Calculator</NavLink>
+            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="margin">
+              Margin Calculator
+            </NavLink>
           </li>
           <li>
-            <NavLink to="swap">Swap Calculator</NavLink>
+            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="swap">
+              Swap Calculator
+            </NavLink>
           </li>
         </ul>
       </nav>
