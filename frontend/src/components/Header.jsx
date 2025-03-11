@@ -6,9 +6,7 @@ const Header = () => {
     <header className="header">
       <nav className="nav">
         <div className="logo">
-          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/">
-            BTCalaculator
-          </NavLink>
+          <NavLink to="/">BTCalaculator</NavLink>
         </div>
         <ul>
           <li>
