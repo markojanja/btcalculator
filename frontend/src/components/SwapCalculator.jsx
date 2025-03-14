@@ -4,6 +4,7 @@ import CalculatorHeading from "./CalculatorHeading";
 import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
 import { useState } from "react";
 import { calculateDailySwap, getDatesInRange, getTotalSwap } from "../utils/calculations";
+import CustomDatePicker from "./CustomDatePicker";
 
 const SwapCalculator = () => {
   const calculationType = ["money", "points", "percentage"];
@@ -153,12 +154,12 @@ const SwapCalculator = () => {
         </div>
         <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>
           <div className="input-group flex-col">
-            <label htmlFor="">date open</label>
-            <input type="date" onChange={handleChange(setOpenDate)} />
+            <label>date open</label>
+            <CustomDatePicker setter={setOpenDate} placeholder={"select open date"} />
           </div>
           <div className="input-group flex-col">
-            <label htmlFor="">date close</label>
-            <input type="date" onChange={handleChange(setCloseDate)} />
+            <label>date close</label>
+            <CustomDatePicker setter={setCloseDate} placeholder={"select close date"} />
           </div>
         </div>
         <button onClick={handleCalculateSwap}>Calculate</button>
