@@ -95,3 +95,60 @@
 .calendar-icon:hover {
   color: oklch(0.777 0.152 181.912) !important;
 }
+.modal {
+  position: absolute;
+  min-height: 100vh;
+  inset: 0;
+  background-color: oklch(0.21 0.034 264.665) !important;
+  z-index: 10;
+}
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  background-color: oklch(0.129 0.042 264.695) !important;
+  min-width: 320px;
+  max-width: 768px;
+  margin: 16px auto;
+  min-height: 100%;
+  padding-top: 2rem;
+  align-items: start;
+  gap: 1rem;
+  padding: 2rem 1.5rem;
+  padding-top: 0.5rem;
+  border: 2px solid #fff;
+  border-radius: 16px;
+}
+.modal-container p {
+  text-align: left;
+}
+.modal-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.modal-btn {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.modal-container ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: start;
+  list-style: disc;
+  list-style-position: inside;
+}
+.modal-container li {
+  text-align: left;
+  width: 100%;
+}
+.header-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 10px;
+  margin-right: auto;
+}

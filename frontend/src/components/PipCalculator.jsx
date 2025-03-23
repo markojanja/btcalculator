@@ -1,13 +1,15 @@
 import "./PipCalculator.css";
 import { useState, useEffect } from "react";
-import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
+import { allCurrencyPairs, uniqueCurrencies, pipHowTo } from "../utils/helpers";
+import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";
+import { calculatePipValue } from "../utils/calculations";
 import Input from "./Input";
 import ResultsDisplay from "./ResultsDisplay";
 import Select from "./Select";
-import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";
 import CalculatorHeading from "./CalculatorHeading";
 import Info from "./Info";
-import { calculatePipValue } from "../utils/calculations";
+import Modal from "./Modal";
+
 const PipCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
   const [depositCurrency, setDepositCurrency] = useState("EUR");
@@ -26,6 +28,7 @@ const PipCalculator = () => {
   const [conversionPair, setConversionPair] = useState("");
   const [prevDepositCurrency, setPrevDepositCurrency] = useState("EUR");
   const [editMode, setEditMode] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const API_KEY = import.meta.env.VITE_API_KEY;
 
@@ -157,6 +160,7 @@ const PipCalculator = () => {
 
   return (
     <>
+      {showModal && <Modal setShowModal={setShowModal} content={pipHowTo} />}
       <Info editMode={editMode} />
       <div className={`calculator ${editMode ? "active-border" : ""}`}>
         <CalculatorHeading
@@ -164,6 +168,7 @@ const PipCalculator = () => {
           editMode={editMode}
           setEditMode={setEditMode}
           visible={true}
+          setShowModal={setShowModal}
         />
         <Select
           label={"currency pair"}
