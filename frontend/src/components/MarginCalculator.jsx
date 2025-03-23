@@ -1,11 +1,18 @@
 import Input from "./Input";
 import Select from "./Select";
 import CalculatorHeading from "./CalculatorHeading";
+import Modal from "./Modal";
 import "./PipCalculator.css";
 import ButtonGroup from "./ButtonGroup";
 import { useState } from "react";
 import { marginCalculationCFD, marginCalculationForex } from "../utils/calculations";
-import { allCurrencyPairs, uniqueCurrencies, calcType, tradeTypeList } from "../utils/helpers";
+import {
+  allCurrencyPairs,
+  uniqueCurrencies,
+  calcType,
+  tradeTypeList,
+  pipHowTo,
+} from "../utils/helpers";
 import { MdDeleteForever } from "react-icons/md";
 import { fetchExchangeRate } from "../utils/fetchData";
 
@@ -22,6 +29,7 @@ const MarginCalculator = () => {
   const [showConversion, setShowConversion] = useState(false);
   const [conversion, setConversion] = useState("");
   const [deposit, setDeposit] = useState("EUR");
+  const [showModal, setShowModal] = useState(false);
 
   const API_KEY = import.meta.env.VITE_API_KEY;
 
@@ -103,12 +111,14 @@ const MarginCalculator = () => {
 
   return (
     <>
+      {showModal && <Modal setShowModal={setShowModal} content={pipHowTo} />}
       <div className="calculator">
         <CalculatorHeading
           title={"Margin Calculator"}
           editMode={false}
           setEditMode={null}
           visible={false}
+          setShowModal={setShowModal}
         />
         <ButtonGroup array={calcType} activeType={activeType} onClick={handleTypeSelect} />
         <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>

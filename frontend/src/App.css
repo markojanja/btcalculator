@@ -22,3 +22,133 @@
 .active-border {
   border-color: oklch(0.777 0.152 181.912);
 }
+
+.flatpickr-calendar,
+.flatpickr-months {
+  background-color: oklch(0.21 0.034 264.665) !important;
+  color: white !important;
+  border-radius: 0px !important;
+}
+.flatpickr-weekday {
+  color: white !important;
+}
+.numInputWrapper {
+  color: white !important;
+}
+.flatpickr-monthDropdown-months {
+  color: white !important;
+  background-color: oklch(0.21 0.034 264.665) !important;
+}
+
+.flatpickr-day {
+  color: white !important;
+}
+
+.flatpickr-day:hover {
+  background-color: oklch(0.777 0.152 181.912) !important;
+}
+
+.flatpickr-next-month svg,
+.flatpickr-prev-month svg {
+  fill: white !important;
+}
+
+.flatpickr-next-month svg:hover,
+.flatpickr-prev-month svg :hover {
+  fill: oklch(0.777 0.152 181.912) !important;
+}
+
+.flatpickr-current-month .numInputWrapper span.arrowDown:after {
+  border-top-color: white !important;
+}
+.flatpickr-current-month .numInputWrapper span.arrowUp:after {
+  border-bottom-color: white !important;
+}
+/* Wrap input and icon */
+.date-picker-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Style Flatpickr input */
+.date-picker-container input {
+  width: 100%;
+  padding: 10px;
+  padding-right: 35px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* Position the calendar icon */
+.calendar-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666; /* Default color */
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Change color on hover */
+.calendar-icon:hover {
+  color: oklch(0.777 0.152 181.912) !important;
+}
+.modal {
+  position: absolute;
+  min-height: 100vh;
+  inset: 0;
+  background-color: oklch(0.21 0.034 264.665) !important;
+  z-index: 10;
+}
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  background-color: oklch(0.129 0.042 264.695) !important;
+  min-width: 320px;
+  max-width: 768px;
+  margin: 16px auto;
+  min-height: 100%;
+  padding-top: 2rem;
+  align-items: start;
+  gap: 1rem;
+  padding: 2rem 1.5rem;
+  padding-top: 0.5rem;
+  border: 2px solid #fff;
+  border-radius: 16px;
+}
+.modal-container p {
+  text-align: left;
+}
+.modal-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.modal-btn {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.modal-container ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: start;
+  list-style: disc;
+  list-style-position: inside;
+}
+.modal-container li {
+  text-align: left;
+  width: 100%;
+}
+.header-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 10px;
+  margin-right: auto;
+}

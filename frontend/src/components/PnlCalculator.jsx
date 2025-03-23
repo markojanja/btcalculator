@@ -1,11 +1,12 @@
 import "./PipCalculator.css";
-import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
+import { allCurrencyPairs, uniqueCurrencies, pipHowTo } from "../utils/helpers";
 import ResultsDisplay from "./ResultsDisplay";
 import { useState } from "react";
 import axios from "axios";
 import CalculatorHeading from "./CalculatorHeading";
 import Input from "./Input";
 import Info from "./Info";
+import Modal from "./Modal";
 
 const PnlCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
@@ -17,6 +18,7 @@ const PnlCalculator = () => {
   const [pnl, setPnl] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [conversionRate, setConverisonRate] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const API_KEY = import.meta.env.VITE_API_KEY;
 
@@ -92,6 +94,7 @@ const PnlCalculator = () => {
   };
   return (
     <>
+      {showModal && <Modal setShowModal={setShowModal} content={pipHowTo} />}
       <Info editMode={editMode} />
       <div className={`calculator ${editMode ? "active-border" : ""}`}>
         <CalculatorHeading
@@ -99,6 +102,7 @@ const PnlCalculator = () => {
           editMode={editMode}
           setEditMode={setEditMode}
           visible={true}
+          setShowModal={setShowModal}
         />
         <div className="input-group flex-col">
           <label htmlFor="">currency pair</label>

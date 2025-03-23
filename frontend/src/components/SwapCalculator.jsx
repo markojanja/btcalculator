@@ -1,9 +1,11 @@
 import Input from "./Input";
 import Select from "./Select";
 import CalculatorHeading from "./CalculatorHeading";
-import { allCurrencyPairs, uniqueCurrencies } from "../utils/helpers";
+import Modal from "./Modal";
+import { allCurrencyPairs, uniqueCurrencies, pipHowTo } from "../utils/helpers";
 import { useState } from "react";
 import { calculateDailySwap, getDatesInRange, getTotalSwap } from "../utils/calculations";
+import CustomDatePicker from "./CustomDatePicker";
 
 const SwapCalculator = () => {
   const calculationType = ["money", "points", "percentage"];
@@ -24,6 +26,7 @@ const SwapCalculator = () => {
   const [closeDate, setCloseDate] = useState("");
   const [result, setResult] = useState();
   const [test, setTest] = useState(0);
+  const [showModal, setShowModal] = useState(false);
 
   const handleChange = (setter) => (e) => {
     setter(e.target.value);
@@ -59,12 +62,14 @@ const SwapCalculator = () => {
 
   return (
     <>
+      {showModal && <Modal setShowModal={setShowModal} content={pipHowTo} />}
       <div className="calculator">
         <CalculatorHeading
           title={"Swap Calculator"}
           editMode={false}
           setEditMode={null}
           visible={false}
+          setShowModal={setShowModal}
         />
         <h4>Symbol settings</h4>
         <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>
@@ -107,14 +112,14 @@ const SwapCalculator = () => {
         <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>
           <Input
             label={"long"}
-            placeholder={""}
+            placeholder={"short swap"}
             value={long}
             onChange={handleChange(setLong)}
             disabled={false}
           />
           <Input
             label={"short"}
-            placeholder={""}
+            placeholder={"long swap"}
             value={short}
             onChange={handleChange(setShort)}
             disabled={false}
@@ -153,12 +158,12 @@ const SwapCalculator = () => {
         </div>
         <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>
           <div className="input-group flex-col">
-            <label htmlFor="">date open</label>
-            <input type="date" onChange={handleChange(setOpenDate)} />
+            <label>date open</label>
+            <CustomDatePicker setter={setOpenDate} placeholder={"select open date"} />
           </div>
           <div className="input-group flex-col">
-            <label htmlFor="">date close</label>
-            <input type="date" onChange={handleChange(setCloseDate)} />
+            <label>date close</label>
+            <CustomDatePicker setter={setCloseDate} placeholder={"select close date"} />
           </div>
         </div>
         <button onClick={handleCalculateSwap}>Calculate</button>
