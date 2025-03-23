@@ -1,18 +1,19 @@
 import "./PipCalculator.css";
-import { allCurrencyPairs, uniqueCurrencies, pipHowTo } from "../utils/helpers";
+import { allCurrencyPairs, uniqueCurrencies, tradeTypeList, pnlHowTo } from "../utils/helpers";
 import ResultsDisplay from "./ResultsDisplay";
 import { useState } from "react";
 import axios from "axios";
 import CalculatorHeading from "./CalculatorHeading";
 import Input from "./Input";
+import Select from "./Select";
 import Info from "./Info";
 import Modal from "./Modal";
 
 const PnlCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
   const [depositCurrency, setDepositCurrency] = useState("USD");
-  const [openPrice, setOpenPrice] = useState(null);
-  const [closePrice, setClosePrice] = useState(null);
+  const [openPrice, setOpenPrice] = useState("");
+  const [closePrice, setClosePrice] = useState("");
   const [tradeSize, setTradeSize] = useState(1);
   const [tradeType, setTradeType] = useState("BUY");
   const [pnl, setPnl] = useState(null);
@@ -94,7 +95,7 @@ const PnlCalculator = () => {
   };
   return (
     <>
-      {showModal && <Modal setShowModal={setShowModal} content={pipHowTo} />}
+      {showModal && <Modal setShowModal={setShowModal} content={pnlHowTo} />}
       <Info editMode={editMode} />
       <div className={`calculator ${editMode ? "active-border" : ""}`}>
         <CalculatorHeading
@@ -115,33 +116,47 @@ const PnlCalculator = () => {
           </select>
         </div>
         <div className="input-group flex-col">
-          <label htmlFor="">buy or sell</label>
-          <select type="text" defaultValue={"BUY"} onChange={handleTradeType}>
-            <option value={"BUY"}>BUY</option>
-            <option value={"SELL"}>SELL</option>
-          </select>
+          <Select
+            label={"buy or sell"}
+            value={tradeType}
+            onChange={handleTradeType}
+            array={tradeTypeList}
+          />
         </div>
         <div className="input-group flex-col">
-          <label htmlFor="">open price</label>
-          <input type="number" onChange={handleOpenPrice} />
+          <Input
+            label={"open price"}
+            placeholder={"example: 1.03215"}
+            value={openPrice}
+            onChange={handleOpenPrice}
+            disabled={false}
+          />
         </div>
         <div className="input-group flex-col">
-          <label htmlFor="">close price</label>
-          <input type="number" onChange={handleClosePrice} />
+          <Input
+            label={"close price"}
+            placeholder={"example: 1.03218"}
+            value={closePrice}
+            onChange={handleClosePrice}
+            disabled={false}
+          />
         </div>
         <div className="input-group flex-col">
-          <label htmlFor="">trade size (lots)</label>
-          <input type="number" onChange={handleTradeSize} />
+          <Input
+            label={"trade size(lots)"}
+            placeholder={"example: 0.01"}
+            value={tradeSize}
+            onChange={handleTradeSize}
+            disabled={false}
+          />
         </div>
         <div className="input-group flex-col">
-          <label htmlFor="">deposit currency</label>
-          <select type="text" value={depositCurrency} onChange={handleDepositSelect}>
-            {uniqueCurrencies.map((pair) => (
-              <option key={pair} value={pair}>
-                {pair}
-              </option>
-            ))}
-          </select>
+          <Select
+            label={"account currency"}
+            value={depositCurrency}
+            onChange={handleDepositSelect}
+            array={uniqueCurrencies}
+          />
         </div>
         {editMode && (
           <Input
