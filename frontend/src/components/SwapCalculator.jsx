@@ -2,7 +2,7 @@ import Input from "./Input";
 import Select from "./Select";
 import CalculatorHeading from "./CalculatorHeading";
 import Modal from "./Modal";
-import { allCurrencyPairs, uniqueCurrencies, pipHowTo } from "../utils/helpers";
+import { allCurrencyPairs, uniqueCurrencies, swapHowTo } from "../utils/helpers";
 import { useState } from "react";
 import { calculateDailySwap, getDatesInRange, getTotalSwap } from "../utils/calculations";
 import CustomDatePicker from "./CustomDatePicker";
@@ -62,7 +62,7 @@ const SwapCalculator = () => {
 
   return (
     <>
-      {showModal && <Modal setShowModal={setShowModal} content={pipHowTo} />}
+      {showModal && <Modal setShowModal={setShowModal} content={swapHowTo} />}
       <div className="calculator">
         <CalculatorHeading
           title={"Swap Calculator"}

@@ -11,7 +11,7 @@ import {
   uniqueCurrencies,
   calcType,
   tradeTypeList,
-  pipHowTo,
+  marginHowTo,
 } from "../utils/helpers";
 import { MdDeleteForever } from "react-icons/md";
 import { fetchExchangeRate } from "../utils/fetchData";
@@ -111,7 +111,7 @@ const MarginCalculator = () => {
 
   return (
     <>
-      {showModal && <Modal setShowModal={setShowModal} content={pipHowTo} />}
+      {showModal && <Modal setShowModal={setShowModal} content={marginHowTo} />}
       <div className="calculator">
         <CalculatorHeading
           title={"Margin Calculator"}
