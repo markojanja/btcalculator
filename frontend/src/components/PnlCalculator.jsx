@@ -1,4 +1,4 @@
-import "./PipCalculator.css";
+import "./Calculator.css";
 import { allCurrencyPairs, uniqueCurrencies, tradeTypeList, pnlHowTo } from "../utils/helpers";
 import ResultsDisplay from "./ResultsDisplay";
 import { useState } from "react";

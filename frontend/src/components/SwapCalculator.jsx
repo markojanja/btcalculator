@@ -1,3 +1,4 @@
+import "./Calculator.css";
 import Input from "./Input";
 import Select from "./Select";
 import CalculatorHeading from "./CalculatorHeading";

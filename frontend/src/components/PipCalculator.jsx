@@ -1,4 +1,4 @@
-import "./PipCalculator.css";
+import "./Calculator.css";
 import { useState, useEffect } from "react";
 import { allCurrencyPairs, uniqueCurrencies, pipHowTo } from "../utils/helpers";
 import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";

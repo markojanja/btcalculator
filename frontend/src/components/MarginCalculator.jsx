@@ -2,7 +2,7 @@ import Input from "./Input";
 import Select from "./Select";
 import CalculatorHeading from "./CalculatorHeading";
 import Modal from "./Modal";
-import "./PipCalculator.css";
+import "./Calculator.css";
 import ButtonGroup from "./ButtonGroup";
 import { useState } from "react";
 import { marginCalculationCFD, marginCalculationForex } from "../utils/calculations";
