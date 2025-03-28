@@ -26,7 +26,7 @@ const Converter = () => {
         },
       });
 
-      console.log(response.data.jsonData); // Updated JSON data
+      console.log(response.data.jsonData);
     } catch (error) {
       console.error(error);
     }

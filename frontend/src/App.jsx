@@ -6,7 +6,7 @@ import Root from "./components/Root";
 import MarginCalculator from "./components/MarginCalculator";
 import SwapCalculator from "./components/SwapCalculator";
 import Converter from "./components/Converter";
-
+//app
 const router = createBrowserRouter([
   {
     path: "/",
