@@ -5,6 +5,7 @@ import PnlCalculator from "./components/PnlCalculator";
 import Root from "./components/Root";
 import MarginCalculator from "./components/MarginCalculator";
 import SwapCalculator from "./components/SwapCalculator";
+import Converter from "./components/Converter";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/swap",
         element: <SwapCalculator />,
+      },
+      {
+        path: "/converter",
+        element: <Converter />,
       },
     ],
   },
