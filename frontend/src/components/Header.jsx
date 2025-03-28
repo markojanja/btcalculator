@@ -29,6 +29,12 @@ const Header = () => {
               Swap Calculator
             </NavLink>
           </li>
+
+          <li>
+            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="converter">
+              Converter
+            </NavLink>
+          </li>
         </ul>
       </nav>
     </header>
