@@ -31,7 +31,7 @@ const Converter = () => {
     console.log(formData);
 
     try {
-      const response = await axios.post("http://localhost:3000/", formData, {
+      const response = await axios.post("https://btcalculator.onrender.com", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
