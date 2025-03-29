@@ -8,6 +8,8 @@ const Converter = () => {
   const [message, setMessage] = useState("");
   const [symbols, setSymbols] = useState([]);
 
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
   const handleFileChange = (e) => {
     if (e.target.name === "jsonFile") {
       setJsonFile(e.target.files[0]); // Use `files[0]`
@@ -31,7 +33,7 @@ const Converter = () => {
     console.log(formData);
 
     try {
-      const response = await axios.post("https://btcalculator.onrender.com", formData, {
+      const response = await axios.post(`${BACKEND_URL}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

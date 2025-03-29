@@ -26,7 +26,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://btccalculator.netlify.app",
+    origin: process.env.CORS,
     credentials: true,
   })
 );
