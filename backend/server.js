@@ -36,11 +36,25 @@ app.use(cookieParser());
 
 let jsonData = [];
 let swapTable = [];
-let noMatch = [];
 
 app.post("/", upload.fields([{ name: "jsonFile" }, { name: "xlsxFile" }]), async (req, res) => {
   console.log(req.files);
+  const uploads = path.join(__dirname, "uploads");
+  const downloads = path.join(__dirname, "uploads");
 
+  if (!fs.existsSync(uploads)) {
+    fs.mkdirSync(uploads, { recursive: true });
+    console.log("uploads created");
+  } else {
+    console.log("uploads already exists");
+  }
+  if (!fs.existsSync(downloads)) {
+    fs.mkdirSync(downloads, { recursive: true });
+    console.log("downloads created");
+  } else {
+    console.log("dowloads already exists");
+  }
+  let noMatch = [];
   try {
     const filename = req.files.jsonFile[0].originalname;
     const filePath = path.join(__dirname, "uploads", filename);
@@ -82,6 +96,8 @@ app.post("/", upload.fields([{ name: "jsonFile" }, { name: "xlsxFile" }]), async
     // Write the file back with UTF-16 LE encoding and add BOM manually
     const utf16WithBOM = "\uFEFF" + jsonString; // Add BOM manually
     await fs.writeFile(filePathDownloads, utf16WithBOM, { encoding: "utf16le" });
+    await fs.unlink(xlsFile);
+    await fs.unlink(path.join(__dirname, "uploads", filename));
 
     res.json({
       message: "JSON updated and saved successfully!",
