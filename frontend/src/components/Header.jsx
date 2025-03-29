@@ -11,22 +11,22 @@ const Header = () => {
         <ul>
           <li>
             <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/">
-              Pip Calculator
+              Pip Value
             </NavLink>
           </li>
           <li>
             <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="pnl">
-              PNL Calculator
+              Profit & Loss
             </NavLink>
           </li>
           <li>
             <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="margin">
-              Margin Calculator
+              Margin Value
             </NavLink>
           </li>
           <li>
             <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="swap">
-              Swap Calculator
+              Swap Values
             </NavLink>
           </li>
 
