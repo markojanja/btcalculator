@@ -36,10 +36,19 @@ app.use(cookieParser());
 
 let jsonData = [];
 let swapTable = [];
-let noMatch = [];
+const uploadsDir = path.join(__dirname, "uploads");
+const downloadsDir = path.join(__dirname, "downloads");
+// Ensure uploads and downloads directories exist
+(async () => {
+  await Promise.all([
+    fs.mkdir(uploadsDir, { recursive: true }),
+    fs.mkdir(downloadsDir, { recursive: true }),
+  ]);
+  console.log("Uploads and downloads folders are ready.");
+})();
 
 app.post("/", upload.fields([{ name: "jsonFile" }, { name: "xlsxFile" }]), async (req, res) => {
-  console.log(req.files);
+  let noMatch = [];
 
   try {
     const filename = req.files.jsonFile[0].originalname;
@@ -82,6 +91,8 @@ app.post("/", upload.fields([{ name: "jsonFile" }, { name: "xlsxFile" }]), async
     // Write the file back with UTF-16 LE encoding and add BOM manually
     const utf16WithBOM = "\uFEFF" + jsonString; // Add BOM manually
     await fs.writeFile(filePathDownloads, utf16WithBOM, { encoding: "utf16le" });
+    await fs.unlink(xlsFile);
+    await fs.unlink(path.join(__dirname, "uploads", filename));
 
     res.json({
       message: "JSON updated and saved successfully!",
