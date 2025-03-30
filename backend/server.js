@@ -36,26 +36,20 @@ app.use(cookieParser());
 
 let jsonData = [];
 let swapTable = [];
+const uploadsDir = path.join(__dirname, "uploads");
+const downloadsDir = path.join(__dirname, "downloads");
+// Ensure uploads and downloads directories exist
+(async () => {
+  await Promise.all([
+    fs.mkdir(uploadsDir, { recursive: true }),
+    fs.mkdir(downloadsDir, { recursive: true }),
+  ]);
+  console.log("Uploads and downloads folders are ready.");
+})();
 
 app.post("/", upload.fields([{ name: "jsonFile" }, { name: "xlsxFile" }]), async (req, res) => {
-  console.log(req.files);
-  const uploads = path.join(__dirname, "uploads");
-  const downloads = path.join(__dirname, "uploads");
-
-  if (!fs.existsSync(uploads)) {
-    fs.mkdirSync(uploads, { recursive: true });
-    console.log("uploads created");
-  } else {
-    console.log("uploads already exists");
-  }
-  if (!fs.existsSync(downloads)) {
-    fs.mkdirSync(downloads, { recursive: true });
-    console.log("downloads created");
-  } else {
-    console.log("dowloads already exists");
-  }
-
   let noMatch = [];
+
   try {
     const filename = req.files.jsonFile[0].originalname;
     const filePath = path.join(__dirname, "uploads", filename);
