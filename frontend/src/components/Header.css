@@ -18,3 +18,32 @@
   color: oklch(0.777 0.152 181.912) !important;
   transition: color 0.2s ease;
 }
+
+.nav ul li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: -20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 5px rgba(0, 213, 190, 0.2);
+  z-index: 100;
+  width: 200px;
+  background-color: oklch(0.129 0.042 264.695);
+  padding: 10px;
+  gap: 1rem;
+  text-align: left;
+  border-radius: 0.5rem;
+}
+
+.nav a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  gap: 0.1rem;
+}
