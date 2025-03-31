@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import CalculatorHeading from "./CalculatorHeading";
+import DownloadButton from "./DownloadButton";
 
 const Converter = () => {
   const [jsonFile, setJsonFile] = useState(null);
@@ -69,7 +70,12 @@ const Converter = () => {
         <button onClick={handleUpload} style={{ minWidth: "190px" }}>
           {loading ? "Loading..." : "Upload and Update"}
         </button>
-        {success && <p>{success}</p>}
+        {success && (
+          <>
+            <p>{success}</p>
+            <DownloadButton jsonFile={jsonFile} />
+          </>
+        )}
       </div>
       <div
         className="flex-col"
@@ -91,10 +97,23 @@ const Converter = () => {
           </div>
         )}
         {message && (
-          <h3 style={{ textAlign: "left", width: "30%", margin: "0 auto" }}>{message}</h3>
+          <h3
+            style={{
+              textAlign: "left",
+              width: "30%",
+              margin: "0 auto",
+              padding: "0.5rem",
+              backgroundColor: "oklch(0.129 0.042 264.695)",
+            }}
+          >
+            {message}
+          </h3>
         )}
         {symbols.length > 0 && (
-          <ul className="flex-col" style={{ textAlign: "left", width: "30%", margin: "0 auto" }}>
+          <ul
+            className="flex-col symbol-list"
+            style={{ textAlign: "left", width: "30%", margin: "0 auto" }}
+          >
             {symbols.map((symbol) => (
               <li key={symbol}>{symbol}</li>
             ))}

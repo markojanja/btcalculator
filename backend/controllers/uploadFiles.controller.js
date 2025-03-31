@@ -57,9 +57,17 @@ export const uploadFiles = async (req, res) => {
     await fs.unlink(xlsFile);
     await fs.unlink(path.join(__dirname, "..", "uploads", filename));
 
+    const baseUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://btcalculator.onrender.com"
+        : `http://localhost:${3000}`;
+
+    const downloadUrl = `${baseUrl}/downloads/${"updated_" + filename}`;
+
     res.json({
       message: "JSON updated and saved successfully!",
       noMatch: { message: "symbols not updated!", symbols: noMatch },
+      downloadUrl,
     });
   } catch (err) {
     console.log("Error:", err);
