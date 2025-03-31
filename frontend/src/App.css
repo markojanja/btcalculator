@@ -152,3 +152,15 @@
   margin-left: 10px;
   margin-right: auto;
 }
+
+.symbol-list {
+  gap: 0;
+}
+.symbol-list li {
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.symbol-list li:nth-child(even) {
+  background-color: oklch(0.129 0.042 264.695);
+}
