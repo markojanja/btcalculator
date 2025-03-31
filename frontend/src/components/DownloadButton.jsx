@@ -5,7 +5,7 @@ const DownloadButton = ({ jsonFile }) => {
 
   const handleDownload = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}downloads/updated_${jsonFile.name}`, {
+      const response = await axios.get(`${BACKEND_URL}/downloads/updated_${jsonFile.name}`, {
         responseType: "blob",
       });
 
