@@ -227,6 +227,6 @@
   align-items: center;
   justify-content: center;
   z-index: 50;
-  background: oklch(0.21 0.034 264.665);
+  background: var(--background-color);
   min-height: 200px;
 }
