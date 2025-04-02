@@ -7,7 +7,7 @@ const SettingsButton = ({ editMode, setEditMode }) => {
   return (
     <button className="settings-btn" onClick={handleClick}>
       <MdOutlineSettingsInputComposite
-        color={editMode ? "oklch(0.777 0.152 181.912)" : "#ffffff"}
+        color={editMode ? "oklch(0.777 0.152 181.912)!important;" : "#ffffff"}
         size={"20px"}
       />
     </button>

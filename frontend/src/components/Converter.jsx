@@ -5,6 +5,7 @@ import Modal from "./Modal";
 import DownloadButton from "./DownloadButton";
 import { ImSpinner9 } from "react-icons/im";
 import { converterHowTo } from "../utils/helpers";
+import SymbolList from "./SymbolList";
 
 const Converter = () => {
   const [jsonFile, setJsonFile] = useState(null);
@@ -64,7 +65,6 @@ const Converter = () => {
             visible={false}
             setShowModal={setShowModal}
           />
-
           <div className="input-group flex-col">
             <label>Upload valid JSON</label>
             <input type="file" name="jsonFile" accept=".json" onChange={handleFileChange} />
@@ -88,28 +88,12 @@ const Converter = () => {
           style={{ alignItems: "center", position: "relative", padding: "2rem 0" }}
         >
           {loading && (
-            <div
-              style={{
-                position: "absolute",
-                inset: "0",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: "50",
-                background: "oklch(0.21 0.034 264.665)",
-              }}
-            >
+            <div className="loading-container">
               <ImSpinner9 className="spinner" size={36} />
             </div>
           )}
           {message && <h3 className="list-heading">{message}</h3>}
-          {symbols.length > 0 && (
-            <ul className="flex-col symbol-list" style={{ textAlign: "left", margin: "0 auto" }}>
-              {symbols.map((symbol) => (
-                <li key={symbol}>{symbol}</li>
-              ))}
-            </ul>
-          )}
+          {symbols.length > 0 && <SymbolList symbols={symbols} />}
         </div>
       </div>
     </>

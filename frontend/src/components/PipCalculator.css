@@ -10,7 +10,8 @@
   border: 1px solid rgba(255, 255, 255, 0.87);
   border-radius: 0.5rem;
   padding: 1rem;
-  background-color: oklch(0.129 0.042 264.695);
+  background-color: var(--secondary-color);
+  box-shadow: var(--box-shadow);
 
   @media (max-width: 1440px) {
     width: 50%;
@@ -66,7 +67,7 @@ select {
   justify-content: flex-start;
   gap: 0.5rem;
   border: 2px solid oklch(0.277 0.046 192.524);
-  color: oklch(0.277 0.046 192.524);
+
   font-weight: 700;
   background-color: oklch(0.984 0.014 180.72);
   width: 30%;
@@ -92,6 +93,7 @@ select {
 }
 .info p {
   flex: 1;
+  color: oklch(0.277 0.046 192.524) !important;
 }
 
 .active-border {
@@ -117,20 +119,41 @@ select {
 .btn-outline {
   cursor: pointer;
   display: inline-block;
-  border: 1px solid oklch(0.777 0.152 181.912);
-  color: #ffffff;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
   background: transparent;
   padding: 0.3rem 0.6rem;
 }
 
 .selected {
-  background: oklch(0.777 0.152 181.912);
+  background: var(--accent-color);
   transition: all 0.2s ease;
+  color: #fff;
 }
+
+.table-wrapper {
+  width: 60%;
+  margin: 0 auto;
+  font-size: 1rem;
+  @media (max-width: 1440px) {
+    width: 50%;
+  }
+  @media (max-width: 1024px) {
+    width: 60%;
+  }
+  @media (min-width: 768px) {
+    max: 60%;
+  }
+  @media (max-width: 426px) {
+    width: 90%;
+  }
+}
+
 .calculation-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  overflow-x: auto;
 }
 
 .calculation-table th,
@@ -138,13 +161,16 @@ select {
   border: 1px solid #ddd;
   padding: 10px;
   text-align: center;
+  color: var(--text-color);
 }
 
 .calculation-table th {
-  background-color: oklch(0.129 0.042 264.695);
+  background-color: var(--secondary-color);
+  color: var(--text-color);
 }
 .calculation-table tr:nth-child(even) {
-  background-color: oklch(0.129 0.042 264.695);
+  background-color: var(--secondary-color);
+  color: var(--text-color);
 }
 
 .calculation-table tr:hover {

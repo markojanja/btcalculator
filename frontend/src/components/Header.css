@@ -11,6 +11,9 @@
   justify-content: space-between;
 }
 .logo {
+  font-size: 1.2rem;
+}
+.logo a {
   font-weight: 900;
 }
 
@@ -30,10 +33,10 @@
   left: -20px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 5px rgba(0, 213, 190, 0.2);
+  box-shadow: var(--box-shadow);
   z-index: 100;
   width: 200px;
-  background-color: oklch(0.129 0.042 264.695);
+  background-color: var(--secondary-color);
   padding: 10px;
   gap: 1rem;
   text-align: left;

@@ -14,55 +14,55 @@
 }
 .settings-btn {
   background-color: transparent;
-  color: oklch(0.777 0.152 181.912);
+  color: var(--accent-color);
   border: none;
   outline: none;
 }
 
 .active-border {
-  border-color: oklch(0.777 0.152 181.912);
+  border-color: var(--accent-color);
 }
 
 .flatpickr-calendar,
 .flatpickr-months {
-  background-color: oklch(0.21 0.034 264.665) !important;
-  color: white !important;
+  background-color: var(--secondary-color) !important;
+  color: var(--text-color) !important;
   border-radius: 0px !important;
 }
 .flatpickr-weekday {
-  color: white !important;
+  color: var(--text-color) !important;
 }
 .numInputWrapper {
-  color: white !important;
+  color: var(--text-color) !important;
 }
 .flatpickr-monthDropdown-months {
-  color: white !important;
-  background-color: oklch(0.21 0.034 264.665) !important;
+  color: var(--text-color) !important;
+  background-color: var(--secondary-color) !important;
 }
 
 .flatpickr-day {
-  color: white !important;
+  color: var(--text-color) !important;
 }
 
 .flatpickr-day:hover {
-  background-color: oklch(0.777 0.152 181.912) !important;
+  background-color: var(--accent-color) !important;
 }
 
 .flatpickr-next-month svg,
 .flatpickr-prev-month svg {
-  fill: white !important;
+  fill: var(--text-color) !important;
 }
 
 .flatpickr-next-month svg:hover,
-.flatpickr-prev-month svg :hover {
-  fill: oklch(0.777 0.152 181.912) !important;
+.flatpickr-prev-month svg:hover {
+  fill: var(--accent-color) !important;
 }
 
 .flatpickr-current-month .numInputWrapper span.arrowDown:after {
-  border-top-color: white !important;
+  border-top-color: var(--text-color) !important;
 }
 .flatpickr-current-month .numInputWrapper span.arrowUp:after {
-  border-bottom-color: white !important;
+  border-bottom-color: var(--text-color) !important;
 }
 /* Wrap input and icon */
 .date-picker-container {
@@ -86,7 +86,7 @@
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #666; /* Default color */
+  color: #666 !important; /* Default color */
   cursor: pointer;
   font-size: 16px;
 }
@@ -97,15 +97,17 @@
 }
 .modal {
   position: absolute;
-  min-height: 100vh;
-  inset: 0;
-  background-color: oklch(0.21 0.034 264.665) !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--background-color) !important;
   z-index: 10;
+  min-height: 100%;
 }
 .modal-container {
   display: flex;
   flex-direction: column;
-  background-color: oklch(0.129 0.042 264.695) !important;
+  background-color: var(--secondary-color) !important;
   min-width: 320px;
   max-width: 768px;
   margin: 16px auto;
@@ -117,6 +119,7 @@
   padding-top: 0.5rem;
   border: 2px solid #fff;
   border-radius: 16px;
+  box-shadow: var(--box-shadow);
 }
 .modal-container p {
   text-align: left;
@@ -188,6 +191,12 @@
     width: 90%;
   }
 }
+
+.symbol-list {
+  text-align: left;
+  margin: 0 auto;
+}
+
 .symbol-list li {
   width: 100%;
   padding: 0.5rem;
@@ -209,4 +218,15 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+.loading-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  background: oklch(0.21 0.034 264.665);
+  min-height: 200px;
 }

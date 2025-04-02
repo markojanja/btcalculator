@@ -2,8 +2,12 @@ import { useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
 import "./Header.css";
 import { NavLink, useLocation } from "react-router-dom";
+import ReactSwitch from "react-switch";
+import { useContext } from "react";
+import { ThemeContext } from "../contexts/ThemeContext";
 
 const Header = () => {
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const location = useLocation();
   const [submenuOpen, setSubmenuOpen] = useState(false);
 
@@ -16,6 +20,15 @@ const Header = () => {
           <NavLink to="/">BTCalculator</NavLink>
         </div>
         <ul>
+          <li style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <ReactSwitch
+              height={16}
+              width={32}
+              handleDiameter={14}
+              onChange={toggleTheme}
+              checked={theme === "" ? false : true}
+            />
+          </li>
           <li onMouseEnter={() => setSubmenuOpen(true)} onMouseLeave={() => setSubmenuOpen(false)}>
             <NavLink className={`submenu ${isSubmenuActive ? "is-active" : ""}`} to="/">
               Calculators <IoChevronDown style={{ marginTop: "1px" }} />

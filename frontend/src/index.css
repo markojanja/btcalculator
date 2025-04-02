@@ -2,16 +2,26 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: oklch(0.21 0.034 264.665);
-
+  color-scheme: dark light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --background-color: oklch(0.21 0.034 264.665);
+  --text-color: rgba(255, 255, 255, 0.87);
+  --accent-color: oklch(0.777 0.152 181.912);
+  --secondary-color: oklch(0.129 0.042 264.695);
+  --box-shadow: 0 2px 5px rgba(0, 213, 190, 0.2);
+  color: var(--text-color);
 }
+
+.light {
+  --background-color: oklch(97% 0.001 106.424);
+  --text-color: black;
+  --secondary-color: white;
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -21,7 +31,7 @@ button,
 a {
   font-weight: 500;
   text-decoration: none;
-  color: #ffffff;
+  color: var(--text-color);
 }
 
 body {
@@ -38,6 +48,20 @@ h1 {
   line-height: 1.1;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+li {
+  color: var(--text-color);
+}
+svg {
+  fill: var(--text-color);
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -45,17 +69,27 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: oklch(0.777 0.152 181.912);
+  background-color: var(--accent-color);
+
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: oklch(0.777 0.152 181.912);
+  border-color: var(--accent-color);
 }
 ul {
   list-style: none;
   display: flex;
   gap: 1rem;
+}
+
+.App {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  flex: 1;
 }
 
 .flex1 {
@@ -74,15 +108,15 @@ ul {
 input,
 select,
 option {
-  background-color: oklch(0.21 0.034 264.665);
+  background-color: var(--background-color);
   border: inherit;
   outline: inherit;
   box-shadow: inherit;
-  color: inherit;
+  color: var(--text-color);
 }
 input:focus,
 select:focus {
-  border: 1px solid white;
+  border: 1px solid var(--text-color);
   box-shadow: inset 0 0 0 2px inherit;
   outline: none;
   border-radius: 4px;
@@ -108,13 +142,13 @@ input[type="number"]::-moz-number-spin-box {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: oklch(0.777 0.152 181.912);
+  background-color: var(--accent-color);
   border-radius: 10px;
-  border: 2px solid oklch(0.21 0.034 264.665);
+  border: 2px solid var(--secondary-color);
 }
 
 ::-webkit-scrollbar-track {
-  background-color: oklch(0.21 0.034 264.665);
+  background-color: var(--secondary-color);
   border-radius: 10px;
 }
 
@@ -146,17 +180,4 @@ input[type="checkbox"]::after {
 
 input[type="checkbox"]:checked::after {
   display: block;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
 }

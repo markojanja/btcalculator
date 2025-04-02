@@ -6,6 +6,7 @@ import Root from "./components/Root";
 import MarginCalculator from "./components/MarginCalculator";
 import SwapCalculator from "./components/SwapCalculator";
 import Converter from "./components/Converter";
+import { ThemeContextProvider } from "./contexts/ThemeContext";
 //app
 const router = createBrowserRouter([
   {
@@ -37,7 +38,13 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ThemeContextProvider>
+      <div className="App">
+        <RouterProvider router={router} />
+      </div>
+    </ThemeContextProvider>
+  );
 }
 
 export default App;
