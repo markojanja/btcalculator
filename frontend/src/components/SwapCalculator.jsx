@@ -156,14 +156,14 @@ const SwapCalculator = () => {
             disabled={false}
           />
         </div>
-        <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>
+        <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }} id="date-container">
           <div className="input-group flex-col">
-            <label>date open</label>
-            <CustomDatePicker setter={setOpenDate} placeholder={"select open date"} />
+            <label>open date</label>
+            <CustomDatePicker setter={setOpenDate} placeholder={"select date"} />
           </div>
           <div className="input-group flex-col">
-            <label>date close</label>
-            <CustomDatePicker setter={setCloseDate} placeholder={"select close date"} />
+            <label>close date</label>
+            <CustomDatePicker setter={setCloseDate} placeholder={"select date"} />
           </div>
         </div>
         <button onClick={handleCalculateSwap}>Calculate</button>

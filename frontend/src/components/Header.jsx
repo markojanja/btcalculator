@@ -17,13 +17,18 @@ const Header = () => {
     <header className="header">
       <nav className="nav">
         <div className="logo">
-          <NavLink to="/">BTCalculator</NavLink>
+          <NavLink to="/">
+            <span className="is-active">BT</span>Calculator
+          </NavLink>
         </div>
         <ul>
           <li style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
             <ReactSwitch
               height={16}
               width={32}
+              boxShadow="none"
+              activeBoxShadow="none"
+              onColor="#c70036"
               handleDiameter={14}
               onChange={toggleTheme}
               checked={theme === "" ? false : true}
