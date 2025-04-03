@@ -1,6 +1,6 @@
+import "./Header.css";
 import { useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
-import "./Header.css";
 import { NavLink, useLocation } from "react-router-dom";
 import ReactSwitch from "react-switch";
 import { useContext } from "react";

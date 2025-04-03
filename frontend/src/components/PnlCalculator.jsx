@@ -1,13 +1,12 @@
-import "./PipCalculator.css";
-import { allCurrencyPairs, uniqueCurrencies, tradeTypeList, pnlHowTo } from "../utils/helpers";
-import ResultsDisplay from "./ResultsDisplay";
 import { useState } from "react";
 import axios from "axios";
-import CalculatorHeading from "./CalculatorHeading";
+import ResultsDisplay from "./ResultsDisplay";
+import CardHeading from "./CardHeading";
 import Input from "./Input";
 import Select from "./Select";
 import Info from "./Info";
 import Modal from "./Modal";
+import { allCurrencyPairs, uniqueCurrencies, tradeTypeList, pnlHowTo } from "../utils/helpers";
 
 const PnlCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
@@ -98,7 +97,7 @@ const PnlCalculator = () => {
       {showModal && <Modal setShowModal={setShowModal} content={pnlHowTo} />}
       <Info editMode={editMode} />
       <div className={`calculator ${editMode ? "active-border" : ""}`}>
-        <CalculatorHeading
+        <CardHeading
           title={"PnL Calculator"}
           editMode={editMode}
           setEditMode={setEditMode}

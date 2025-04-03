@@ -12,17 +12,197 @@
   flex-direction: column;
   flex: 1;
 }
+.calculator,
+.results-display,
+.converter {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.6rem;
+  width: 30%;
+  margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.87);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: var(--secondary-color);
+  box-shadow: var(--box-shadow);
+
+  @media (max-width: 1440px) {
+    width: 50%;
+  }
+  @media (max-width: 1024px) {
+    width: 60%;
+  }
+  @media (min-width: 768px) {
+    max: 60%;
+  }
+  @media (max-width: 426px) {
+    width: 90%;
+  }
+}
+.results-display {
+  margin-top: 1rem;
+  padding: 2rem 1rem;
+}
+.results-display {
+  text-align: left;
+}
+.input-group {
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  gap: 0.5rem;
+}
+label {
+  color: oklch(0.777 0.152 181.912);
+}
+input,
+select {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.25rem;
+  font-size: 1rem;
+  border-radius: 4px;
+}
+.w-auto {
+  width: auto;
+}
+.calculator-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  border: 2px solid oklch(0.277 0.046 192.524);
+
+  font-weight: 700;
+  background-color: oklch(0.984 0.014 180.72);
+  width: 30%;
+  margin: 0 auto;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  padding: 0.5rem;
+
+  @media (max-width: 1440px) {
+    width: 50%;
+  }
+  @media (max-width: 1024px) {
+    width: 60%;
+  }
+  @media (min-width: 768px) {
+    max: 60%;
+    font-size: 12px;
+  }
+  @media (max-width: 426px) {
+    width: 90%;
+    font-size: 12px;
+  }
+}
+.info p {
+  flex: 1;
+  color: oklch(0.277 0.046 192.524) !important;
+}
+
+.active-border {
+  border-color: oklch(0.777 0.152 181.912);
+}
+.group-inline {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: start;
+  max-height: 50px;
+}
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.label {
+  text-align: left;
+  color: oklch(0.777 0.152 181.912);
+}
+
+.btn-outline {
+  cursor: pointer;
+  display: inline-block;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  background: transparent;
+  padding: 0.3rem 0.6rem;
+}
+
+.selected {
+  background: var(--accent-color);
+  transition: all 0.2s ease;
+  color: #fff;
+}
+
+.table-wrapper {
+  width: 60%;
+  margin: 0 auto;
+  font-size: 1rem;
+  @media (max-width: 1440px) {
+    width: 50%;
+  }
+  @media (max-width: 1024px) {
+    width: 60%;
+  }
+  @media (min-width: 768px) {
+    max: 60%;
+  }
+  @media (max-width: 426px) {
+    width: 90%;
+  }
+}
+
+.calculation-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.calculation-table th,
+.calculation-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.calculation-table th {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+.calculation-table tr:nth-child(even) {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+
+.calculation-table tr:hover {
+  background: oklch(0.777 0.152 181.912);
+  transition: all 0.2s ease-in-out;
+}
+
 .settings-btn {
   background-color: transparent;
   color: var(--accent-color);
   border: none;
   outline: none;
 }
-
 .active-border {
   border-color: var(--accent-color);
 }
 
+/*Calendar styles*/
 .flatpickr-calendar,
 .flatpickr-months {
   background-color: var(--secondary-color) !important;
@@ -64,13 +244,11 @@
 .flatpickr-current-month .numInputWrapper span.arrowUp:after {
   border-bottom-color: var(--text-color) !important;
 }
-/* Wrap input and icon */
+
 .date-picker-container {
   position: relative;
   display: inline-block;
 }
-
-/* Style Flatpickr input */
 .date-picker-container input {
   width: 100%;
   padding: 10px;
@@ -80,7 +258,6 @@
   font-size: 16px;
 }
 
-/* Position the calendar icon */
 .calendar-icon {
   position: absolute;
   right: 10px;
@@ -91,10 +268,12 @@
   font-size: 16px;
 }
 
-/* Change color on hover */
 .calendar-icon:hover {
   color: oklch(0.777 0.152 181.912) !important;
 }
+/*End Calendar styles*/
+
+/**Modal styles*/
 .modal {
   position: absolute;
   top: 0;
@@ -147,6 +326,9 @@
   text-align: left;
   width: 100%;
 }
+
+/*End Modal*/
+
 .header-btn {
   display: flex;
   align-items: center;
@@ -155,7 +337,6 @@
   margin-left: 10px;
   margin-right: auto;
 }
-
 .symbol-list {
   gap: 0;
   width: 30%;
@@ -206,6 +387,7 @@
   background-color: var(--secondary-color);
 }
 
+/*Loader and spinner*/
 .spinner {
   animation: spin 0.8s ease-in-out infinite;
   fill: oklch(0.777 0.152 181.912);
@@ -230,3 +412,4 @@
   background: var(--background-color);
   min-height: 200px;
 }
+/*End Loader & spinner*/

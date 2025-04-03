@@ -1,8 +1,7 @@
 import Input from "./Input";
 import Select from "./Select";
-import CalculatorHeading from "./CalculatorHeading";
+import CardHeading from "./CardHeading";
 import Modal from "./Modal";
-import "./PipCalculator.css";
 import ButtonGroup from "./ButtonGroup";
 import { useState } from "react";
 import { marginCalculationCFD, marginCalculationForex } from "../utils/calculations";
@@ -113,7 +112,7 @@ const MarginCalculator = () => {
     <>
       {showModal && <Modal setShowModal={setShowModal} content={marginHowTo} />}
       <div className="calculator">
-        <CalculatorHeading
+        <CardHeading
           title={"Margin Calculator"}
           editMode={false}
           setEditMode={null}

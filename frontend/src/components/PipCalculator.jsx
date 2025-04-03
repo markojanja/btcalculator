@@ -1,14 +1,13 @@
-import "./PipCalculator.css";
 import { useState, useEffect } from "react";
-import { allCurrencyPairs, uniqueCurrencies, pipHowTo } from "../utils/helpers";
-import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";
-import { calculatePipValue } from "../utils/calculations";
 import Input from "./Input";
 import ResultsDisplay from "./ResultsDisplay";
 import Select from "./Select";
-import CalculatorHeading from "./CalculatorHeading";
+import CardHeading from "./CardHeading";
 import Info from "./Info";
 import Modal from "./Modal";
+import { allCurrencyPairs, uniqueCurrencies, pipHowTo } from "../utils/helpers";
+import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";
+import { calculatePipValue } from "../utils/calculations";
 
 const PipCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
@@ -163,7 +162,7 @@ const PipCalculator = () => {
       {showModal && <Modal setShowModal={setShowModal} content={pipHowTo} />}
       <Info editMode={editMode} />
       <div className={`calculator ${editMode ? "active-border" : ""}`}>
-        <CalculatorHeading
+        <CardHeading
           title={"Pip Value Calculator"}
           editMode={editMode}
           setEditMode={setEditMode}

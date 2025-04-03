@@ -1,7 +1,7 @@
 import SettingsButton from "./SettingsButton";
 import { FaRegQuestionCircle } from "react-icons/fa";
 
-const CalculatorHeading = ({ title, editMode, setEditMode, visible, setShowModal }) => {
+const CardHeading = ({ title, editMode, setEditMode, visible, setShowModal }) => {
   const handleToggleModal = () => {
     setShowModal(true);
   };
@@ -16,4 +16,4 @@ const CalculatorHeading = ({ title, editMode, setEditMode, visible, setShowModal
   );
 };
 
-export default CalculatorHeading;
+export default CardHeading;

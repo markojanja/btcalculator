@@ -1,11 +1,11 @@
+import { useState } from "react";
 import Input from "./Input";
 import Select from "./Select";
-import CalculatorHeading from "./CalculatorHeading";
+import CardHeading from "./CardHeading";
 import Modal from "./Modal";
-import { allCurrencyPairs, uniqueCurrencies, swapHowTo } from "../utils/helpers";
-import { useState } from "react";
-import { calculateDailySwap, getDatesInRange, getTotalSwap } from "../utils/calculations";
 import CustomDatePicker from "./CustomDatePicker";
+import { allCurrencyPairs, uniqueCurrencies, swapHowTo } from "../utils/helpers";
+import { calculateDailySwap, getDatesInRange, getTotalSwap } from "../utils/calculations";
 
 const SwapCalculator = () => {
   const calculationType = ["money", "points", "percentage"];
@@ -64,7 +64,7 @@ const SwapCalculator = () => {
     <>
       {showModal && <Modal setShowModal={setShowModal} content={swapHowTo} />}
       <div className="calculator">
-        <CalculatorHeading
+        <CardHeading
           title={"Swap Calculator"}
           editMode={false}
           setEditMode={null}

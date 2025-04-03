@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import CalculatorHeading from "./CalculatorHeading";
+import CardHeading from "./CardHeading";
 import Modal from "./Modal";
 import DownloadButton from "./DownloadButton";
 import { ImSpinner9 } from "react-icons/im";
@@ -58,7 +58,7 @@ const Converter = () => {
       {showModal && <Modal setShowModal={setShowModal} content={converterHowTo} />}
       <div style={{ display: "flex", flexDirection: "column" }}>
         <div className="converter">
-          <CalculatorHeading
+          <CardHeading
             title={"Excel to JSON Swap Converter"}
             editMode={false}
             setEditMode={null}
