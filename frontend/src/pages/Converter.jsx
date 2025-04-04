@@ -1,11 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
-import CardHeading from "./CardHeading";
-import Modal from "./Modal";
-import DownloadButton from "./DownloadButton";
+import CardHeading from "../components/CardHeading";
+import Modal from "../components/Modal";
+import DownloadButton from "../components/DownloadButton";
 import { ImSpinner9 } from "react-icons/im";
 import { converterHowTo } from "../utils/helpers";
-import SymbolList from "./SymbolList";
+import SymbolList from "../components/SymbolList";
 
 const Converter = () => {
   const [jsonFile, setJsonFile] = useState(null);

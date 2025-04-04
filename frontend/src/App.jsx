@@ -1,12 +1,13 @@
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import PipCalculator from "./components/PipCalculator";
-import PnlCalculator from "./components/PnlCalculator";
-import Root from "./components/Root";
-import MarginCalculator from "./components/MarginCalculator";
-import SwapCalculator from "./components/SwapCalculator";
-import Converter from "./components/Converter";
 import { ThemeContextProvider } from "./contexts/ThemeContext";
+import Root from "./components/Root";
+import PipCalculator from "./pages/PipCalculator";
+import PnlCalculator from "./pages/PnlCalculator";
+import MarginCalculator from "./pages/MarginCalculator";
+import SwapCalculator from "./pages/SwapCalculator";
+import Converter from "./pages/Converter";
+
 //app
 const router = createBrowserRouter([
   {

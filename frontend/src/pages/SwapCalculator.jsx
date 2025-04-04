@@ -1,9 +1,9 @@
 import { useState } from "react";
-import Input from "./Input";
-import Select from "./Select";
-import CardHeading from "./CardHeading";
-import Modal from "./Modal";
-import CustomDatePicker from "./CustomDatePicker";
+import Input from "../components/Input";
+import Select from "../components/Select";
+import CardHeading from "../components/CardHeading";
+import Modal from "../components/Modal";
+import CustomDatePicker from "../components/CustomDatePicker";
 import { allCurrencyPairs, uniqueCurrencies, swapHowTo } from "../utils/helpers";
 import { calculateDailySwap, getDatesInRange, getTotalSwap } from "../utils/calculations";
 

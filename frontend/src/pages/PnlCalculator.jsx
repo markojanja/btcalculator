@@ -1,11 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
-import ResultsDisplay from "./ResultsDisplay";
-import CardHeading from "./CardHeading";
-import Input from "./Input";
-import Select from "./Select";
-import Info from "./Info";
-import Modal from "./Modal";
+import ResultsDisplay from "../components/ResultsDisplay";
+import CardHeading from "../components/CardHeading";
+import Input from "../components/Input";
+import Select from "../components/Select";
+import Info from "../components/Info";
+import Modal from "../components/Modal";
 import { allCurrencyPairs, uniqueCurrencies, tradeTypeList, pnlHowTo } from "../utils/helpers";
 
 const PnlCalculator = () => {

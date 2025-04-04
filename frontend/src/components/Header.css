@@ -50,3 +50,19 @@
   vertical-align: middle;
   gap: 0.1rem;
 }
+
+#mobile-nav {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  @media (max-width: 426px) {
+    display: flex;
+  }
+}
+
+#mobile-hidden {
+  display: flex;
+  @media (max-width: 426px) {
+    display: none;
+  }
+}

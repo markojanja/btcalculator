@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import Input from "./Input";
-import ResultsDisplay from "./ResultsDisplay";
-import Select from "./Select";
-import CardHeading from "./CardHeading";
-import Info from "./Info";
-import Modal from "./Modal";
+import Input from "../components/Input";
+import ResultsDisplay from "../components/ResultsDisplay";
+import Select from "../components/Select";
+import CardHeading from "../components/CardHeading";
+import Info from "../components/Info";
+import Modal from "../components/Modal";
 import { allCurrencyPairs, uniqueCurrencies, pipHowTo } from "../utils/helpers";
 import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";
 import { calculatePipValue } from "../utils/calculations";

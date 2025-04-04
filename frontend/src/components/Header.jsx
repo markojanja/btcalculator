@@ -1,18 +1,18 @@
 import "./Header.css";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { IoChevronDown } from "react-icons/io5";
+import { RiMenu4Line } from "react-icons/ri";
 import { NavLink, useLocation } from "react-router-dom";
 import ReactSwitch from "react-switch";
-import { useContext } from "react";
 import { ThemeContext } from "../contexts/ThemeContext";
+import { NavContext } from "../contexts/NavContext";
 
 const Header = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const { toggleSidebar } = useContext(NavContext);
   const location = useLocation();
   const [submenuOpen, setSubmenuOpen] = useState(false);
-
   const isSubmenuActive = ["/", "/pnl", "/margin", "/swap"].includes(location.pathname);
-
   return (
     <header className="header">
       <nav className="nav">
@@ -34,7 +34,14 @@ const Header = () => {
               checked={theme === "" ? false : true}
             />
           </li>
-          <li onMouseEnter={() => setSubmenuOpen(true)} onMouseLeave={() => setSubmenuOpen(false)}>
+          <li id="mobile-nav" onClick={toggleSidebar}>
+            <RiMenu4Line size={24} />
+          </li>
+          <li
+            id="mobile-hidden"
+            onMouseEnter={() => setSubmenuOpen(true)}
+            onMouseLeave={() => setSubmenuOpen(false)}
+          >
             <NavLink className={`submenu ${isSubmenuActive ? "is-active" : ""}`} to="/">
               Calculators <IoChevronDown style={{ marginTop: "1px" }} />
             </NavLink>
@@ -64,7 +71,7 @@ const Header = () => {
             )}
           </li>
 
-          <li>
+          <li id="mobile-hidden">
             <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="converter">
               Converter
             </NavLink>
