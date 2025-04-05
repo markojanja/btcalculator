@@ -72,7 +72,10 @@ const SwapCalculator = () => {
           setShowModal={setShowModal}
         />
         <h4>Symbol settings</h4>
-        <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>
+        <div
+          style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}
+          id="symbol-settings"
+        >
           <Select
             label={"symbol"}
             value={symbol}

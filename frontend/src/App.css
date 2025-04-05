@@ -203,6 +203,13 @@ select {
   border-color: var(--accent-color);
 }
 
+#symbol-settings {
+  flex-direction: row;
+  @media (max-width: 426px) {
+    flex-direction: column;
+  }
+}
+
 /*Calendar styles*/
 
 #date-container {
@@ -261,6 +268,7 @@ select {
 .date-picker-container {
   position: relative;
   display: inline-block;
+  width: 100%;
 }
 .date-picker-container input {
   width: 100%;
