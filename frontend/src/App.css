@@ -244,8 +244,11 @@ select {
   color: var(--text-color) !important;
 }
 
+.flatpickr-day.selected,
 .flatpickr-day:hover {
   background-color: var(--accent-color) !important;
+  background: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
 }
 
 .flatpickr-next-month svg,

@@ -9,7 +9,9 @@ const CustomDatePicker = ({ setter, placeholder }) => {
   const flatpickrRef = useRef(null);
 
   const handleDateChange = (selectedDates) => {
-    const formattedDate = selectedDates[0]?.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+    const date = selectedDates[0];
+    const formattedDate = date?.toLocaleDateString("en-CA"); // YYYY-MM-DD
+
     setDate(formattedDate);
     setter(formattedDate);
   };
