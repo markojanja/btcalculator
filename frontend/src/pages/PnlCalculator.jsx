@@ -105,14 +105,12 @@ const PnlCalculator = () => {
           setShowModal={setShowModal}
         />
         <div className="input-group flex-col">
-          <label htmlFor="">currency pair</label>
-          <select type="text" value={currencyPair} onChange={handleCurrencySelect}>
-            {allCurrencyPairs.map((pair) => (
-              <option key={pair} value={pair}>
-                {pair}
-              </option>
-            ))}
-          </select>
+          <Select
+            label={"symol"}
+            value={currencyPair}
+            onChange={handleCurrencySelect}
+            array={allCurrencyPairs}
+          />
         </div>
         <div className="input-group flex-col">
           <Select

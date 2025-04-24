@@ -170,7 +170,7 @@ const PipCalculator = () => {
           setShowModal={setShowModal}
         />
         <Select
-          label={"currency pair"}
+          label={"symbol"}
           value={currencyPair}
           onChange={handleCurrencySelect}
           array={allCurrencyPairs}
