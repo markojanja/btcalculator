@@ -7,6 +7,7 @@ import PnlCalculator from "./pages/PnlCalculator";
 import MarginCalculator from "./pages/MarginCalculator";
 import SwapCalculator from "./pages/SwapCalculator";
 import Converter from "./pages/Converter";
+import Login from "./pages/Login";
 
 //app
 const router = createBrowserRouter([
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <Root />,
     children: [
+      {
+        path: "/login",
+        element: <Login />,
+      },
       {
         index: true,
         element: <PipCalculator />,
