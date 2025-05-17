@@ -436,5 +436,6 @@ select {
   z-index: 50;
   background: var(--background-color);
   min-height: 200px;
+  z-index: 999;
 }
 /*End Loader & spinner*/

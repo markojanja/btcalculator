@@ -1,4 +1,6 @@
 import "./Header.css";
+import useAuth from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import { useState, useContext } from "react";
 import { IoChevronDown } from "react-icons/io5";
 import { RiMenu4Line } from "react-icons/ri";
@@ -12,7 +14,20 @@ const Header = () => {
   const { toggleSidebar } = useContext(NavContext);
   const location = useLocation();
   const [submenuOpen, setSubmenuOpen] = useState(false);
-  const isSubmenuActive = ["/", "/pnl", "/margin", "/swap"].includes(location.pathname);
+  const isSubmenuActive = [
+    "/calculators/pip",
+    "/calculators/pnl",
+    "/calculators/margin",
+    "/calculators/swap",
+    "/converter",
+  ].includes(location.pathname);
+
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const handleLogOut = async () => {
+    await logout();
+    navigate("/login");
+  };
   return (
     <header className="header">
       <nav className="nav">
@@ -34,36 +49,57 @@ const Header = () => {
               checked={theme === "" ? false : true}
             />
           </li>
+          <li id="mobile-hidden">
+            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/">
+              MyTasks
+            </NavLink>
+          </li>
           <li id="mobile-nav" onClick={toggleSidebar}>
             <RiMenu4Line size={24} />
           </li>
+
           <li
             id="mobile-hidden"
             onMouseEnter={() => setSubmenuOpen(true)}
             onMouseLeave={() => setSubmenuOpen(false)}
           >
-            <NavLink className={`submenu ${isSubmenuActive ? "is-active" : ""}`} to="/">
+            <NavLink
+              className={`submenu ${isSubmenuActive ? "is-active" : ""}`}
+              to="/calculators/pip"
+            >
               Calculators <IoChevronDown style={{ marginTop: "1px" }} />
             </NavLink>
             {submenuOpen && (
               <ul className="dropdown">
                 <li>
-                  <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/">
+                  <NavLink
+                    className={({ isActive }) => (isActive ? "is-active" : "")}
+                    to="/calculators/pip"
+                  >
                     Pip Value
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="pnl">
+                  <NavLink
+                    className={({ isActive }) => (isActive ? "is-active" : "")}
+                    to="/calculators/pnl"
+                  >
                     Profit & Loss
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="margin">
+                  <NavLink
+                    className={({ isActive }) => (isActive ? "is-active" : "")}
+                    to="/calculators/margin"
+                  >
                     Margin Value
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="swap">
+                  <NavLink
+                    className={({ isActive }) => (isActive ? "is-active" : "")}
+                    to="/calculators/swap"
+                  >
                     Swap Values
                   </NavLink>
                 </li>
@@ -75,6 +111,12 @@ const Header = () => {
             <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="converter">
               Converter
             </NavLink>
+          </li>
+
+          <li id="mobile-hidden" onClick={toggleSidebar}>
+            <a style={{ cursor: "pointer" }} onClick={handleLogOut}>
+              Log Out
+            </a>
           </li>
         </ul>
       </nav>

@@ -24,7 +24,7 @@ const MobileNav = () => {
           <li>
             <NavLink
               className={({ isActive }) => (isActive ? "is-active" : "")}
-              to="pnl"
+              to="/pnl"
               onClick={toggleSidebar}
             >
               Profit & Loss
@@ -33,7 +33,7 @@ const MobileNav = () => {
           <li>
             <NavLink
               className={({ isActive }) => (isActive ? "is-active" : "")}
-              to="margin"
+              to="/margin"
               onClick={toggleSidebar}
             >
               Margin Value
@@ -42,7 +42,7 @@ const MobileNav = () => {
           <li>
             <NavLink
               className={({ isActive }) => (isActive ? "is-active" : "")}
-              to="swap"
+              to="/swap"
               onClick={toggleSidebar}
             >
               Swap Values
@@ -51,7 +51,7 @@ const MobileNav = () => {
           <li>
             <NavLink
               className={({ isActive }) => (isActive ? "is-active" : "")}
-              to="converter"
+              to="/converter"
               onClick={toggleSidebar}
             >
               Converter

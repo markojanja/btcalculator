@@ -1,16 +1,42 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import session from "express-session";
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+import prisma from "./db/prisma.js";
 import UploadRouter from "./routes/uploadFiles.route.js";
 import DownloadRouter from "./routes/downloadFiles.route.js";
 import path from "path";
 import url from "url";
 import { createFolders } from "./utils/createFolders.js";
+import LoginRouter from "./routes/auth.route.js";
+import passport from "passport";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: new PrismaSessionStore(prisma, {
+      checkPeriod: 2 * 60 * 1000, // Check for expired sessions every 2 minutes
+      dbRecordIdIsSessionId: true, // Make sure the session ID is used as the record ID
+    }),
+    cookie: {
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    },
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(
   cors({
@@ -24,6 +50,8 @@ app.use(cookieParser());
 app.use("/downloads", express.static(path.join(__dirname, "downloads")));
 
 createFolders();
+
+app.use("/", LoginRouter);
 
 app.use("/", UploadRouter);
 app.use("/", DownloadRouter);

@@ -8,36 +8,38 @@ import MarginCalculator from "./pages/MarginCalculator";
 import SwapCalculator from "./pages/SwapCalculator";
 import Converter from "./pages/Converter";
 import Login from "./pages/Login";
+import { AuthProvider } from "./contexts/AuthContext";
+import Protected from "./components/Protected";
+import Tasks from "./pages/Tasks";
 
-//app
 const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <Login />,
+  },
   {
     path: "/",
     element: <Root />,
     children: [
       {
-        path: "/login",
-        element: <Login />,
+        path: "/",
+        element: <Protected />,
+        children: [{ index: true, element: <Tasks /> }],
       },
       {
-        index: true,
-        element: <PipCalculator />,
-      },
-      {
-        path: "/pnl",
-        element: <PnlCalculator />,
-      },
-      {
-        path: "/margin",
-        element: <MarginCalculator />,
-      },
-      {
-        path: "/swap",
-        element: <SwapCalculator />,
+        path: "/calculators",
+        element: <Protected />,
+        children: [
+          { path: "/calculators/pip", element: <PipCalculator /> },
+          { path: "/calculators/pnl", element: <PnlCalculator /> },
+          { path: "/calculators/margin", element: <MarginCalculator /> },
+          { path: "/calculators/swap", element: <SwapCalculator /> },
+        ],
       },
       {
         path: "/converter",
-        element: <Converter />,
+        element: <Protected />,
+        children: [{ index: true, element: <Converter /> }],
       },
     ],
   },
@@ -46,9 +48,11 @@ const router = createBrowserRouter([
 function App() {
   return (
     <ThemeContextProvider>
-      <div className="App">
-        <RouterProvider router={router} />
-      </div>
+      <AuthProvider>
+        <div className="App">
+          <RouterProvider router={router} />
+        </div>
+      </AuthProvider>
     </ThemeContextProvider>
   );
 }
