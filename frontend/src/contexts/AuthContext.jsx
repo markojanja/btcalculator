@@ -36,7 +36,7 @@ const AuthProvider = ({ children }) => {
         { username, password },
         { withCredentials: true }
       );
-      console.log(response.data.user);
+      // console.log(response.data.user);
       setUser(response.data.user);
     } catch (error) {
       setError(error);
