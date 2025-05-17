@@ -45,6 +45,8 @@ app.use(
   })
 );
 
+app.set("trust proxy", 1); // for render
+
 app.use(express.json());
 app.use(cookieParser());
 app.use("/downloads", express.static(path.join(__dirname, "downloads")));
