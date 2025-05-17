@@ -9,6 +9,7 @@
     "production": "node server.js",
     "seed": "node populate_db.js",
     "migrate": "prisma generate && prisma migrate deploy"
+    
   },
   "keywords": [],
   "author": "",
