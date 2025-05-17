@@ -1,14 +1,13 @@
-import "./PipCalculator.css";
 import { useState, useEffect } from "react";
+import Input from "../components/Input";
+import ResultsDisplay from "../components/ResultsDisplay";
+import Select from "../components/Select";
+import CardHeading from "../components/CardHeading";
+import Info from "../components/Info";
+import Modal from "../components/Modal";
 import { allCurrencyPairs, uniqueCurrencies, pipHowTo } from "../utils/helpers";
 import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";
 import { calculatePipValue } from "../utils/calculations";
-import Input from "./Input";
-import ResultsDisplay from "./ResultsDisplay";
-import Select from "./Select";
-import CalculatorHeading from "./CalculatorHeading";
-import Info from "./Info";
-import Modal from "./Modal";
 
 const PipCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
@@ -163,7 +162,7 @@ const PipCalculator = () => {
       {showModal && <Modal setShowModal={setShowModal} content={pipHowTo} />}
       <Info editMode={editMode} />
       <div className={`calculator ${editMode ? "active-border" : ""}`}>
-        <CalculatorHeading
+        <CardHeading
           title={"Pip Value Calculator"}
           editMode={editMode}
           setEditMode={setEditMode}
@@ -171,7 +170,7 @@ const PipCalculator = () => {
           setShowModal={setShowModal}
         />
         <Select
-          label={"currency pair"}
+          label={"symbol"}
           value={currencyPair}
           onChange={handleCurrencySelect}
           array={allCurrencyPairs}

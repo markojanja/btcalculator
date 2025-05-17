@@ -1,13 +1,12 @@
-import "./PipCalculator.css";
-import { allCurrencyPairs, uniqueCurrencies, tradeTypeList, pnlHowTo } from "../utils/helpers";
-import ResultsDisplay from "./ResultsDisplay";
 import { useState } from "react";
 import axios from "axios";
-import CalculatorHeading from "./CalculatorHeading";
-import Input from "./Input";
-import Select from "./Select";
-import Info from "./Info";
-import Modal from "./Modal";
+import ResultsDisplay from "../components/ResultsDisplay";
+import CardHeading from "../components/CardHeading";
+import Input from "../components/Input";
+import Select from "../components/Select";
+import Info from "../components/Info";
+import Modal from "../components/Modal";
+import { allCurrencyPairs, uniqueCurrencies, tradeTypeList, pnlHowTo } from "../utils/helpers";
 
 const PnlCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
@@ -98,7 +97,7 @@ const PnlCalculator = () => {
       {showModal && <Modal setShowModal={setShowModal} content={pnlHowTo} />}
       <Info editMode={editMode} />
       <div className={`calculator ${editMode ? "active-border" : ""}`}>
-        <CalculatorHeading
+        <CardHeading
           title={"PnL Calculator"}
           editMode={editMode}
           setEditMode={setEditMode}
@@ -106,14 +105,12 @@ const PnlCalculator = () => {
           setShowModal={setShowModal}
         />
         <div className="input-group flex-col">
-          <label htmlFor="">currency pair</label>
-          <select type="text" value={currencyPair} onChange={handleCurrencySelect}>
-            {allCurrencyPairs.map((pair) => (
-              <option key={pair} value={pair}>
-                {pair}
-              </option>
-            ))}
-          </select>
+          <Select
+            label={"symol"}
+            value={currencyPair}
+            onChange={handleCurrencySelect}
+            array={allCurrencyPairs}
+          />
         </div>
         <div className="input-group flex-col">
           <Select

@@ -1,9 +1,9 @@
-import Input from "./Input";
-import Select from "./Select";
-import CalculatorHeading from "./CalculatorHeading";
-import Modal from "./Modal";
-import "./PipCalculator.css";
-import ButtonGroup from "./ButtonGroup";
+import Input from "../components/Input";
+import Select from "../components/Select";
+import CardHeading from "../components/CardHeading";
+import Modal from "../components/Modal";
+import ButtonGroup from "../components/ButtonGroup";
+import MarginTable from "../components/MarginTable";
 import { useState } from "react";
 import { marginCalculationCFD, marginCalculationForex } from "../utils/calculations";
 import {
@@ -13,7 +13,7 @@ import {
   tradeTypeList,
   marginHowTo,
 } from "../utils/helpers";
-import { MdDeleteForever } from "react-icons/md";
+
 import { fetchExchangeRate } from "../utils/fetchData";
 
 const MarginCalculator = () => {
@@ -113,7 +113,7 @@ const MarginCalculator = () => {
     <>
       {showModal && <Modal setShowModal={setShowModal} content={marginHowTo} />}
       <div className="calculator">
-        <CalculatorHeading
+        <CardHeading
           title={"Margin Calculator"}
           editMode={false}
           setEditMode={null}
@@ -207,50 +207,12 @@ const MarginCalculator = () => {
         <button onClick={handleCalculate}>Calculate</button>
       </div>
       {calculations.length > 0 && (
-        <div style={{ width: "60%", margin: "0 auto" }}>
-          <table className="calculation-table">
-            <thead>
-              <tr>
-                <th>Symbol</th>
-                <th>type</th>
-                <th>Lot Size</th>
-                <th>Price</th>
-                <th>Margin(%)</th>
-                <th>Leverage</th>
-                <th>Margin Required</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {calculations.map((calc, index) => (
-                <tr key={index}>
-                  <td>{calc.pair}</td>
-                  <td>{calc.tradeType}</td>
-                  <td>{calc.lotSize}</td>
-                  <td>{calc.price}</td>
-                  <td>{calc.margin}</td>
-                  <td>{calc.leverage}</td>
-                  <td>{parseFloat(calc.marginRequired.toFixed(2))}</td>
-                  <td>
-                    <MdDeleteForever
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleDelete(calc.id)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <h4 style={{ marginInline: "auto 0", textAlign: "right", padding: "0.5rem 0" }}>
-            Total margin:{" "}
-            <span
-              style={{ fontWeight: "900", color: "oklch(0.723 0.219 149.579)", fontSize: "1.3em" }}
-            >
-              {parseFloat(totalPrice).toFixed(2)}
-            </span>{" "}
-            {deposit}
-          </h4>
-        </div>
+        <MarginTable
+          calculations={calculations}
+          totalPrice={totalPrice}
+          deposit={deposit}
+          handleDelete={handleDelete}
+        />
       )}
     </>
   );

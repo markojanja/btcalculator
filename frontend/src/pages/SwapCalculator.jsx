@@ -1,11 +1,11 @@
-import Input from "./Input";
-import Select from "./Select";
-import CalculatorHeading from "./CalculatorHeading";
-import Modal from "./Modal";
-import { allCurrencyPairs, uniqueCurrencies, swapHowTo } from "../utils/helpers";
 import { useState } from "react";
+import Input from "../components/Input";
+import Select from "../components/Select";
+import CardHeading from "../components/CardHeading";
+import Modal from "../components/Modal";
+import CustomDatePicker from "../components/CustomDatePicker";
+import { allCurrencyPairs, uniqueCurrencies, swapHowTo } from "../utils/helpers";
 import { calculateDailySwap, getDatesInRange, getTotalSwap } from "../utils/calculations";
-import CustomDatePicker from "./CustomDatePicker";
 
 const SwapCalculator = () => {
   const calculationType = ["money", "points", "percentage"];
@@ -64,7 +64,7 @@ const SwapCalculator = () => {
     <>
       {showModal && <Modal setShowModal={setShowModal} content={swapHowTo} />}
       <div className="calculator">
-        <CalculatorHeading
+        <CardHeading
           title={"Swap Calculator"}
           editMode={false}
           setEditMode={null}
@@ -72,7 +72,10 @@ const SwapCalculator = () => {
           setShowModal={setShowModal}
         />
         <h4>Symbol settings</h4>
-        <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>
+        <div
+          style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}
+          id="symbol-settings"
+        >
           <Select
             label={"symbol"}
             value={symbol}
@@ -156,14 +159,14 @@ const SwapCalculator = () => {
             disabled={false}
           />
         </div>
-        <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }}>
+        <div style={{ display: "flex", flex: "1", width: "100%", gap: "1rem" }} id="date-container">
           <div className="input-group flex-col">
-            <label>date open</label>
-            <CustomDatePicker setter={setOpenDate} placeholder={"select open date"} />
+            <label>open date</label>
+            <CustomDatePicker setter={setOpenDate} placeholder={"select date"} />
           </div>
           <div className="input-group flex-col">
-            <label>date close</label>
-            <CustomDatePicker setter={setCloseDate} placeholder={"select close date"} />
+            <label>close date</label>
+            <CustomDatePicker setter={setCloseDate} placeholder={"select date"} />
           </div>
         </div>
         <button onClick={handleCalculateSwap}>Calculate</button>

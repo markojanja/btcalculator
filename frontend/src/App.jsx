@@ -1,43 +1,60 @@
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import PipCalculator from "./components/PipCalculator";
-import PnlCalculator from "./components/PnlCalculator";
+import { ThemeContextProvider } from "./contexts/ThemeContext";
 import Root from "./components/Root";
-import MarginCalculator from "./components/MarginCalculator";
-import SwapCalculator from "./components/SwapCalculator";
-import Converter from "./components/Converter";
-//app
+import PipCalculator from "./pages/PipCalculator";
+import PnlCalculator from "./pages/PnlCalculator";
+import MarginCalculator from "./pages/MarginCalculator";
+import SwapCalculator from "./pages/SwapCalculator";
+import Converter from "./pages/Converter";
+import Login from "./pages/Login";
+import { AuthProvider } from "./contexts/AuthContext";
+import Protected from "./components/Protected";
+import Tasks from "./pages/Tasks";
+
 const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <Login />,
+  },
   {
     path: "/",
     element: <Root />,
     children: [
       {
-        index: true,
-        element: <PipCalculator />,
+        path: "/",
+        element: <Protected />,
+        children: [{ index: true, element: <Tasks /> }],
       },
       {
-        path: "/pnl",
-        element: <PnlCalculator />,
-      },
-      {
-        path: "/margin",
-        element: <MarginCalculator />,
-      },
-      {
-        path: "/swap",
-        element: <SwapCalculator />,
+        path: "/calculators",
+        element: <Protected />,
+        children: [
+          { path: "/calculators/pip", element: <PipCalculator /> },
+          { path: "/calculators/pnl", element: <PnlCalculator /> },
+          { path: "/calculators/margin", element: <MarginCalculator /> },
+          { path: "/calculators/swap", element: <SwapCalculator /> },
+        ],
       },
       {
         path: "/converter",
-        element: <Converter />,
+        element: <Protected />,
+        children: [{ index: true, element: <Converter /> }],
       },
     ],
   },
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ThemeContextProvider>
+      <AuthProvider>
+        <div className="App">
+          <RouterProvider router={router} />
+        </div>
+      </AuthProvider>
+    </ThemeContextProvider>
+  );
 }
 
 export default App;
