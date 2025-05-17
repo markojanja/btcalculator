@@ -7,7 +7,8 @@
     "start": "node --env-file=.env server.js",
     "dev": "node --watch --env-file=.env server.js",
     "production": "node server.js",
-    "seed": "node populate_db.js"
+    "seed": "node populate_db.js",
+    "migrate": "prisma generate && prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
