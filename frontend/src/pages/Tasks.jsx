@@ -1,5 +1,11 @@
 const Tasks = () => {
-  return <div>Tasks dash</div>;
+  return (
+    <div className="tasks-wrapper">
+      <div className="tasks-header">
+        <h3>My Tasks</h3>
+      </div>
+    </div>
+  );
 };
 
 export default Tasks;

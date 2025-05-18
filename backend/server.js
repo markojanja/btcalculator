@@ -30,7 +30,7 @@ app.use(
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
     },
   })
 );
@@ -45,7 +45,10 @@ app.use(
   })
 );
 
-app.set("trust proxy", 1); // for render
+// this line is required by render
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 
 app.use(express.json());
 app.use(cookieParser());

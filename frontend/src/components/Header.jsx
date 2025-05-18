@@ -19,7 +19,6 @@ const Header = () => {
     "/calculators/pnl",
     "/calculators/margin",
     "/calculators/swap",
-    "/converter",
   ].includes(location.pathname);
 
   const { logout } = useAuth();
