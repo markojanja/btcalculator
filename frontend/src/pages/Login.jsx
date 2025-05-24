@@ -47,7 +47,7 @@ const Login = () => {
       >
         <div className="logo">
           <h3>
-            <span className="is-active">BT</span>Calculator
+            <span className="is-active">CS</span>Board
           </h3>
         </div>
         <div className="input-group flex-col">

@@ -32,7 +32,7 @@ const Header = () => {
       <nav className="nav">
         <div className="logo">
           <NavLink to="/">
-            <span className="is-active">BT</span>Calculator
+            <span className="is-active">CS</span>Board
           </NavLink>
         </div>
         <ul>

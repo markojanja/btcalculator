@@ -14,10 +14,13 @@ enum Role {
 }
 
 model User {
-    id       String @id @default(uuid())
-    username String @unique
-    password String
-    role     Role   @default(SUPPORT)
+    id        String   @id @default(uuid())
+    username  String   @unique
+    password  String
+    role      Role     @default(SUPPORT)
+    tasks     Tasks[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model Session {
@@ -27,4 +30,23 @@ model Session {
     expiresAt DateTime
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
+
+enum Status {
+    TODO
+    IN_ROGRESS
+    COMPLETED
+    CS_TICKET
+    IT_TICKET
+}
+
+model Tasks {
+    id          String   @id @default(uuid())
+    title       String
+    description String
+    status      Status   @default(TODO)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    userId      String
+    user        User     @relation(fields: [userId], references: [id])
 }

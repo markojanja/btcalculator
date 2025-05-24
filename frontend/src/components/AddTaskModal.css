@@ -1,0 +1,5 @@
+.add-task-modal {
+  position: absolute;
+  background: var(--background-color);
+  inset: 0;
+}

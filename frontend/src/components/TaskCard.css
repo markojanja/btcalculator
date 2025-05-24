@@ -1,0 +1,22 @@
+.task-card {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: var(--background-color);
+  border-radius: 4px;
+  box-shadow: var(--box-shadow);
+}
+
+.task-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.tasks-btn-group {
+  display: flex;
+  gap: 0.3rem;
+}

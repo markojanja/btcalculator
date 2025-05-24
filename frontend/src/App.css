@@ -446,8 +446,30 @@ select {
   position: relative;
   width: 100%;
   padding: 2rem;
+  flex: 1;
 }
+
 .tasks-header {
   display: flex;
   align-items: start;
+  padding: 1rem 2rem;
+}
+/*quill editor*/
+.ql-editor ul {
+  display: block; /* or just remove any 'display: flex' */
+  padding-left: 1.5em; /* default indent */
+  list-style-position: outside; /* default bullet outside */
+  gap: initial; /* reset gap if needed */
+}
+.quill {
+  width: 100%;
+}
+.ql-container {
+  min-height: 300px;
+  height: auto !important;
+  width: 100%;
+}
+.ql-editor {
+  min-height: 250px;
+  height: auto;
 }
