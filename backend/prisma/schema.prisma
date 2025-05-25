@@ -45,6 +45,7 @@ model Tasks {
     title       String
     description String
     status      Status   @default(TODO)
+    position    Float
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
     userId      String
