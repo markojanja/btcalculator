@@ -66,7 +66,7 @@ const AddTaskModal = ({ setTaskModal }) => {
         <input
           type="text"
           placeholder="title"
-          style={{ backgroundColor: "var(--secondary-color)" }}
+          style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
         />
         <ReactQuill
           ref={quillRef}

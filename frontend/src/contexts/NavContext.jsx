@@ -7,6 +7,7 @@ const NavContextProvider = ({ children }) => {
 
   const toggleSidebar = () => {
     setSidebarActive(!sidebarActive);
+    console.log(sidebarActive);
   };
 
   return (
