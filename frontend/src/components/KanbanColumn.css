@@ -9,6 +9,7 @@
   padding: 0.5rem;
   border-radius: 4px;
   box-shadow: var(--box-shadow);
+  min-width: 170px;
 }
 .kanban-header {
   display: flex;

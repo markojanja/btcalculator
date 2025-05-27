@@ -9,7 +9,7 @@ const Root = () => {
     <>
       <NavContextProvider>
         <Header />
-        <main className="main" style={{ position: "relative" }}>
+        <main className="main">
           <Sidebar />
           <Outlet />
         </main>

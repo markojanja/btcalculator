@@ -1,11 +1,15 @@
 import "./Kanban.css";
 import KanbanColumn from "./KanbanColumn";
 import { data as dbdata } from "../utils/dummyData.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Kanban = ({ setTaskModal }) => {
   const [data, setData] = useState(dbdata);
   const [draggedTask, setDraggedTask] = useState(null);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   const handleDragStart = (task) => {
     setDraggedTask(task);
