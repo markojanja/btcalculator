@@ -5,6 +5,7 @@ import { useContext } from "react";
 
 import { RiMenu4Line } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
+import { RiLogoutBoxRLine } from "react-icons/ri";
 
 import ReactSwitch from "react-switch";
 import { ThemeContext } from "../contexts/ThemeContext";
@@ -49,7 +50,7 @@ const Header = () => {
           </li>
           <li id="mobile-hidden" onClick={toggleSidebar}>
             <a style={{ cursor: "pointer" }} onClick={handleLogOut}>
-              Log Out
+              <RiLogoutBoxRLine size={20} />
             </a>
           </li>
         </ul>

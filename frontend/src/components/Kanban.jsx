@@ -2,14 +2,28 @@ import "./Kanban.css";
 import KanbanColumn from "./KanbanColumn";
 import { data as dbdata } from "../utils/dummyData.js";
 import { useEffect, useState } from "react";
+import AddTaskModal from "./AddTaskModal.jsx";
 
-const Kanban = ({ setTaskModal }) => {
+const Kanban = ({ taskModal, setTaskModal }) => {
   const [data, setData] = useState(dbdata);
   const [draggedTask, setDraggedTask] = useState(null);
 
   useEffect(() => {
     console.log(data);
   }, [data]);
+
+  const handleAddTask = (newTask) => {
+    setData((prevCols) => {
+      const updatedCols = prevCols.map((col) => {
+        if (col.colStatus === newTask.status) {
+          return { ...col, tasks: [...col.tasks, newTask] };
+        }
+        return col;
+      });
+
+      return updatedCols;
+    });
+  };
 
   const handleDragStart = (task) => {
     setDraggedTask(task);
@@ -43,6 +57,11 @@ const Kanban = ({ setTaskModal }) => {
 
     setDraggedTask(null);
   };
+
+  if (taskModal) {
+    return <AddTaskModal setTaskModal={setTaskModal} handleAddTask={handleAddTask} />;
+  }
+
   return (
     <div className="kanban-wrapper">
       {data.map((col, idx) => (
@@ -54,6 +73,7 @@ const Kanban = ({ setTaskModal }) => {
           setTaskModal={setTaskModal}
           onDragStart={handleDragStart}
           onDrop={handleDrop}
+          handleAddTask={handleAddTask}
         />
       ))}
     </div>

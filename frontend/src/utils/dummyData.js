@@ -33,7 +33,7 @@ export const data = [
     tasks: [],
   },
   {
-    title: "CS TICKETS",
+    title: "CS TICKET",
     colStatus: "CS_TICKET",
     tasks: [
       {
@@ -47,7 +47,7 @@ export const data = [
     ],
   },
   {
-    title: "IT TICKETS",
+    title: "IT TICKET",
     colStatus: "IT_TICKET",
     tasks: [
       {

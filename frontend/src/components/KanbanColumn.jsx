@@ -14,21 +14,14 @@ const KanbanColumn = ({ name, column, setTaskModal, onDragStart, onDrop }) => {
       onDrop={() => onDrop(column.colStatus)}
     >
       <div className="kanban-header">
-        <h3 style={{ alignSelf: "start" }}>{name}</h3>
+        <h4 style={{ alignSelf: "start" }}>{name}</h4>
+
         <FaPlus onClick={handleToggleModal} />
       </div>
 
       {column.tasks.map((task) => (
         <TaskCard key={task.id} task={task} taskItem={task} onDragStart={onDragStart} />
       ))}
-
-      <button
-        className="kanban-btn"
-        style={{ color: "white!important" }}
-        onClick={handleToggleModal}
-      >
-        <FaPlus color="white!important" />
-      </button>
     </div>
   );
 };

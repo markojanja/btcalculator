@@ -18,11 +18,3 @@
   width: 100%;
   text-transform: capitalize;
 }
-
-.kanban-btn {
-  position: absolute;
-  bottom: 0.5rem;
-  left: 0.5rem;
-  right: 0.5rem;
-  color: white !important;
-}

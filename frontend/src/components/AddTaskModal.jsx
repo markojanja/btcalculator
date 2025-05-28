@@ -1,11 +1,14 @@
+import "./AddTaskModal.css";
 import { useState, useRef } from "react";
 import ReactQuill from "react-quill";
 import Quill from "quill";
 import ImageResize from "quill-image-resize-module-react";
 import "react-quill/dist/quill.snow.css";
+import { IoMdClose } from "react-icons/io";
+
 Quill.register("modules/imageResize", ImageResize);
 
-const AddTaskModal = ({ setTaskModal }) => {
+const AddTaskModal = ({ setTaskModal, handleAddTask }) => {
   const quillRef = useRef(null);
 
   const modules = {
@@ -38,14 +41,36 @@ const AddTaskModal = ({ setTaskModal }) => {
     "image",
     "code-block",
   ];
+  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [status, setStatus] = useState("TODO");
+  const [position, setPosition] = useState(100);
+  const [id, setID] = useState(`markos-id-1234-${new Date()}`);
 
   const handleTaskModal = () => {
     setTaskModal(false);
   };
 
+  const addTask = () => {
+    const newTask = {
+      title,
+      description: content,
+      status,
+      id,
+    };
+    handleAddTask(newTask);
+  };
+
+  const handleSubmit = () => {
+    addTask();
+    handleTaskModal();
+  };
+
   return (
     <div className="add-task-modal">
+      <div style={{ display: "flex", justifyContent: "flex-end", padding: "0.5rem 3rem" }}>
+        <IoMdClose size={24} onClick={handleTaskModal} />
+      </div>
       <div
         style={{
           display: "flex",
@@ -67,16 +92,20 @@ const AddTaskModal = ({ setTaskModal }) => {
           type="text"
           placeholder="title"
           style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
+          onChange={(e) => {
+            setTitle(e.target.value);
+          }}
         />
         <ReactQuill
-          ref={quillRef}
+          forwardedRef={quillRef}
           value={content}
           onChange={setContent}
           modules={modules}
           formats={formats}
         />
+
         <div>
-          <button onClick={handleTaskModal}>save</button>
+          <button onClick={handleSubmit}>save</button>
         </div>
       </div>
     </div>

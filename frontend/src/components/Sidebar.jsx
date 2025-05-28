@@ -7,7 +7,7 @@ import { IoMdClose } from "react-icons/io";
 
 const Sidebar = () => {
   const location = useLocation();
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const { sidebarActive, toggleSidebar } = useContext(NavContext);
   const isSubmenuActive = [
     "/calculators/pip",

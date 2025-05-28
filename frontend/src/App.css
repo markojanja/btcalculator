@@ -138,6 +138,10 @@ select {
   color: var(--accent-color);
   background: transparent;
   padding: 0.3rem 0.6rem;
+  vertical-align: middle;
+}
+.btn-outline svg {
+  fill: var(--accent-color);
 }
 
 .selected {
@@ -442,6 +446,7 @@ select {
 .tasks-wrapper {
   display: flex;
   flex-direction: column;
+
   position: relative;
   width: 100%;
   padding: 2rem;
@@ -452,6 +457,8 @@ select {
   display: flex;
   align-items: start;
   padding: 1rem 2rem;
+  justify-content: space-between;
+  border-bottom: 1px solid lightgray;
 }
 /*quill editor*/
 .ql-editor ul {
