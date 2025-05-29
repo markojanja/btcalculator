@@ -21,18 +21,14 @@ const Sidebar = () => {
   };
 
   return (
-    <div className={sidebarActive ? "sidebar show" : "sidebar"}>
+    <div className={sidebarActive ? "sidebar show" : "sidebar"} onMouseLeave={toggleSidebar}>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <IoMdClose size={20} onClick={toggleSidebar} />
       </div>
       <ul className="sidebar-wrapper">
         <li id="mobile-hidden">
-          <NavLink
-            className={({ isActive }) => (isActive ? "is-active" : "")}
-            to="/"
-            onClick={toggleSidebar}
-          >
-            MyTasks
+          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/">
+            My Tasks
           </NavLink>
         </li>
 
@@ -62,7 +58,6 @@ const Sidebar = () => {
                 <NavLink
                   className={({ isActive }) => (isActive ? "is-active" : "")}
                   to="/calculators/pip"
-                  onClick={toggleSidebar}
                 >
                   Pip Value
                 </NavLink>
@@ -71,7 +66,6 @@ const Sidebar = () => {
                 <NavLink
                   className={({ isActive }) => (isActive ? "is-active" : "")}
                   to="/calculators/pnl"
-                  onClick={toggleSidebar}
                 >
                   Profit & Loss
                 </NavLink>
@@ -80,18 +74,16 @@ const Sidebar = () => {
                 <NavLink
                   className={({ isActive }) => (isActive ? "is-active" : "")}
                   to="/calculators/margin"
-                  onClick={toggleSidebar}
                 >
-                  Margin Value
+                  Margin Calculator
                 </NavLink>
               </li>
               <li>
                 <NavLink
                   className={({ isActive }) => (isActive ? "is-active" : "")}
                   to="/calculators/swap"
-                  onClick={toggleSidebar}
                 >
-                  Swap Values
+                  Swap Calculator
                 </NavLink>
               </li>
             </ul>
@@ -99,12 +91,23 @@ const Sidebar = () => {
         </li>
 
         <li id="mobile-hidden">
-          <NavLink
-            className={({ isActive }) => (isActive ? "is-active" : "")}
-            to="converter"
-            onClick={toggleSidebar}
-          >
+          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="converter">
             Converter
+          </NavLink>
+        </li>
+        <li id="mobile-hidden">
+          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/features">
+            New features
+          </NavLink>
+        </li>
+        <li id="mobile-hidden">
+          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/features">
+            User Guides
+          </NavLink>
+        </li>
+        <li id="mobile-hidden">
+          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/features">
+            User Management
           </NavLink>
         </li>
       </ul>
