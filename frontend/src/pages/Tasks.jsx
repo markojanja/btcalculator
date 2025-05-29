@@ -4,6 +4,7 @@ import Kanban from "../components/Kanban";
 
 const Tasks = () => {
   const [taskModal, setTaskModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
 
   return (
     <div className="tasks-wrapper">
@@ -18,7 +19,12 @@ const Tasks = () => {
           New <FaPlus size={12} color="white!important" />
         </button>
       </div>
-      <Kanban taskModal={taskModal} setTaskModal={setTaskModal} />
+      <Kanban
+        taskModal={taskModal}
+        setTaskModal={setTaskModal}
+        editModal={editModal}
+        setEditModal={setEditModal}
+      />
     </div>
   );
 };

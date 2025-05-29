@@ -2,7 +2,16 @@ import "./KanbanColumn.css";
 import TaskCard from "./TaskCard";
 import { FaPlus } from "react-icons/fa";
 
-const KanbanColumn = ({ name, column, setTaskModal, onDragStart, onDrop }) => {
+const KanbanColumn = ({
+  name,
+  column,
+  setTaskModal,
+  onDragStart,
+  onDrop,
+  handleDeleteTask,
+  handleEditModal,
+  setActiveTask,
+}) => {
   const handleToggleModal = () => {
     setTaskModal(true);
   };
@@ -20,7 +29,15 @@ const KanbanColumn = ({ name, column, setTaskModal, onDragStart, onDrop }) => {
       </div>
 
       {column.tasks.map((task) => (
-        <TaskCard key={task.id} task={task} taskItem={task} onDragStart={onDragStart} />
+        <TaskCard
+          key={task.id}
+          task={task}
+          taskItem={task}
+          onDragStart={onDragStart}
+          handleDeleteTask={handleDeleteTask}
+          handleEditModal={handleEditModal}
+          setActiveTask={setActiveTask}
+        />
       ))}
     </div>
   );

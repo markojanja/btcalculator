@@ -1,4 +1,4 @@
-import "./AddTaskModal.css";
+import "./EditTask.css";
 import { useState, useRef } from "react";
 import ReactQuill from "react-quill";
 import Quill from "quill";
@@ -8,7 +8,8 @@ import { IoMdClose } from "react-icons/io";
 
 Quill.register("modules/imageResize", ImageResize);
 
-const AddTaskModal = ({ setTaskModal, handleAddTask }) => {
+const EditTask = ({ handleEditModal, activeTask }) => {
+  console.log(activeTask);
   const quillRef = useRef(null);
 
   const modules = {
@@ -41,35 +42,16 @@ const AddTaskModal = ({ setTaskModal, handleAddTask }) => {
     "image",
     "code-block",
   ];
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [status, setStatus] = useState("TODO");
-  const [position, setPosition] = useState(100);
-  const [id, setID] = useState(`markos-id-1234-${new Date()}`);
-
-  const handleTaskModal = () => {
-    setTaskModal(false);
-  };
-
-  const addTask = () => {
-    const newTask = {
-      title,
-      description: content,
-      status,
-      id,
-    };
-    handleAddTask(newTask);
-  };
-
-  const handleSubmit = () => {
-    addTask();
-    handleTaskModal();
-  };
+  const [title, setTitle] = useState(activeTask.title);
+  const [content, setContent] = useState(activeTask.description);
+  const [status, setStatus] = useState(activeTask.status);
+  const [position, setPosition] = useState(activeTask.position);
+  const [id, setID] = useState(activeTask.id);
 
   return (
-    <div className="add-task-modal">
+    <div className="edit-task-modal">
       <div style={{ display: "flex", justifyContent: "flex-end", padding: "0.5rem 3rem" }}>
-        <IoMdClose size={24} onClick={handleTaskModal} />
+        <IoMdClose size={24} onClick={handleEditModal} />
       </div>
       <div
         style={{
@@ -87,7 +69,7 @@ const AddTaskModal = ({ setTaskModal, handleAddTask }) => {
           boxShadow: "var(--box-shadow)",
         }}
       >
-        <h3>Add task</h3>
+        <h3>Edit task</h3>
         <input
           type="text"
           placeholder="title"
@@ -95,6 +77,7 @@ const AddTaskModal = ({ setTaskModal, handleAddTask }) => {
           onChange={(e) => {
             setTitle(e.target.value);
           }}
+          value={title || ""}
         />
         <ReactQuill
           forwardedRef={quillRef}
@@ -105,11 +88,11 @@ const AddTaskModal = ({ setTaskModal, handleAddTask }) => {
         />
 
         <div>
-          <button onClick={handleSubmit}>save</button>
+          <button onClick={() => console.log("hello")}>save</button>
         </div>
       </div>
     </div>
   );
 };
 
-export default AddTaskModal;
+export default EditTask;

@@ -3,14 +3,19 @@ import KanbanColumn from "./KanbanColumn";
 import { data as dbdata } from "../utils/dummyData.js";
 import { useEffect, useState } from "react";
 import AddTaskModal from "./AddTaskModal.jsx";
+import EditTask from "./EditTask.jsx";
 
-const Kanban = ({ taskModal, setTaskModal }) => {
+const Kanban = ({ taskModal, setTaskModal, editModal, setEditModal }) => {
   const [data, setData] = useState(dbdata);
   const [draggedTask, setDraggedTask] = useState(null);
 
   useEffect(() => {
     console.log(data);
   }, [data]);
+
+  const handleEditModal = () => {
+    setEditModal(!editModal);
+  };
 
   const handleAddTask = (newTask) => {
     setData((prevCols) => {
@@ -21,6 +26,16 @@ const Kanban = ({ taskModal, setTaskModal }) => {
         return col;
       });
 
+      return updatedCols;
+    });
+  };
+
+  const handleDeleteTask = (task) => {
+    setData((prevCols) => {
+      const updatedCols = prevCols.map((col) => {
+        const updatedTasks = col.tasks.filter((t) => t.id !== task.id);
+        return { ...col, tasks: updatedTasks };
+      });
       return updatedCols;
     });
   };
@@ -57,9 +72,14 @@ const Kanban = ({ taskModal, setTaskModal }) => {
 
     setDraggedTask(null);
   };
+  const [activeTask, setActiveTask] = useState("");
 
   if (taskModal) {
     return <AddTaskModal setTaskModal={setTaskModal} handleAddTask={handleAddTask} />;
+  }
+
+  if (editModal && activeTask) {
+    return <EditTask handleEditModal={handleEditModal} activeTask={activeTask} />;
   }
 
   return (
@@ -74,6 +94,10 @@ const Kanban = ({ taskModal, setTaskModal }) => {
           onDragStart={handleDragStart}
           onDrop={handleDrop}
           handleAddTask={handleAddTask}
+          handleDeleteTask={handleDeleteTask}
+          handleEditModal={handleEditModal}
+          activeTask={activeTask}
+          setActiveTask={setActiveTask}
         />
       ))}
     </div>
