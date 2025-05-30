@@ -31,9 +31,9 @@
 .nav a {
   display: flex;
   align-items: center;
-  justify-content: center;
   vertical-align: middle;
   gap: 0.1rem;
+  justify-content: center;
 }
 
 #mobile-nav {
@@ -50,4 +50,45 @@
   @media (max-width: 426px) {
     justify-content: center;
   }
+}
+
+.profile-menu {
+  position: relative;
+  display: flex;
+}
+
+.profile-submenu {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  right: -50px;
+  top: 100%;
+  min-width: 200px;
+  min-height: fit-content;
+  padding: 0.5rem;
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  z-index: 999;
+  flex-direction: column;
+  transition: all 0.2s ease;
+  gap: 1rem;
+  border-radius: 4px;
+  align-self: flex-start;
+  transition: all 0.2s ease;
+}
+@media (max-width: 426px) {
+  .profile-submenu {
+    position: fixed;
+    top: 60px; /* adjust based on your navbar height */
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 0;
+    align-self: stretch;
+    padding: 1rem;
+  }
+}
+
+.profile-menu:hover .profile-submenu {
+  display: flex;
 }

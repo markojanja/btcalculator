@@ -42,16 +42,23 @@ const Header = () => {
               checked={theme === "" ? false : true}
             />
           </li>
-          <li className="mobile-hidden">
+          <li className="profile-menu">
             <FaUserCircle size={20} />
+
+            <div className="profile-submenu">
+              <a href="#" style={{ justifyContent: "flex-start" }}>
+                Marko Janjic
+              </a>
+              <div style={{ display: "flex", alignItems: "start" }}>
+                <a style={{ cursor: "pointer" }} onClick={handleLogOut}>
+                  <span>Log out</span>
+                  <RiLogoutBoxRLine size={20} />
+                </a>
+              </div>
+            </div>
           </li>
           <li id="mobile-hidden" onClick={toggleSidebar}>
             <RiMenu4Line size={20} />
-          </li>
-          <li id="mobile-hidden" onClick={toggleSidebar}>
-            <a style={{ cursor: "pointer" }} onClick={handleLogOut}>
-              <RiLogoutBoxRLine size={20} />
-            </a>
           </li>
         </ul>
       </nav>
