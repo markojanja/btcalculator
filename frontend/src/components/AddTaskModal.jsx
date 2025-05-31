@@ -1,4 +1,5 @@
 import "./AddTaskModal.css";
+import axios from "axios";
 import { useState, useRef } from "react";
 import ReactQuill from "react-quill";
 import Quill from "quill";
@@ -12,6 +13,7 @@ Quill.register("modules/imageResize", ImageResize);
 const AddTaskModal = () => {
   const quillRef = useRef(null);
   const { toggleAddTaskModal, addTask } = useKanban();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const modules = {
     toolbar: [
@@ -48,18 +50,24 @@ const AddTaskModal = () => {
   const [content, setContent] = useState("");
   const status = "TODO";
 
-  const handleAddTask = () => {
-    const newTask = {
-      title,
-      description: content,
-      status,
-    };
-    addTask(newTask);
-  };
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/tasks/add_task`,
+        {
+          title,
+          description: content,
+          status,
+        },
+        { withCredentials: true }
+      );
 
-  const handleSubmit = () => {
-    handleAddTask();
-    toggleAddTaskModal();
+      addTask(response.data.task);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      toggleAddTaskModal();
+    }
   };
 
   return (
@@ -98,6 +106,11 @@ const AddTaskModal = () => {
           onChange={setContent}
           modules={modules}
           formats={formats}
+        />
+        <input
+          type="text"
+          placeholder="test"
+          style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
         />
 
         <div>

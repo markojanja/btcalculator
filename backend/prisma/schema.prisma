@@ -40,12 +40,18 @@ enum Status {
     IT_TICKET
 }
 
+enum Priority {
+    LOW
+    MEDIUM
+    HIGH
+}
+
 model Tasks {
     id          String   @id @default(uuid())
     title       String
     description String
     status      Status   @default(TODO)
-    position    Float
+    priority    Priority @default(LOW)
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
     userId      String

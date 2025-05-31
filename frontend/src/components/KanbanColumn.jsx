@@ -13,7 +13,9 @@ const KanbanColumn = ({ name, column, onDragStart, onDrop }) => {
       onDrop={() => onDrop(column.colStatus)}
     >
       <div className="kanban-header">
-        <h4 style={{ alignSelf: "start" }}>{name}</h4>
+        <h4 style={{ alignSelf: "start" }}>
+          {name} <span>{column.tasks.length}</span>
+        </h4>
 
         <FaPlus onClick={() => toggleAddTaskModal()} />
       </div>

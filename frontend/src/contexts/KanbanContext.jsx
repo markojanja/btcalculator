@@ -1,25 +1,29 @@
 import { createContext, useState, useEffect } from "react";
-import { data } from "../utils/dummyData.js";
+import axios from "axios";
 
 const KanbanContext = createContext(null);
 
 const KanbanContextProvider = ({ children }) => {
-  const [columns, setColumns] = useState(data);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  const [columns, setColumns] = useState([]);
   const [taskModal, setTaskModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [activeTask, setActiveTask] = useState("");
 
   useEffect(() => {
-    console.log(columns);
-  }, [columns]);
+    const getTasks = async () => {
+      const res = await axios.get(`${BACKEND_URL}/tasks/my_tasks`, { withCredentials: true });
+
+      setColumns(res.data);
+    };
+    getTasks();
+  }, []);
 
   const toggleAddTaskModal = () => {
     setTaskModal(!taskModal);
-    console.log("helloAdd");
   };
 
   const toggleEditTaskModal = () => {
-    console.log("helloEdit");
     setEditModal(!editModal);
   };
 
@@ -27,11 +31,14 @@ const KanbanContextProvider = ({ children }) => {
     setColumns((prevCols) => {
       const updatedCols = prevCols.map((col) => {
         if (col.colStatus === newTask.status) {
-          return { ...col, tasks: [...col.tasks, newTask] };
+          const updated = { ...col, tasks: [...col.tasks, newTask] };
+          console.log("Added task to column:", updated);
+          return updated;
         }
         return col;
       });
 
+      console.log("Updated columns:", updatedCols);
       return updatedCols;
     });
   };
@@ -47,7 +54,8 @@ const KanbanContextProvider = ({ children }) => {
     });
   };
 
-  const deleteTask = (task) => {
+  const deleteTask = async (task) => {
+    console.log(task.id);
     setColumns((prevCols) => {
       const updatedCols = prevCols.map((col) => {
         const updatedTasks = col.tasks.filter((t) => t.id !== task.id);
@@ -55,6 +63,8 @@ const KanbanContextProvider = ({ children }) => {
       });
       return updatedCols;
     });
+
+    await axios.put(`${BACKEND_URL}/tasks/delete_task/${task.id}`, {}, { withCredentials: true });
   };
 
   const value = {

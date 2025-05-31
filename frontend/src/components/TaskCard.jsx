@@ -26,8 +26,19 @@ const TaskCard = ({ task, onDragStart }) => {
           />
         </div>
       </div>
-      <p style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-        <CgProfile /> <span>Marko janjic</span>
+      <p
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.3rem",
+          textTransform: "lowercase",
+          color: "gray",
+        }}
+      >
+        priority: <span>{task.priority}</span>
+      </p>
+      <p style={{ display: "flex", alignItems: "center", gap: "0.3rem", color: "gray" }}>
+        <CgProfile /> <span>{task.user.username}</span>
       </p>
     </div>
   );

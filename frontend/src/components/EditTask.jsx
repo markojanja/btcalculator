@@ -1,4 +1,5 @@
 import "./EditTask.css";
+import axios from "axios";
 import { useState, useRef } from "react";
 import ReactQuill from "react-quill";
 import Quill from "quill";
@@ -10,6 +11,7 @@ import useKanban from "../hooks/useKanban";
 Quill.register("modules/imageResize", ImageResize);
 
 const EditTask = () => {
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { toggleEditTaskModal, updateTask, activeTask } = useKanban();
   const quillRef = useRef(null);
 
@@ -50,9 +52,17 @@ const EditTask = () => {
   // const [position, setPosition] = useState(activeTask.position);
   // const [id, setID] = useState(activeTask.id);
 
-  const handleSave = () => {
-    updateTask({ ...activeTask, title, description: content });
-    toggleEditTaskModal();
+  const handleSave = async () => {
+    try {
+      const updatedTask = { ...activeTask, title, description: content };
+      console.log(activeTask);
+      await axios.put(`${BACKEND_URL}/tasks/edit_task`, updatedTask, { withCredentials: true });
+      updateTask(updatedTask);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      toggleEditTaskModal();
+    }
   };
 
   return (
