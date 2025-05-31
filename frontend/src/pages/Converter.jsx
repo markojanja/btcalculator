@@ -42,6 +42,7 @@ const Converter = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       });
 
       setSuccess(response.data.message);

@@ -1,10 +1,12 @@
 import "./Header.css";
 import useAuth from "../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
-import { IoChevronDown } from "react-icons/io5";
+import { useNavigate, NavLink } from "react-router-dom";
+import { useContext } from "react";
+
 import { RiMenu4Line } from "react-icons/ri";
-import { NavLink, useLocation } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
+import { RiLogoutBoxRLine } from "react-icons/ri";
+
 import ReactSwitch from "react-switch";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { NavContext } from "../contexts/NavContext";
@@ -12,15 +14,6 @@ import { NavContext } from "../contexts/NavContext";
 const Header = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { toggleSidebar } = useContext(NavContext);
-  const location = useLocation();
-  const [submenuOpen, setSubmenuOpen] = useState(false);
-  const isSubmenuActive = [
-    "/calculators/pip",
-    "/calculators/pnl",
-    "/calculators/margin",
-    "/calculators/swap",
-    "/converter",
-  ].includes(location.pathname);
 
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -33,7 +26,7 @@ const Header = () => {
       <nav className="nav">
         <div className="logo">
           <NavLink to="/">
-            <span className="is-active">BT</span>Calculator
+            <span className="is-active">CS</span>Board
           </NavLink>
         </div>
         <ul>
@@ -49,74 +42,23 @@ const Header = () => {
               checked={theme === "" ? false : true}
             />
           </li>
-          <li id="mobile-hidden">
-            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/">
-              MyTasks
-            </NavLink>
-          </li>
-          <li id="mobile-nav" onClick={toggleSidebar}>
-            <RiMenu4Line size={24} />
-          </li>
+          <li className="profile-menu">
+            <FaUserCircle size={20} />
 
-          <li
-            id="mobile-hidden"
-            onMouseEnter={() => setSubmenuOpen(true)}
-            onMouseLeave={() => setSubmenuOpen(false)}
-          >
-            <NavLink
-              className={`submenu ${isSubmenuActive ? "is-active" : ""}`}
-              to="/calculators/pip"
-            >
-              Calculators <IoChevronDown style={{ marginTop: "1px" }} />
-            </NavLink>
-            {submenuOpen && (
-              <ul className="dropdown">
-                <li>
-                  <NavLink
-                    className={({ isActive }) => (isActive ? "is-active" : "")}
-                    to="/calculators/pip"
-                  >
-                    Pip Value
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    className={({ isActive }) => (isActive ? "is-active" : "")}
-                    to="/calculators/pnl"
-                  >
-                    Profit & Loss
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    className={({ isActive }) => (isActive ? "is-active" : "")}
-                    to="/calculators/margin"
-                  >
-                    Margin Value
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    className={({ isActive }) => (isActive ? "is-active" : "")}
-                    to="/calculators/swap"
-                  >
-                    Swap Values
-                  </NavLink>
-                </li>
-              </ul>
-            )}
+            <div className="profile-submenu">
+              <a href="#" style={{ justifyContent: "flex-start" }}>
+                Marko Janjic
+              </a>
+              <div style={{ display: "flex", alignItems: "start" }}>
+                <a style={{ cursor: "pointer" }} onClick={handleLogOut}>
+                  <span>Log out</span>
+                  <RiLogoutBoxRLine size={20} />
+                </a>
+              </div>
+            </div>
           </li>
-
-          <li id="mobile-hidden">
-            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="converter">
-              Converter
-            </NavLink>
-          </li>
-
           <li id="mobile-hidden" onClick={toggleSidebar}>
-            <a style={{ cursor: "pointer" }} onClick={handleLogOut}>
-              Log Out
-            </a>
+            <RiMenu4Line size={20} />
           </li>
         </ul>
       </nav>

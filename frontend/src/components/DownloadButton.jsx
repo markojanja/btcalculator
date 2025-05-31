@@ -7,6 +7,7 @@ const DownloadButton = ({ jsonFile }) => {
     try {
       const response = await axios.get(`${BACKEND_URL}/downloads/updated_${jsonFile.name}`, {
         responseType: "blob",
+        withCredentials: true,
       });
 
       const url = window.URL.createObjectURL(new Blob([response.data]));

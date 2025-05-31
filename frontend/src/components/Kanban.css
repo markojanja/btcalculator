@@ -1,0 +1,11 @@
+.kanban-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  width: 100%;
+  padding: 1rem 2rem;
+  background-color: var(----secondary-color);
+  justify-content: space-evenly;
+  gap: 1rem;
+  overflow-x: auto;
+}

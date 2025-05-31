@@ -7,10 +7,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --background-color: oklch(21% 0.006 285.885);
+  --background-color: oklch(14.5% 0 0);
   --text-color: rgba(255, 255, 255, 1);
   --accent-color: oklch(51.4% 0.222 16.935);
-  --secondary-color: oklch(14.1% 0.005 285.823);
+  --secondary-color: oklch(21% 0.006 285.885);
   --box-shadow: 0 2px 5px rgb(245, 245, 244, 0.1);
   color: var(--text-color);
 }
@@ -18,10 +18,10 @@
 /*For the theme switch update color directly on the switch component*/
 
 .light {
-  --background-color: oklch(97% 0.001 106.424);
+  --background-color: oklch(98.5% 0 0);
   --text-color: oklch(14.1% 0.005 285.823);
-  --secondary-color: oklch(98.5% 0 0);
-  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  --secondary-color: oklch(97% 0 0);
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -29,14 +29,21 @@
   padding: 0;
   box-sizing: border-box;
 }
-button,
+
 a {
   font-weight: 600;
   text-decoration: none;
   color: var(--text-color);
 }
+
 button {
+  font-weight: 600;
+  text-decoration: none;
   color: rgba(255, 255, 255, 1);
+}
+
+button svg {
+  fill: rgba(255, 255, 255, 1);
 }
 
 body {
@@ -65,6 +72,7 @@ li {
 }
 svg {
   fill: var(--text-color);
+  cursor: pointer;
 }
 
 button {

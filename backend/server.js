@@ -1,16 +1,19 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import passport from "passport";
 import session from "express-session";
+import path from "path";
+import url from "url";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import prisma from "./db/prisma.js";
 import UploadRouter from "./routes/uploadFiles.route.js";
 import DownloadRouter from "./routes/downloadFiles.route.js";
-import path from "path";
-import url from "url";
-import { createFolders } from "./utils/createFolders.js";
 import LoginRouter from "./routes/auth.route.js";
-import passport from "passport";
+import TasksRouter from "./routes/tasks.route.js";
+import { createFolders } from "./utils/createFolders.js";
+
+import { isAuth } from "./middleware/isAuth.js";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,7 +33,7 @@ app.use(
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
     },
   })
 );
@@ -45,7 +48,10 @@ app.use(
   })
 );
 
-app.set("trust proxy", 1); // for render
+// this line is required by render
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 
 app.use(express.json());
 app.use(cookieParser());
@@ -55,8 +61,9 @@ createFolders();
 
 app.use("/", LoginRouter);
 
-app.use("/", UploadRouter);
-app.use("/", DownloadRouter);
+app.use("/", isAuth, UploadRouter);
+app.use("/", isAuth, DownloadRouter);
+app.use("/", isAuth, TasksRouter);
 
 const PORT = process.env.PORT || 3500;
 

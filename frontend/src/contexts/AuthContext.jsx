@@ -1,11 +1,12 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import Loading from "../components/Loading";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -13,7 +14,6 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkIfLoggedIn = async () => {
       try {
-        setLoading(true);
         const res = await axios.get(`${BACKEND_URL}/auth/status`, {
           withCredentials: true,
         });
@@ -58,7 +58,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, error, loading, login, logout }}>
-      {children}
+      {loading ? <Loading /> : children}
     </AuthContext.Provider>
   );
 };
