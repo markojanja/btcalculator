@@ -2,15 +2,14 @@ import "./TaskCard.css";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
+import useKanban from "../hooks/useKanban";
 
-const TaskCard = ({ task, onDragStart, handleDeleteTask, handleEditModal, setActiveTask }) => {
-  const handleDelete = () => {
-    handleDeleteTask(task);
-  };
+const TaskCard = ({ task, onDragStart }) => {
+  const { toggleEditTaskModal, deleteTask, setActiveTask } = useKanban();
 
   const toggleModal = (task) => {
-    handleEditModal();
     setActiveTask(task);
+    toggleEditTaskModal();
     console.log(task);
   };
 
@@ -20,7 +19,11 @@ const TaskCard = ({ task, onDragStart, handleDeleteTask, handleEditModal, setAct
         <h4>{task.title}</h4>
         <div className="tasks-btn-group">
           <FaRegEdit onClick={() => toggleModal(task)} />
-          <MdDeleteOutline onClick={handleDelete} />
+          <MdDeleteOutline
+            onClick={() => {
+              deleteTask(task);
+            }}
+          />
         </div>
       </div>
       <p style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>

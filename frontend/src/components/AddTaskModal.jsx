@@ -5,11 +5,13 @@ import Quill from "quill";
 import ImageResize from "quill-image-resize-module-react";
 import "react-quill/dist/quill.snow.css";
 import { IoMdClose } from "react-icons/io";
+import useKanban from "../hooks/useKanban";
 
 Quill.register("modules/imageResize", ImageResize);
 
-const AddTaskModal = ({ setTaskModal, handleAddTask }) => {
+const AddTaskModal = () => {
   const quillRef = useRef(null);
+  const { toggleAddTaskModal, addTask } = useKanban();
 
   const modules = {
     toolbar: [
@@ -41,35 +43,29 @@ const AddTaskModal = ({ setTaskModal, handleAddTask }) => {
     "image",
     "code-block",
   ];
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [status, setStatus] = useState("TODO");
-  const [position, setPosition] = useState(100);
-  const [id, setID] = useState(`markos-id-1234-${new Date()}`);
+  const status = "TODO";
 
-  const handleTaskModal = () => {
-    setTaskModal(false);
-  };
-
-  const addTask = () => {
+  const handleAddTask = () => {
     const newTask = {
       title,
       description: content,
       status,
-      id,
     };
-    handleAddTask(newTask);
+    addTask(newTask);
   };
 
   const handleSubmit = () => {
-    addTask();
-    handleTaskModal();
+    handleAddTask();
+    toggleAddTaskModal();
   };
 
   return (
     <div className="add-task-modal">
       <div style={{ display: "flex", justifyContent: "flex-end", padding: "0.5rem 3rem" }}>
-        <IoMdClose size={24} onClick={handleTaskModal} />
+        <IoMdClose size={24} onClick={() => toggleAddTaskModal()} />
       </div>
       <div
         style={{

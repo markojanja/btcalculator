@@ -1,20 +1,10 @@
+import useKanban from "../hooks/useKanban";
 import "./KanbanColumn.css";
 import TaskCard from "./TaskCard";
 import { FaPlus } from "react-icons/fa";
 
-const KanbanColumn = ({
-  name,
-  column,
-  setTaskModal,
-  onDragStart,
-  onDrop,
-  handleDeleteTask,
-  handleEditModal,
-  setActiveTask,
-}) => {
-  const handleToggleModal = () => {
-    setTaskModal(true);
-  };
+const KanbanColumn = ({ name, column, onDragStart, onDrop }) => {
+  const { toggleAddTaskModal } = useKanban();
 
   return (
     <div
@@ -25,19 +15,11 @@ const KanbanColumn = ({
       <div className="kanban-header">
         <h4 style={{ alignSelf: "start" }}>{name}</h4>
 
-        <FaPlus onClick={handleToggleModal} />
+        <FaPlus onClick={() => toggleAddTaskModal()} />
       </div>
 
       {column.tasks.map((task) => (
-        <TaskCard
-          key={task.id}
-          task={task}
-          taskItem={task}
-          onDragStart={onDragStart}
-          handleDeleteTask={handleDeleteTask}
-          handleEditModal={handleEditModal}
-          setActiveTask={setActiveTask}
-        />
+        <TaskCard key={task.id} task={task} onDragStart={onDragStart} />
       ))}
     </div>
   );

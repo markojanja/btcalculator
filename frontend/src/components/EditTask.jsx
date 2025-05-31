@@ -5,11 +5,12 @@ import Quill from "quill";
 import ImageResize from "quill-image-resize-module-react";
 import "react-quill/dist/quill.snow.css";
 import { IoMdClose } from "react-icons/io";
+import useKanban from "../hooks/useKanban";
 
 Quill.register("modules/imageResize", ImageResize);
 
-const EditTask = ({ handleEditModal, activeTask }) => {
-  console.log(activeTask);
+const EditTask = () => {
+  const { toggleEditTaskModal, updateTask, activeTask } = useKanban();
   const quillRef = useRef(null);
 
   const modules = {
@@ -42,16 +43,22 @@ const EditTask = ({ handleEditModal, activeTask }) => {
     "image",
     "code-block",
   ];
+
   const [title, setTitle] = useState(activeTask.title);
   const [content, setContent] = useState(activeTask.description);
-  const [status, setStatus] = useState(activeTask.status);
-  const [position, setPosition] = useState(activeTask.position);
-  const [id, setID] = useState(activeTask.id);
+  // const [status, setStatus] = useState(activeTask.status);
+  // const [position, setPosition] = useState(activeTask.position);
+  // const [id, setID] = useState(activeTask.id);
+
+  const handleSave = () => {
+    updateTask({ ...activeTask, title, description: content });
+    toggleEditTaskModal();
+  };
 
   return (
     <div className="edit-task-modal">
       <div style={{ display: "flex", justifyContent: "flex-end", padding: "0.5rem 3rem" }}>
-        <IoMdClose size={24} onClick={handleEditModal} />
+        <IoMdClose size={24} onClick={() => toggleEditTaskModal()} />
       </div>
       <div
         style={{
@@ -88,7 +95,7 @@ const EditTask = ({ handleEditModal, activeTask }) => {
         />
 
         <div>
-          <button onClick={() => console.log("hello")}>save</button>
+          <button onClick={() => handleSave()}>save</button>
         </div>
       </div>
     </div>

@@ -1,11 +1,9 @@
-import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import Kanban from "../components/Kanban";
+import useKanban from "../hooks/useKanban";
 
 const Tasks = () => {
-  const [taskModal, setTaskModal] = useState(false);
-  const [editModal, setEditModal] = useState(false);
-
+  const { toggleAddTaskModal } = useKanban();
   return (
     <div className="tasks-wrapper">
       <div className="tasks-header">
@@ -13,18 +11,13 @@ const Tasks = () => {
         <button
           className="btn-outline"
           onClick={() => {
-            setTaskModal(!taskModal);
+            toggleAddTaskModal();
           }}
         >
           New <FaPlus size={12} color="white!important" />
         </button>
       </div>
-      <Kanban
-        taskModal={taskModal}
-        setTaskModal={setTaskModal}
-        editModal={editModal}
-        setEditModal={setEditModal}
-      />
+      <Kanban />
     </div>
   );
 };
