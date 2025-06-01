@@ -50,7 +50,7 @@ const Header = () => {
               <a href="#" style={{ justifyContent: "flex-start" }}>
                 <FaUser size={20} style={{ marginRight: "8px" }} />
                 <span>
-                  {user.firstname} {user.lastname}
+                  {user?.firstname} {user?.lastname}
                 </span>
               </a>
               <div style={{ display: "flex", alignItems: "start" }}>
