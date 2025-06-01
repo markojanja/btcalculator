@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { RiMenu4Line } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
 import { RiLogoutBoxRLine } from "react-icons/ri";
+import { FaUser } from "react-icons/fa";
 
 import ReactSwitch from "react-switch";
 import { ThemeContext } from "../contexts/ThemeContext";
@@ -15,7 +16,7 @@ const Header = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { toggleSidebar } = useContext(NavContext);
 
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const handleLogOut = async () => {
     await logout();
@@ -47,12 +48,15 @@ const Header = () => {
 
             <div className="profile-submenu">
               <a href="#" style={{ justifyContent: "flex-start" }}>
-                Marko Janjic
+                <FaUser size={20} style={{ marginRight: "8px" }} />
+                <span>
+                  {user.firstname} {user.lastname}
+                </span>
               </a>
               <div style={{ display: "flex", alignItems: "start" }}>
                 <a style={{ cursor: "pointer" }} onClick={handleLogOut}>
+                  <RiLogoutBoxRLine size={20} style={{ marginRight: "8px" }} />
                   <span>Log out</span>
-                  <RiLogoutBoxRLine size={20} />
                 </a>
               </div>
             </div>

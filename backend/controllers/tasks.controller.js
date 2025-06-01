@@ -5,7 +5,7 @@ export const myTasks = async (req, res) => {
   console.log("Fetching tasks...");
   const COLUMNS = [
     { title: "TODO", colStatus: "TODO" },
-    { title: "IN PROGRESS", colStatus: "IN_ROGRESS" },
+    { title: "IN PROGRESS", colStatus: "IN_PROGRESS" },
     { title: "CS TICKET", colStatus: "CS_TICKET" },
     { title: "IT TICKET", colStatus: "IT_TICKET" },
     { title: "COMPLETED", colStatus: "COMPLETED" },
@@ -39,14 +39,16 @@ export const myTasks = async (req, res) => {
 
 export const addTask = async (req, res) => {
   try {
-    const task = req.body;
+    const { title, description, priority, status } = req.body;
+
+    console.log(req.body);
 
     const newTask = await prisma.tasks.create({
       data: {
-        title: task.title,
-        description: task.description,
-        priority: task.priority,
-        status: task.status,
+        title,
+        description,
+        priority,
+        status,
         userId: req.user.id,
       },
       include: {

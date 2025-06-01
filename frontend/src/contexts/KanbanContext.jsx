@@ -10,12 +10,13 @@ const KanbanContextProvider = ({ children }) => {
   const [editModal, setEditModal] = useState(false);
   const [activeTask, setActiveTask] = useState("");
 
-  useEffect(() => {
-    const getTasks = async () => {
-      const res = await axios.get(`${BACKEND_URL}/tasks/my_tasks`, { withCredentials: true });
+  const getTasks = async () => {
+    const res = await axios.get(`${BACKEND_URL}/tasks/my_tasks`, { withCredentials: true });
 
-      setColumns(res.data);
-    };
+    setColumns(res.data);
+  };
+
+  useEffect(() => {
     getTasks();
   }, []);
 
@@ -79,6 +80,7 @@ const KanbanContextProvider = ({ children }) => {
     updateTask,
     deleteTask,
     setColumns,
+    getTasks,
   };
 
   return <KanbanContext.Provider value={value}>{children}</KanbanContext.Provider>;

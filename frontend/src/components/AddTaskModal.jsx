@@ -45,10 +45,13 @@ const AddTaskModal = () => {
     "image",
     "code-block",
   ];
+  const STATUS = ["TODO", "IN_PROGRESS", "CS_TICKET", "IT_TICKET"];
+  const PRIORITY = ["LOW", "MEDIUM", "HIGH"];
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const status = "TODO";
+  const [status, setStatus] = useState(STATUS[0]);
+  const [priority, setPriority] = useState(PRIORITY[0]);
 
   const handleSubmit = async () => {
     try {
@@ -58,6 +61,7 @@ const AddTaskModal = () => {
           title,
           description: content,
           status,
+          priority,
         },
         { withCredentials: true }
       );
@@ -107,11 +111,33 @@ const AddTaskModal = () => {
           modules={modules}
           formats={formats}
         />
-        <input
-          type="text"
-          placeholder="test"
-          style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
-        />
+        <div className="input-group flex-col">
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
+          >
+            {STATUS.map((stat) => (
+              <option key={stat} value={stat}>
+                {stat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="input-group flex-col">
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
+          >
+            {PRIORITY.map((prior) => (
+              <option key={prior} value={prior}>
+                {prior}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div>
           <button onClick={handleSubmit}>save</button>
