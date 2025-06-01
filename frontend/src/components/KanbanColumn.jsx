@@ -17,7 +17,7 @@ const KanbanColumn = ({ name, column, onDragStart, onDrop }) => {
           {name} <span>{column.tasks.length}</span>
         </h4>
 
-        <FaPlus onClick={() => toggleAddTaskModal()} />
+        {name !== "COMPLETED" && <FaPlus onClick={() => toggleAddTaskModal()} />}
       </div>
 
       {column.tasks.map((task) => (

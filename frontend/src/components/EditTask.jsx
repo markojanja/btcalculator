@@ -12,7 +12,7 @@ Quill.register("modules/imageResize", ImageResize);
 
 const EditTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const { toggleEditTaskModal, updateTask, activeTask } = useKanban();
+  const { toggleEditTaskModal, updateTask, activeTask, getTasks } = useKanban();
   const quillRef = useRef(null);
 
   const modules = {
@@ -46,21 +46,23 @@ const EditTask = () => {
     "code-block",
   ];
 
+  const STATUS = ["TODO", "IN_PROGRESS", "CS_TICKET", "IT_TICKET"];
+  const PRIORITY = ["LOW", "MEDIUM", "HIGH"];
+
   const [title, setTitle] = useState(activeTask.title);
   const [content, setContent] = useState(activeTask.description);
-  // const [status, setStatus] = useState(activeTask.status);
-  // const [position, setPosition] = useState(activeTask.position);
-  // const [id, setID] = useState(activeTask.id);
+  const [status, setStatus] = useState(activeTask.status);
+  const [priority, setPriority] = useState(activeTask.priority);
 
   const handleSave = async () => {
     try {
-      const updatedTask = { ...activeTask, title, description: content };
-      console.log(activeTask);
-      await axios.put(`${BACKEND_URL}/tasks/edit_task`, updatedTask, { withCredentials: true });
+      const updatedTask = { ...activeTask, title, description: content, status, priority };
       updateTask(updatedTask);
+      await axios.put(`${BACKEND_URL}/tasks/edit_task`, updatedTask, { withCredentials: true });
     } catch (error) {
       console.log(error);
     } finally {
+      await getTasks();
       toggleEditTaskModal();
     }
   };
@@ -103,6 +105,34 @@ const EditTask = () => {
           modules={modules}
           formats={formats}
         />
+
+        <div className="input-group flex-col">
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
+          >
+            {STATUS.map((stat) => (
+              <option key={stat} value={stat}>
+                {stat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="input-group flex-col">
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
+          >
+            {PRIORITY.map((prior) => (
+              <option key={prior} value={prior}>
+                {prior}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div>
           <button onClick={() => handleSave()}>save</button>

@@ -39,7 +39,7 @@ model Session {
 
 enum Status {
     TODO
-    IN_ROGRESS
+    IN_PROGRESS
     COMPLETED
     CS_TICKET
     IT_TICKET

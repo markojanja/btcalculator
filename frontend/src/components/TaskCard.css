@@ -24,3 +24,7 @@
   gap: 0.3rem;
   margin-top: 1px;
 }
+
+.task-span::first-letter {
+  text-transform: capitalize;
+}
