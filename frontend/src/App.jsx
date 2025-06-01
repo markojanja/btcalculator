@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import { AuthProvider } from "./contexts/AuthContext";
 import Protected from "./components/Protected";
 import Tasks from "./pages/Tasks";
+import Profile from "./pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +25,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Protected />,
-        children: [{ index: true, element: <Tasks /> }],
+        children: [
+          { index: true, element: <Tasks /> },
+          { path: "/profile", element: <Profile /> },
+        ],
       },
       {
         path: "/calculators",

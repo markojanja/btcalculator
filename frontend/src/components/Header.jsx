@@ -1,6 +1,6 @@
 import "./Header.css";
 import useAuth from "../hooks/useAuth";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate, NavLink, Link } from "react-router-dom";
 import { useContext } from "react";
 
 import { RiMenu4Line } from "react-icons/ri";
@@ -47,12 +47,12 @@ const Header = () => {
             <FaUserCircle size={20} />
 
             <div className="profile-submenu">
-              <a href="#" style={{ justifyContent: "flex-start" }}>
+              <Link to={"/profile"} style={{ justifyContent: "flex-start" }}>
                 <FaUser size={20} style={{ marginRight: "8px" }} />
                 <span>
                   {user?.firstname} {user?.lastname}
                 </span>
-              </a>
+              </Link>
               <div style={{ display: "flex", alignItems: "start" }}>
                 <a style={{ cursor: "pointer" }} onClick={handleLogOut}>
                   <RiLogoutBoxRLine size={20} style={{ marginRight: "8px" }} />
