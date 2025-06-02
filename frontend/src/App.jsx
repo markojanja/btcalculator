@@ -12,6 +12,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Protected from "./components/Protected";
 import Tasks from "./pages/Tasks";
 import Profile from "./pages/Profile";
+import Error from "./pages/Error";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
+    errorElement: <Error />,
     element: <Root />,
     children: [
       {
