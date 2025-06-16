@@ -13,6 +13,7 @@ import Protected from "./components/Protected";
 import Tasks from "./pages/Tasks";
 import Profile from "./pages/Profile";
 import Error from "./pages/Error";
+import Users from "./pages/Users";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Tasks /> },
           { path: "/profile", element: <Profile /> },
+          { path: "/users", element: <Users /> },
         ],
       },
       {

@@ -10,8 +10,14 @@ const NavContextProvider = ({ children }) => {
     console.log(sidebarActive);
   };
 
+  const closeSidebar = () => {
+    setSidebarActive(false);
+  };
+
   return (
-    <NavContext.Provider value={{ sidebarActive, toggleSidebar }}>{children}</NavContext.Provider>
+    <NavContext.Provider value={{ sidebarActive, closeSidebar, toggleSidebar }}>
+      {children}
+    </NavContext.Provider>
   );
 };
 

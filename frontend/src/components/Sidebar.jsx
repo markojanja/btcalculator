@@ -8,7 +8,7 @@ import { IoMdClose } from "react-icons/io";
 const Sidebar = () => {
   const location = useLocation();
   const [expanded, setExpanded] = useState(false);
-  const { sidebarActive, toggleSidebar } = useContext(NavContext);
+  const { sidebarActive, closeSidebar } = useContext(NavContext);
   const isSubmenuActive = [
     "/calculators/pip",
     "/calculators/pnl",
@@ -21,9 +21,9 @@ const Sidebar = () => {
   };
 
   return (
-    <div className={sidebarActive ? "sidebar show" : "sidebar"} onMouseLeave={toggleSidebar}>
+    <div className={sidebarActive ? "sidebar show" : "sidebar"} onMouseLeave={closeSidebar}>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <IoMdClose size={20} onClick={toggleSidebar} />
+        <IoMdClose size={20} onClick={closeSidebar} />
       </div>
       <ul className="sidebar-wrapper">
         <li id="mobile-hidden">
@@ -101,12 +101,12 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li id="mobile-hidden">
-          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/features">
+          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/guides">
             User Guides
           </NavLink>
         </li>
         <li id="mobile-hidden">
-          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/features">
+          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/users">
             User Management
           </NavLink>
         </li>
