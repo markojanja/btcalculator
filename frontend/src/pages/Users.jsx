@@ -2,6 +2,7 @@ import "./Users.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import UsersCard from "../components/UsersCard";
+import { Link } from "react-router-dom";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -21,7 +22,9 @@ const Users = () => {
     <div className="users-wrapper">
       <div className="users-header">
         <h3>Users</h3>
-        <button className="btn-outline">New user</button>
+        <Link className="btn-outline" style={{ borderRadius: "8px" }} to={"/users/add"}>
+          New user
+        </Link>
       </div>
       <div className="users-list">
         {users.map((user) => (

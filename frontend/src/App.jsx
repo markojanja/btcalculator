@@ -14,6 +14,7 @@ import Tasks from "./pages/Tasks";
 import Profile from "./pages/Profile";
 import Error from "./pages/Error";
 import Users from "./pages/Users";
+import AddUser from "./pages/AddUser";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
           { index: true, element: <Tasks /> },
           { path: "/profile", element: <Profile /> },
           { path: "/users", element: <Users /> },
+          { path: "/users/add", element: <AddUser /> },
         ],
       },
       {
