@@ -11,6 +11,10 @@ import Login from "./pages/Login";
 import { AuthProvider } from "./contexts/AuthContext";
 import Protected from "./components/Protected";
 import Tasks from "./pages/Tasks";
+import Profile from "./pages/Profile";
+import Error from "./pages/Error";
+import Users from "./pages/Users";
+import AddUser from "./pages/AddUser";
 
 const router = createBrowserRouter([
   {
@@ -19,12 +23,18 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
+    errorElement: <Error />,
     element: <Root />,
     children: [
       {
         path: "/",
         element: <Protected />,
-        children: [{ index: true, element: <Tasks /> }],
+        children: [
+          { index: true, element: <Tasks /> },
+          { path: "/profile", element: <Profile /> },
+          { path: "/users", element: <Users /> },
+          { path: "/users/add", element: <AddUser /> },
+        ],
       },
       {
         path: "/calculators",

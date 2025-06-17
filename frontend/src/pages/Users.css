@@ -1,0 +1,27 @@
+.users-wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  padding: 2rem;
+  flex: 1;
+}
+
+.users-header {
+  display: flex;
+  align-items: start;
+  padding: 1rem 2rem;
+  justify-content: space-between;
+  border-bottom: 1px solid lightgray;
+}
+
+.users-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  padding: 1rem 2rem;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  overflow-x: auto;
+}

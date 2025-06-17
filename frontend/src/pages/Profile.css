@@ -1,0 +1,55 @@
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-card {
+  display: flex;
+  background-color: var(--secondary-color);
+  margin-top: 2rem;
+  padding: 2rem;
+  width: 60%;
+  margin-inline: auto;
+  box-shadow: var(--box-shadow);
+  border-radius: 4px;
+  gap: 1rem;
+  align-items: center;
+}
+.profile-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30%;
+}
+.profile-icon svg {
+  height: 100%;
+  width: 100%;
+}
+.profile-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 70%;
+  gap: 1rem;
+}
+.profile-info-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.password-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 60%;
+  margin: 0 auto;
+  justify-content: space-between;
+  padding: 2rem;
+  border-radius: 4px;
+  background: var(--secondary-color);
+  box-shadow: var(--box-shadow);
+}
