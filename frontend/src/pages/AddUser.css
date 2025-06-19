@@ -39,3 +39,17 @@
   gap: 0.5rem;
   width: 100%;
 }
+.error-popup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  width: 100%;
+  background-color: oklch(93.6% 0.032 17.717);
+  border-radius: 8px;
+  border: 2px solid oklch(39.6% 0.141 25.723);
+}
+.error-popup p {
+  color: oklch(39.6% 0.141 25.723);
+  font-weight: bold;
+}
