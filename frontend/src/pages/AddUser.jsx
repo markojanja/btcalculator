@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./AddUser.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,17 @@ const AddUser = () => {
   const [role, setRole] = useState("ADMIN");
   const [activeUser, setActiveUser] = useState(true);
   const [centroid, setCentroid] = useState(false);
+  const [errorPopup, setErrorPopup] = useState("");
+
+  const matchPwd = password === repeatPassword && repeatPassword.length > 3 ? true : false;
+
+  useEffect(() => {
+    if (firstname || lastname) {
+      setUsername(`${firstname.toLowerCase()}.${lastname.toLowerCase()}`);
+    } else {
+      setUsername("");
+    }
+  }, [firstname, lastname]);
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
@@ -31,23 +42,40 @@ const AddUser = () => {
       centroid,
     };
 
-    const res = await axios.post(
-      `${BACKEND_URL}/users/new`,
-      { ...newUser },
-      { withCredentials: true }
-    );
-    console.log(res.data);
-    navigate("/users");
+    try {
+      const res = await axios.post(
+        `${BACKEND_URL}/users/new`,
+        { ...newUser },
+        { withCredentials: true }
+      );
+      console.log(res.data);
+      setErrorPopup("");
+      navigate("/users");
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.message) {
+        console.log(err.response.data.message);
+        setErrorPopup(err.response.data.message);
+      } else {
+        console.log("Something went wrong. Please try again.");
+        setErrorPopup("Something went wrong. Please try again.");
+      }
+    }
   };
 
   return (
     <div className="modal-wrapper">
       <div className="form-container">
+        {errorPopup && (
+          <div className="error-popup">
+            <p>{errorPopup}</p>
+          </div>
+        )}
         <form action="post" onSubmit={handleSubmit}>
           <div className="form-group">
             <label>firstname</label>
             <input
               type="text"
+              value={firstname}
               onChange={(e) => {
                 setFirstname(e.target.value);
               }}
@@ -57,6 +85,7 @@ const AddUser = () => {
             <label>lastname</label>
             <input
               type="text"
+              value={lastname}
               onChange={(e) => {
                 setLastname(e.target.value);
               }}
@@ -66,6 +95,7 @@ const AddUser = () => {
             <label>username</label>
             <input
               type="text"
+              value={username}
               onChange={(e) => {
                 setUsername(e.target.value);
               }}
@@ -75,6 +105,7 @@ const AddUser = () => {
             <label>email</label>
             <input
               type="email"
+              value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
@@ -87,6 +118,9 @@ const AddUser = () => {
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
+              style={{
+                borderColor: matchPwd ? "limegreen" : repeatPassword.length > 4 ? "red" : "",
+              }}
             />
           </div>
           <div className="form-group">
@@ -96,7 +130,13 @@ const AddUser = () => {
               onChange={(e) => {
                 setRepeatPassword(e.target.value);
               }}
+              style={{
+                borderColor: matchPwd ? "limegreen" : repeatPassword.length > 4 ? "red" : "",
+              }}
             />
+            {!matchPwd && repeatPassword.length > 4 && (
+              <p style={{ color: "oklch(50.5% 0.213 27.518)" }}>passwords do not match</p>
+            )}
           </div>
           <div className="form-group">
             <label>Role</label>
@@ -136,7 +176,9 @@ const AddUser = () => {
               }}
             />
           </div>
-          <button type="submit">Save</button>
+          <button disabled={!matchPwd} type="submit" style={{ opacity: !matchPwd ? "0.7" : "1" }}>
+            Save
+          </button>
         </form>
       </div>
     </div>

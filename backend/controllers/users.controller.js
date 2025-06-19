@@ -15,14 +15,14 @@ export const addUser = async (req, res) => {
   const { firstname, lastname, username, email, password, active, role, centroid } = req.body;
 
   try {
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findFirst({
       where: {
-        email: email,
+        OR: [{ email: email }, { username: username }],
       },
     });
 
     if (existingUser) {
-      return res.status(401).json({ message: "User with this email already exists." });
+      return res.status(409).json({ message: "User with this email or username already exists." });
     }
 
     const salt = await bcrypt.genSalt(10);
