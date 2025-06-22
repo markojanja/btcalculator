@@ -18,7 +18,7 @@
 .form-container {
   display: flex;
   flex-direction: column;
-  width: 33%;
+  width: 50%;
   margin: 0 auto;
   background-color: var(--secondary-color);
   padding: 1rem;

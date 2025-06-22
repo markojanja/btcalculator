@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import "./AddUser.css";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
-const AddUser = () => {
+const EditUser = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [username, setUsername] = useState("");
@@ -13,26 +12,43 @@ const AddUser = () => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [role, setRole] = useState("ADMIN");
-  const [activeUser, setActiveUser] = useState(true);
+  const [activeUser, setActiveUser] = useState(false);
   const [centroid, setCentroid] = useState(false);
   const [errorPopup, setErrorPopup] = useState("");
+
+  const navigate = useNavigate();
+  const { id } = useParams();
 
   const matchPwd = password === repeatPassword && repeatPassword.length > 3 ? true : false;
 
   useEffect(() => {
-    if (firstname || lastname) {
-      setUsername(`${firstname.toLowerCase()}.${lastname.toLowerCase()}`);
-    } else {
-      setUsername("");
-    }
-  }, [firstname, lastname]);
+    const getUser = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/users/${id}/edit`, {
+          withCredentials: true,
+        });
+
+        const user = response.data;
+        console.log(user);
+        setFirstname(user.firstname);
+        setLastname(user.lastname);
+        setUsername(user.username);
+        setEmail(user.email);
+        setRole(user.role);
+        setActiveUser(user.active);
+        setCentroid(user.centroid);
+      } catch (error) {
+        setErrorPopup(error);
+      }
+    };
+    getUser();
+  }, []);
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newUser = {
+    const editedUser = {
       firstname,
       lastname,
       username,
@@ -40,14 +56,14 @@ const AddUser = () => {
       password,
       repeatPassword,
       role,
-      acitve: activeUser,
+      active: activeUser,
       centroid,
     };
 
     try {
-      const res = await axios.post(
-        `${BACKEND_URL}/users/new`,
-        { ...newUser },
+      const res = await axios.put(
+        `${BACKEND_URL}/users/${id}/edit`,
+        { ...editedUser },
         { withCredentials: true }
       );
       console.log(res.data);
@@ -72,7 +88,7 @@ const AddUser = () => {
             <p>{errorPopup}</p>
           </div>
         )}
-        <h3 style={{ textAlign: "left" }}>New User user</h3>
+        <h3 style={{ textAlign: "left" }}>Edit User</h3>
         <form action="post" onSubmit={handleSubmit}>
           <div className="form-group">
             <label>firstname</label>
@@ -118,6 +134,7 @@ const AddUser = () => {
             <label>password</label>
             <input
               type="password"
+              value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
@@ -130,6 +147,7 @@ const AddUser = () => {
             <label>repeat password</label>
             <input
               type="password"
+              value={repeatPassword}
               onChange={(e) => {
                 setRepeatPassword(e.target.value);
               }}
@@ -168,9 +186,9 @@ const AddUser = () => {
             />
           </div>
           <div className="checkbox-group">
-            <label htmlFor="checkbox">Centroid</label>
+            <label htmlFor="checkbox2">Centroid</label>
             <input
-              id="checkbox"
+              id="checkbox2"
               type="checkbox"
               checked={centroid}
               className="w-auto"
@@ -180,7 +198,7 @@ const AddUser = () => {
             />
           </div>
           <button disabled={!matchPwd} type="submit" style={{ opacity: !matchPwd ? "0.7" : "1" }}>
-            Save
+            Edit
           </button>
         </form>
       </div>
@@ -196,4 +214,4 @@ const AddUser = () => {
   );
 };
 
-export default AddUser;
+export default EditUser;

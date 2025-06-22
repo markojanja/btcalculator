@@ -5,6 +5,7 @@ import { MdOutlineEmail } from "react-icons/md";
 import { GrStatusGoodSmall } from "react-icons/gr";
 import { CiCalendarDate } from "react-icons/ci";
 import { FaRegEdit } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const UsersCard = ({ user }) => {
   return (
@@ -13,7 +14,9 @@ const UsersCard = ({ user }) => {
         <h4>
           {user.firstname} {user.lastname}
         </h4>
-        <FaRegEdit />
+        <Link to={`/users/edit/${user.id}`}>
+          <FaRegEdit />
+        </Link>
       </div>
       <div className="card-info">
         <div className="card-info-section">
