@@ -14,6 +14,20 @@ export const getPublishedFeatures = async (req, res) => {
   return res.status(200).json(publishedFeatures);
 };
 
+export const featureDeatils = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const feature = await prisma.features.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    return res.status(200).json(feature);
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong!" });
+  }
+};
+
 export const addFeature = async (req, res) => {
   const { title, description, releaseDate, released, published } = req.body;
   console.log(req.body, req.user.id);

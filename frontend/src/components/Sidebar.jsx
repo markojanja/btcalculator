@@ -97,7 +97,7 @@ const Sidebar = () => {
         </li>
         <li id="mobile-hidden">
           <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/features">
-            New features
+            Feature Announcements
           </NavLink>
         </li>
         <li id="mobile-hidden">

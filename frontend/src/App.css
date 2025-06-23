@@ -479,3 +479,7 @@ select {
   min-height: 250px;
   height: auto;
 }
+
+.ql-syntax {
+  color: var(--text-color);
+}
