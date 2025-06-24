@@ -110,7 +110,7 @@ const Sidebar = () => {
             User Guides
           </NavLink>
         </li>
-        {user.role === "ADMIN" && (
+        {user?.role === "ADMIN" && (
           <li id="mobile-hidden">
             <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/users">
               User Management
