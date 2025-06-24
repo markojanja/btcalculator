@@ -11,4 +11,9 @@
   box-shadow: var(--box-shadow);
   padding: 0.5rem 1rem;
   text-align: left;
+  cursor: pointer;
+}
+.features-card:hover {
+  background: var(--accent-color);
+  transition: all 0.2s ease;
 }

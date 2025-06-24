@@ -7,6 +7,13 @@ export const getPublishedFeatures = async (req, res) => {
     where: {
       published: true,
     },
+    include: {
+      user: {
+        select: {
+          username: true,
+        },
+      },
+    },
   });
   if (!publishedFeatures) {
     return res.status(200).json({ message: "No new features are published yet!" });
@@ -20,6 +27,13 @@ export const featureDeatils = async (req, res) => {
     const feature = await prisma.features.findUnique({
       where: {
         id: id,
+      },
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
       },
     });
     return res.status(200).json(feature);
@@ -50,6 +64,40 @@ export const addFeature = async (req, res) => {
   }
 };
 
-export const editFeatueGet = async (req, res) => {};
+export const editFeatueGet = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const feature = await prisma.features.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    return res.status(200).json(feature);
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong!" });
+  }
+};
 
-export const editFeaturePost = async (req, res) => {};
+export const editFeaturePut = async (req, res) => {
+  const { id } = req.params;
+  const { title, description, releaseDate, released, published } = req.body;
+  try {
+    const data = {
+      title,
+      description,
+      releaseDate,
+      releaseDate,
+      published,
+      userId: req.user.id,
+    };
+    const featureToEdit = await prisma.features.update({
+      where: {
+        id: id,
+      },
+      data: data,
+    });
+    return res.status(201).json({ message: "feature updated" }, featureToEdit);
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong!" });
+  }
+};

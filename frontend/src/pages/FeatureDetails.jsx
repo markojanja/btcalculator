@@ -31,6 +31,12 @@ const FeatureDetails = () => {
         <h2>{feature.title}</h2>
       </div>
       <div className="feature-desc" dangerouslySetInnerHTML={{ __html: clean }} />
+      <div style={{ textAlign: "left" }}>
+        <p>published: {feature.published ? "✅" : "❌"}</p>
+        <p>author:{feature.user?.username}</p>
+        <p>released: {feature.released ? "✅" : "❌"}</p>
+        <p>release date: {new Date(feature.releaseDate).toLocaleDateString()}</p>
+      </div>
       <Link style={{ alignSelf: "flex-end" }} to={"/features"}>
         Back to features
       </Link>
