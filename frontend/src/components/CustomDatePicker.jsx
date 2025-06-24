@@ -1,10 +1,16 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Flatpickr from "react-flatpickr";
 import { FaCalendarAlt } from "react-icons/fa";
 import "flatpickr/dist/flatpickr.min.css";
 
-const CustomDatePicker = ({ setter, placeholder }) => {
+const CustomDatePicker = ({ setter, placeholder, initialValue }) => {
   const [date, setDate] = useState(null);
+
+  useEffect(() => {
+    if (initialValue) {
+      setDate(initialValue);
+    }
+  }, [initialValue]);
 
   const flatpickrRef = useRef(null);
 

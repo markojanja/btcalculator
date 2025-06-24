@@ -85,18 +85,19 @@ export const editFeaturePut = async (req, res) => {
     const data = {
       title,
       description,
-      releaseDate,
-      releaseDate,
+      released,
+      releaseDate: releaseDate ? new Date(releaseDate) : null,
       published,
       userId: req.user.id,
     };
+    console.log(data);
     const featureToEdit = await prisma.features.update({
       where: {
         id: id,
       },
       data: data,
     });
-    return res.status(201).json({ message: "feature updated" }, featureToEdit);
+    return res.status(201).json({ message: "feature updated" });
   } catch (error) {
     return res.status(500).json({ message: "something went wrong!" });
   }

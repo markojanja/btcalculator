@@ -29,6 +29,7 @@ const FeatureDetails = () => {
     <div className="feature-wrapper">
       <div className="feature-heading">
         <h2>{feature.title}</h2>
+        <Link to={`/features/${feature.id}/edit`}>Edit</Link>
       </div>
       <div className="feature-desc" dangerouslySetInnerHTML={{ __html: clean }} />
       <div style={{ textAlign: "left" }}>
