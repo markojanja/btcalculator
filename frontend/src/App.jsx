@@ -19,6 +19,7 @@ import EditUser from "./pages/EditUser";
 import NewFeatures from "./pages/NewFeatures";
 import AddFeature from "./pages/AddFeature";
 import FeatureDetails from "./pages/FeatureDetails";
+import EditFeature from "./pages/EditFeature";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
           { path: "/features/", element: <NewFeatures /> },
           { path: "/features/new", element: <AddFeature /> },
           { path: "/features/:id", element: <FeatureDetails /> },
+          { path: "/features/:id/edit", element: <EditFeature /> },
         ],
       },
       {
