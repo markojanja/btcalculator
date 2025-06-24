@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import "./NewFeatures.css";
 import axios from "axios";
+import FeaturesCard from "../components/FeaturesCard";
 
 const NewFeatures = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -19,7 +21,7 @@ const NewFeatures = () => {
   return (
     <div className="features-wrapper">
       <div className="feature-header">
-        <h3>New Features</h3>
+        <h3>Feature Announcements</h3>
         <Link className="btn-outline" style={{ borderRadius: "8px" }} to={"/features/new"}>
           New feature
         </Link>
@@ -32,7 +34,7 @@ const NewFeatures = () => {
         )}
 
         {features.map((feature) => (
-          <p key={feature.id}>{feature.title}</p>
+          <FeaturesCard key={feature.id} feature={feature} />
         ))}
       </div>
     </div>

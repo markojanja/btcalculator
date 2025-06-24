@@ -4,10 +4,12 @@ import { IoChevronDown } from "react-icons/io5";
 import { useState, useContext } from "react";
 import { NavContext } from "../contexts/NavContext";
 import { IoMdClose } from "react-icons/io";
+import useAuth from "../hooks/useAuth";
 
 const Sidebar = () => {
   const location = useLocation();
   const [expanded, setExpanded] = useState(false);
+  const { user } = useAuth();
   const { sidebarActive, closeSidebar } = useContext(NavContext);
   const isSubmenuActive = [
     "/calculators/pip",
@@ -90,14 +92,17 @@ const Sidebar = () => {
           )}
         </li>
 
-        <li id="mobile-hidden">
-          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="converter">
-            Converter
-          </NavLink>
-        </li>
+        {user?.centroid && (
+          <li id="mobile-hidden">
+            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="converter">
+              Converter
+            </NavLink>
+          </li>
+        )}
+
         <li id="mobile-hidden">
           <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/features">
-            New features
+            Feature Announcements
           </NavLink>
         </li>
         <li id="mobile-hidden">
@@ -105,11 +110,13 @@ const Sidebar = () => {
             User Guides
           </NavLink>
         </li>
-        <li id="mobile-hidden">
-          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/users">
-            User Management
-          </NavLink>
-        </li>
+        {user.role === "ADMIN" && (
+          <li id="mobile-hidden">
+            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/users">
+              User Management
+            </NavLink>
+          </li>
+        )}
       </ul>
     </div>
   );

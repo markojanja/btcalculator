@@ -121,7 +121,7 @@ ul {
 input,
 select,
 option {
-  background-color: var(--background-color);
+  background-color: var(--secondary-color);
   border: 1px solid rgba(204, 204, 204, 0.5);
   outline: inherit;
   box-shadow: inherit;

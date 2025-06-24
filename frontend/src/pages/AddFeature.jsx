@@ -1,6 +1,6 @@
 import "./AddFeature.css";
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Quill from "quill";
 import ReactQuill from "react-quill";
@@ -14,6 +14,8 @@ const AddFeature = () => {
   const [released, setReleased] = useState(false);
   const [published, setPublished] = useState(false);
   const [releaseDate, setReleaseDate] = useState("");
+
+  const navigate = useNavigate();
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const modules = {
@@ -58,6 +60,7 @@ const AddFeature = () => {
         published,
       };
       await axios.post(`${BACKEND_URL}/features/new`, newFeature, { withCredentials: true });
+      navigate("/features");
     } catch (error) {
       console.log(error);
     }
