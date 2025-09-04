@@ -33,10 +33,19 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Protected />,
+        element: <Protected roles={["ADMIN", "MANAGER", "SUPPORT"]} />,
         children: [
           { index: true, element: <Tasks /> },
           { path: "/profile", element: <Profile /> },
+          { path: "/features/", element: <NewFeatures /> },
+          { path: "/features/:id", element: <FeatureDetails /> },
+        ],
+      },
+            {
+        path: "/",
+        element: <Protected roles={["ADMIN", "MANAGER"]} />,
+        children: [
+          { index: true, element: <Tasks /> },
           { path: "/users", element: <Users /> },
           { path: "/users/add", element: <AddUser /> },
           { path: "/users/edit/:id", element: <EditUser /> },
@@ -48,7 +57,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/calculators",
-        element: <Protected />,
+        element: <Protected roles={["ADMIN", "MANAGER", "SUPPORT"]} />,
         children: [
           { path: "/calculators/pip", element: <PipCalculator /> },
           { path: "/calculators/pnl", element: <PnlCalculator /> },
@@ -58,7 +67,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/converter",
-        element: <Protected />,
+        element: <Protected roles={["ADMIN", "MANAGER", "SUPPORT"]} />,
         children: [{ index: true, element: <Converter /> }],
       },
     ],

@@ -4,9 +4,7 @@ export const getFeatures = async (req, res) => {};
 
 export const getPublishedFeatures = async (req, res) => {
   const publishedFeatures = await prisma.features.findMany({
-    where: {
-      published: true,
-    },
+
     include: {
       user: {
         select: {

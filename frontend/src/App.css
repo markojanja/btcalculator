@@ -139,6 +139,7 @@ select {
   background: transparent;
   padding: 0.3rem 0.6rem;
   vertical-align: middle;
+  border-radius: 8px;
 }
 .btn-outline svg {
   fill: var(--accent-color);
