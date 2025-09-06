@@ -20,6 +20,8 @@ import NewFeatures from "./pages/NewFeatures";
 import AddFeature from "./pages/AddFeature";
 import FeatureDetails from "./pages/FeatureDetails";
 import EditFeature from "./pages/EditFeature";
+import IndexPageRedirect from "./components/IndexPageRedirect";
+import Dashboard from "./pages/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -32,26 +34,27 @@ const router = createBrowserRouter([
     element: <Root />,
     children: [
       {
-        path: "/",
+        element: <Protected roles={["SUPPORT"]} />,
+        children: [{ path: "tasks", element: <Tasks /> }],
+      },
+
+      {
         element: <Protected roles={["ADMIN", "MANAGER", "SUPPORT"]} />,
         children: [
-          { index: true, element: <Tasks /> },
+          { index: true, element: <IndexPageRedirect /> },
           { path: "/profile", element: <Profile /> },
           { path: "/features/", element: <NewFeatures /> },
           { path: "/features/:id", element: <FeatureDetails /> },
         ],
       },
-            {
-        path: "/",
+      {
         element: <Protected roles={["ADMIN", "MANAGER"]} />,
         children: [
-          { index: true, element: <Tasks /> },
+          { path: "dashboard", element: <Dashboard /> },
           { path: "/users", element: <Users /> },
           { path: "/users/add", element: <AddUser /> },
           { path: "/users/edit/:id", element: <EditUser /> },
-          { path: "/features/", element: <NewFeatures /> },
           { path: "/features/new", element: <AddFeature /> },
-          { path: "/features/:id", element: <FeatureDetails /> },
           { path: "/features/:id/edit", element: <EditFeature /> },
         ],
       },

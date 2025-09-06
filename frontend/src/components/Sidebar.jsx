@@ -23,20 +23,42 @@ const Sidebar = () => {
   };
 
   return (
-    <div className={sidebarActive ? "sidebar show" : "sidebar"} onMouseLeave={closeSidebar}>
+    <div
+      className={sidebarActive ? "sidebar show" : "sidebar"}
+      onMouseLeave={closeSidebar}
+    >
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <IoMdClose size={20} onClick={closeSidebar} />
       </div>
       <ul className="sidebar-wrapper">
-        <li id="mobile-hidden">
-          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/">
-            My Tasks
-          </NavLink>
-        </li>
+        {(user.role === "ADMIN" || user.role === "MANAGER") && (
+          <li id="mobile-hidden">
+            <NavLink
+              className={({ isActive }) => (isActive ? "is-active" : "")}
+              to="/dashboard"
+            >
+              Dashboard
+            </NavLink>
+          </li>
+        )}
+        {user.role === "SUPPORT" && (
+          <li id="mobile-hidden">
+            <NavLink
+              className={({ isActive }) => (isActive ? "is-active" : "")}
+              to="/tasks"
+            >
+              My Tasks
+            </NavLink>
+          </li>
+        )}
 
         <li
           id="mobile-hidden"
-          style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
         >
           <NavLink
             className={`submenu ${isSubmenuActive ? "is-active" : ""}`}
@@ -94,25 +116,37 @@ const Sidebar = () => {
 
         {user?.centroid && (
           <li id="mobile-hidden">
-            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="converter">
+            <NavLink
+              className={({ isActive }) => (isActive ? "is-active" : "")}
+              to="converter"
+            >
               Converter
             </NavLink>
           </li>
         )}
 
         <li id="mobile-hidden">
-          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/features">
+          <NavLink
+            className={({ isActive }) => (isActive ? "is-active" : "")}
+            to="/features"
+          >
             Feature Announcements
           </NavLink>
         </li>
         <li id="mobile-hidden">
-          <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/guides">
+          <NavLink
+            className={({ isActive }) => (isActive ? "is-active" : "")}
+            to="/guides"
+          >
             User Guides
           </NavLink>
         </li>
         {user?.role === "ADMIN" && (
           <li id="mobile-hidden">
-            <NavLink className={({ isActive }) => (isActive ? "is-active" : "")} to="/users">
+            <NavLink
+              className={({ isActive }) => (isActive ? "is-active" : "")}
+              to="/users"
+            >
               User Management
             </NavLink>
           </li>
