@@ -31,7 +31,7 @@ const Sidebar = () => {
         <IoMdClose size={20} onClick={closeSidebar} />
       </div>
       <ul className="sidebar-wrapper">
-        {(user.role === "ADMIN" || user.role === "MANAGER") && (
+        {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
           <li id="mobile-hidden">
             <NavLink
               className={({ isActive }) => (isActive ? "is-active" : "")}
@@ -41,7 +41,7 @@ const Sidebar = () => {
             </NavLink>
           </li>
         )}
-        {user.role === "SUPPORT" && (
+        {user?.role === "SUPPORT" && (
           <li id="mobile-hidden">
             <NavLink
               className={({ isActive }) => (isActive ? "is-active" : "")}

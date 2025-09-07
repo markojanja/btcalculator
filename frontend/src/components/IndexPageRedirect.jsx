@@ -8,8 +8,10 @@ const IndexPageRedirect = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (loading) return;
+
     if (!user) {
-      navigate("/loading");
+      navigate("/login", { replace: true });
     }
     if (user?.role === "ADMIN" || user?.role === "MANAGER") {
       navigate("/dashboard", { replace: true });
@@ -20,6 +22,8 @@ const IndexPageRedirect = () => {
   }, [user, loading, navigate]);
 
   if (loading) return <Loading />;
+
+  return null;
 };
 
 export default IndexPageRedirect;
