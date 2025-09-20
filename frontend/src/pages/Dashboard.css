@@ -1,7 +1,6 @@
 .dashboard-wrapper {
   display: flex;
   flex-direction: column;
-
   position: relative;
   width: 100%;
   padding: 2rem;
@@ -36,7 +35,8 @@
 }
 
 .dash-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   width: 100%;
   min-height: 200px;
   justify-content: space-evenly;
@@ -45,30 +45,62 @@
   margin: 0 auto;
   flex-wrap: wrap;
 }
-
-.alert-bg {
-  background-color: rgba(255, 117, 124, 0.15);
-}
-.alert-txt {
-  fill: rgb(231, 0, 11);
-}
-.warning-bg {
-  background-color: rgba(245, 170, 73, 0.15);
-}
-.warning-txt {
-  fill: oklch(85.2% 0.199 91.936);
+@media (max-width: 768px) {
+  .dash-row {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .dashboard-wrapper,
+  .dash-content {
+    padding: 0.5rem;
+    width: 100%;
+  }
 }
 
-.info-bg {
-  background-color: rgba(0, 213, 189, 0.15);
-}
-.info-txt {
-  fill: rgb(0, 213, 189);
+.pending-tasks {
+  grid-column: span 3;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--secondary-color);
+  padding: 0.5rem;
+  border-radius: 4px;
+  box-shadow: var(--box-shadow);
+  text-align: left;
 }
 
-.success-bg {
-  background-color:rgba(0, 201, 80, 0.15);
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 14px;
+  white-space: normal;
+  vertical-align: top;
+  color: var(--text-color);
 }
-.success-txt {
-  fill: rgb(0, 201, 80);
+.dash-table th,
+td {
+  padding: 4px 8px;
+  text-align: left;
+  height: max-content;
+}
+
+.dash-table tr:hover {
+  background-color: var(--background-color);
+}
+.dash-table thead {
+  border-bottom: 1px solid gray;
+}
+.dash-table th {
+  font-weight: bold;
+}
+
+.users {
+  display: flex;
+  flex-direction: column;
+  min-height: 500px;
+  background: var(--secondary-color);
+  padding: 0.5rem;
+  border-radius: 4px;
+  box-shadow: var(--box-shadow);
+  text-align: left;
 }

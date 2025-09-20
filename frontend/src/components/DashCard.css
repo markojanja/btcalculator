@@ -6,6 +6,7 @@
   border-radius: 4px;
   flex: 1;
   box-shadow: var(--box-shadow);
+  width: 100%;
   
 }
 .d-info {
@@ -35,3 +36,4 @@
   justify-content: center;
   border-radius: 4px;
 }
+

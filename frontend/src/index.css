@@ -197,3 +197,36 @@ input[type="checkbox"]:checked::after {
 label {
   text-transform: capitalize;
 }
+
+.alert-bg {
+  background-color: rgba(255, 117, 124, 0.15);
+}
+.alert-txt {
+  fill: rgb(231, 0, 11);
+  color:rgb(231, 0, 11); ;
+}
+.warning-bg {
+  background-color: rgba(245, 170, 73, 0.15);
+}
+.warning-txt {
+  fill: oklch(85.2% 0.199 91.936);
+  color: oklch(85.2% 0.199 91.936);
+
+}
+
+.info-bg {
+  background-color: rgba(0, 213, 189, 0.15);
+}
+.info-txt {
+  fill: rgb(0, 213, 189);
+  color: rgb(0, 213, 189);
+
+}
+
+.success-bg {
+  background-color:rgba(0, 201, 80, 0.15);
+}
+.success-txt {
+  fill: rgb(0, 201, 80);
+  color: rgb(0, 201, 80);
+}

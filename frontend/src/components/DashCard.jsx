@@ -4,7 +4,7 @@ const DashCard = ({ title, value, linkText, linkHref, Icon, bg, clr }) => {
   return (
     <div className="dash-card">
       <div className="d-info">
-        <p>{title}</p>
+        <p className={clr}>{title}</p>
         <h3>{value}</h3>
         <a href={linkHref}>{linkText}</a>
       </div>

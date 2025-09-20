@@ -62,10 +62,10 @@ const router = createBrowserRouter([
         path: "calculators",
         element: <Protected roles={["ADMIN", "MANAGER", "SUPPORT"]} />,
         children: [
-          { path: "calculators/pip", element: <PipCalculator /> },
-          { path: "calculators/pnl", element: <PnlCalculator /> },
-          { path: "calculators/margin", element: <MarginCalculator /> },
-          { path: "calculators/swap", element: <SwapCalculator /> },
+          { path: "pip", element: <PipCalculator /> },
+          { path: "pnl", element: <PnlCalculator /> },
+          { path: "margin", element: <MarginCalculator /> },
+          { path: "swap", element: <SwapCalculator /> },
         ],
       },
       {

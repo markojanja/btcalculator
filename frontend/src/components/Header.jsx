@@ -5,7 +5,7 @@ import { useContext } from "react";
 
 import { RiMenu4Line } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
-import { RiLogoutBoxRLine } from "react-icons/ri";
+import { FaPowerOff } from "react-icons/fa";
 import { FaUser } from "react-icons/fa";
 
 import ReactSwitch from "react-switch";
@@ -31,7 +31,13 @@ const Header = () => {
           </NavLink>
         </div>
         <ul>
-          <li style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <li
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             <ReactSwitch
               height={16}
               width={32}
@@ -55,7 +61,7 @@ const Header = () => {
               </Link>
               <div style={{ display: "flex", alignItems: "start" }}>
                 <a style={{ cursor: "pointer" }} onClick={handleLogOut}>
-                  <RiLogoutBoxRLine size={20} style={{ marginRight: "8px" }} />
+                  <FaPowerOff size={20} style={{ marginRight: "8px" }} />
                   <span>Log out</span>
                 </a>
               </div>

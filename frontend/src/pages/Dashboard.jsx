@@ -14,7 +14,7 @@ const Dashboard = () => {
       <div className="dash-content">
         <div className="dash-row">
           <DashCard
-            title={"TODO"}
+            title={"Todo"}
             value={10}
             linkText={"view more"}
             linkHref={"/"}
@@ -49,6 +49,119 @@ const Dashboard = () => {
             bg="success-bg"
             clr={"success-txt"}
           />
+        </div>
+        <div className="dash-row">
+          <div className="pending-tasks">
+            <h4>Recent tasks</h4>
+            <div style={{ flex: "1" }}>
+              <table className="dash-table">
+                <thead>
+                  <td>Title</td>
+                  <td>Status</td>
+                  <td>Priority</td>
+                  <td>Created by</td>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>{" "}
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>{" "}
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>{" "}
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>{" "}
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>{" "}
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>{" "}
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <a href="/">view all tasks</a>
+          </div>
+          <div className="users">
+            <h4>Recent Users</h4>
+            <div style={{ flex: "1" }}>
+              <table className="dash-table">
+                <thead>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Marko Janjic</td>
+                    <td>marko.m.janjic@gmail.com</td>
+                    <td>Admin</td>
+                  </tr>
+                  <tr>
+                    <td>Marko Janjic</td>
+                    <td>marko.m.janjic@gmail.com</td>
+                    <td>Admin</td>
+                  </tr>
+                  <tr>
+                    <td>Marko Janjic</td>
+                    <td>marko.m.janjic@gmail.com</td>
+                    <td>Admin</td>
+                  </tr>
+                  <tr>
+                    <td>Marko Janjic</td>
+                    <td>marko.m.janjic@gmail.com</td>
+                    <td>Admin</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <a href="/">view all users</a>
+          </div>
         </div>
       </div>
     </div>
