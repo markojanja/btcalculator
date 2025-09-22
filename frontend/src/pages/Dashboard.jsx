@@ -163,69 +163,69 @@ const Dashboard = () => {
                     <th>Title</th>
                     <th>Status</th>
                     <th>Priority</th>
-                    <th>Created by</th>
+                    <th>Assigne</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
+                    <td>Signal performance fee not working</td>
+                    <td>To-do</td>
+                    <td>High</td>
+                    <td>Marko Janjic</td>
                   </tr>
                   <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
+                    <td>Fix chart</td>
+                    <td>In Progress</td>
+                    <td>Medium</td>
+                    <td>Marko Janjic</td>
                   </tr>
                   <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
+                    <td>Create new groups</td>
+                    <td>In Progrss</td>
+                    <td>Medium</td>
+                    <td>Marko Janjic</td>
                   </tr>
                   <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
+                    <td>PAMM profit share issue</td>
+                    <td>IT ticket</td>
+                    <td>Medium</td>
+                    <td>Marko Janjic</td>
                   </tr>
                   <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
+                    <td>Fix email template</td>
+                    <td>To-do</td>
+                    <td>Medium</td>
+                    <td>Marko Janjic</td>
                   </tr>
                   <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
+                    <td>Import new groups</td>
+                    <td>In progress</td>
+                    <td>High</td>
+                    <td>Marko Janjic</td>
                   </tr>
                   <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
+                    <td>Add new adapter</td>
+                    <td>To-do</td>
+                    <td>Low</td>
+                    <td>Marko Janjic</td>
                   </tr>
                   <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
+                    <td>Transaction not auto approved</td>
+                    <td>CS Ticket</td>
+                    <td>Medium</td>
+                    <td>Marko Janjic</td>
                   </tr>
                   <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
+                    <td>Check signal close delay</td>
+                    <td>IT Ticket</td>
+                    <td>High</td>
+                    <td>Marko Janjic</td>
                   </tr>
                   <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
+                    <td>Add new symbol MT5</td>
+                    <td>To-do</td>
+                    <td>Low</td>
+                    <td>Marko Janjic</td>
                   </tr>
                 </tbody>
               </table>
