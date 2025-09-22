@@ -5,7 +5,84 @@ import { SiJirasoftware } from "react-icons/si";
 import { IoCheckmarkDoneCircle } from "react-icons/io5";
 import DashCard from "../components/DashCard";
 
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  LinearScale,
+  BarElement,
+} from "chart.js/auto";
+import { Pie, Bar } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend, LinearScale, BarElement);
+
 const Dashboard = () => {
+  const labels1 = ["Marko", "Tijana", "Demo", "Aleksandra", "Sava"];
+  const data = {
+    labels: labels1,
+    datasets: [
+      {
+        label: "Pending Tasks",
+        data: [12, 15, 7, 3, 8],
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.5)",
+          "rgba(54, 162, 235, 0.5)",
+          "rgba(255, 206, 86, 0.5)",
+          "rgba(75, 192, 192, 0.5)",
+          "rgba(153, 102, 255, 0.5)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const labels2 = ["Tasks by priority"];
+
+  const barData = {
+    labels: labels2,
+    datasets: [
+      {
+        label: "High",
+        data: [30],
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: "rgba(255, 99, 132, 1)",
+        borderWidth: 1,
+      },
+      {
+        label: "Medium",
+        data: [20],
+        backgroundColor: "rgba(54, 162, 235, 0.5)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1,
+      },
+      {
+        label: "Low",
+        data: [50],
+        backgroundColor: "rgba(75, 192, 192, 0.5)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "left",
+      },
+    },
+  };
+
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-heading">
@@ -23,7 +100,7 @@ const Dashboard = () => {
             clr={"alert-txt"}
           />
           <DashCard
-            title={"In progress"}
+            title={"In Progress"}
             value={7}
             linkText={"view more"}
             linkHref={"/"}
@@ -51,15 +128,43 @@ const Dashboard = () => {
           />
         </div>
         <div className="dash-row">
+          <div className="dash-chart">
+            <h3>Pending Tasks</h3>
+            <div
+              style={{
+                flex: "1",
+                padding: "0.5rem",
+                height: "300px",
+              }}
+            >
+              <Pie data={data} options={options} />
+            </div>
+          </div>
+          <div className="dash-chart" style={{ gridColumn: "3/5" }}>
+            <h3>Tasks by Priority</h3>
+            <div
+              style={{
+                flex: "1",
+                padding: "0.5rem",
+                height: "300px",
+              }}
+            >
+              <Bar data={barData} options={options} />
+            </div>
+          </div>
+        </div>
+        <div className="dash-row">
           <div className="pending-tasks">
             <h4>Recent tasks</h4>
             <div style={{ flex: "1" }}>
               <table className="dash-table">
                 <thead>
-                  <td>Title</td>
-                  <td>Status</td>
-                  <td>Priority</td>
-                  <td>Created by</td>
+                  <tr>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Created by</th>
+                  </tr>
                 </thead>
                 <tbody>
                   <tr>
@@ -73,19 +178,7 @@ const Dashboard = () => {
                     <td>janjic</td>
                     <td>admin</td>
                     <td>yes</td>
-                  </tr>{" "}
-                  <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
-                  </tr>{" "}
-                  <tr>
-                    <td>marko</td>
-                    <td>janjic</td>
-                    <td>admin</td>
-                    <td>yes</td>
-                  </tr>{" "}
+                  </tr>
                   <tr>
                     <td>marko</td>
                     <td>janjic</td>
@@ -97,7 +190,7 @@ const Dashboard = () => {
                     <td>janjic</td>
                     <td>admin</td>
                     <td>yes</td>
-                  </tr>{" "}
+                  </tr>
                   <tr>
                     <td>marko</td>
                     <td>janjic</td>
@@ -109,13 +202,25 @@ const Dashboard = () => {
                     <td>janjic</td>
                     <td>admin</td>
                     <td>yes</td>
-                  </tr>{" "}
+                  </tr>
                   <tr>
                     <td>marko</td>
                     <td>janjic</td>
                     <td>admin</td>
                     <td>yes</td>
-                  </tr>{" "}
+                  </tr>
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>
+                  <tr>
+                    <td>marko</td>
+                    <td>janjic</td>
+                    <td>admin</td>
+                    <td>yes</td>
+                  </tr>
                   <tr>
                     <td>marko</td>
                     <td>janjic</td>
@@ -132,9 +237,11 @@ const Dashboard = () => {
             <div style={{ flex: "1" }}>
               <table className="dash-table">
                 <thead>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                  </tr>
                 </thead>
                 <tbody>
                   <tr>
