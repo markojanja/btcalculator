@@ -12,7 +12,16 @@ export const getUsers = async (req, res) => {
 
 export const addUser = async (req, res) => {
   console.log(req.body);
-  const { firstname, lastname, username, email, password, active, role, centroid } = req.body;
+  const {
+    firstname,
+    lastname,
+    username,
+    email,
+    password,
+    active,
+    role,
+    centroid,
+  } = req.body;
 
   try {
     const existingUser = await prisma.user.findFirst({
@@ -22,7 +31,9 @@ export const addUser = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(409).json({ message: "User with this email or username already exists." });
+      return res
+        .status(409)
+        .json({ message: "User with this email or username already exists." });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -81,18 +92,23 @@ export const editUserGet = async (req, res) => {
 
 export const editUserPut = async (req, res) => {
   const { id } = req.params;
-  const { firstname, lastname, username, email, password, role, active, centroid } = req.body;
+  const {
+    firstname,
+    lastname,
+    username,
+    email,
+    password,
+    role,
+    active,
+    centroid,
+  } = req.body;
 
   try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     const updateData = {
       firstname,
       lastname,
       username,
       email,
-      password: hashedPassword,
       role,
       active,
       centroid,

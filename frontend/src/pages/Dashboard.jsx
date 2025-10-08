@@ -14,17 +14,40 @@ import {
   BarElement,
 } from "chart.js/auto";
 import { Pie, Bar } from "react-chartjs-2";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale, BarElement);
 
 const Dashboard = () => {
-  const labels1 = ["Marko", "Tijana", "Demo", "Aleksandra", "Sava"];
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  const [dataCard, setDataCard] = useState([]);
+  const [barChartData, setBarChartData] = useState([]);
+  const [pieChartdata, setPieChartData] = useState([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/admindata/`, {
+          withCredentials: true,
+        });
+        console.log(response);
+        setDataCard(response.data.tasksByStatus);
+        setBarChartData(response.data.tasksByPriority);
+        setPieChartData(response.data.rawByUser);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getData();
+  }, []);
+  const labels1 = pieChartdata.map((obj) => obj.firstname);
   const data = {
     labels: labels1,
     datasets: [
       {
         label: "Pending Tasks",
-        data: [12, 15, 7, 3, 8],
+        data: pieChartdata.map((obj) => obj.count),
         backgroundColor: [
           "rgba(255, 99, 132, 0.5)",
           "rgba(54, 162, 235, 0.5)",
@@ -44,33 +67,32 @@ const Dashboard = () => {
     ],
   };
 
-  const labels2 = ["Tasks by priority"];
+  const priorityOrder = ["HIGH", "MEDIUM", "LOW"];
+  const colors = [
+    { bg: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" },
+    { bg: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" },
+    { bg: "rgba(75, 192, 192, 0.5)", border: "rgba(75, 192, 192, 1)" },
+  ];
+
+  const datasets = priorityOrder
+    .map((priority, i) => {
+      const match = barChartData.find((d) => d.priority === priority);
+      const count = match ? match._count.priority : 0;
+
+      if (count === 0) return null;
+      return {
+        label: priority,
+        data: [count],
+        backgroundColor: colors[i].bg,
+        borderColor: colors[i].border,
+        borderWidth: 1,
+      };
+    })
+    .filter(Boolean);
 
   const barData = {
-    labels: labels2,
-    datasets: [
-      {
-        label: "High",
-        data: [30],
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-        borderColor: "rgba(255, 99, 132, 1)",
-        borderWidth: 1,
-      },
-      {
-        label: "Medium",
-        data: [20],
-        backgroundColor: "rgba(54, 162, 235, 0.5)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 1,
-      },
-      {
-        label: "Low",
-        data: [50],
-        backgroundColor: "rgba(75, 192, 192, 0.5)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
-      },
-    ],
+    labels: [""],
+    datasets,
   };
 
   const options = {
@@ -92,7 +114,10 @@ const Dashboard = () => {
         <div className="dash-row">
           <DashCard
             title={"Todo"}
-            value={10}
+            value={
+              dataCard.find((item) => item.status === "TODO")?._count?.status ||
+              0
+            }
             linkText={"view more"}
             linkHref={"/"}
             Icon={FaBusinessTime}
@@ -101,25 +126,34 @@ const Dashboard = () => {
           />
           <DashCard
             title={"In Progress"}
-            value={7}
+            value={
+              dataCard.find((item) => item.status === "IN_PROGRESS")?._count
+                ?.status || 0
+            }
             linkText={"view more"}
             linkHref={"/"}
             Icon={RiProgress2Line}
             bg="warning-bg"
             clr={"warning-txt"}
-          />{" "}
+          />
           <DashCard
             title={"Jira Ticket"}
-            value={5}
+            value={
+              dataCard.find((item) => item.status === "JIRA_TICKET")?._count
+                ?.status || 0
+            }
             linkText={"view more"}
             linkHref={"/"}
             Icon={SiJirasoftware}
             bg="info-bg"
             clr={"info-txt"}
-          />{" "}
+          />
           <DashCard
             title={"Completed"}
-            value={15}
+            value={
+              dataCard.find((item) => item.status === "COMPLETED")?._count
+                ?.status || 0
+            }
             linkText={"view more"}
             linkHref={"/"}
             Icon={IoCheckmarkDoneCircle}
