@@ -1,4 +1,5 @@
 import "./DashCard.css";
+import { Link } from "react-router-dom";
 
 const DashCard = ({ title, value, linkText, linkHref, Icon, bg, clr }) => {
   return (
@@ -6,7 +7,7 @@ const DashCard = ({ title, value, linkText, linkHref, Icon, bg, clr }) => {
       <div className="d-info">
         <p className={clr}>{title}</p>
         <h3>{value}</h3>
-        <a href={linkHref}>{linkText}</a>
+        <Link to={linkHref}>{linkText}</Link>
       </div>
       <div className="d-icon ">
         <div className={bg}>

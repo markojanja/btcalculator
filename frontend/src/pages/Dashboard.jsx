@@ -3,6 +3,7 @@ import { FaBusinessTime } from "react-icons/fa";
 import { RiProgress2Line } from "react-icons/ri";
 import { SiJirasoftware } from "react-icons/si";
 import { IoCheckmarkDoneCircle } from "react-icons/io5";
+import { Link } from "react-router-dom";
 import DashCard from "../components/DashCard";
 
 import {
@@ -24,6 +25,8 @@ const Dashboard = () => {
   const [dataCard, setDataCard] = useState([]);
   const [barChartData, setBarChartData] = useState([]);
   const [pieChartdata, setPieChartData] = useState([]);
+  const [latestTasks, setLatestTask] = useState([]);
+  const [recentUsers, setRecentUsers] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
@@ -35,6 +38,8 @@ const Dashboard = () => {
         setDataCard(response.data.tasksByStatus);
         setBarChartData(response.data.tasksByPriority);
         setPieChartData(response.data.rawByUser);
+        setLatestTask(response.data.latestTasks);
+        setRecentUsers(response.data.recentUsers);
       } catch (error) {
         console.log(error);
       }
@@ -119,7 +124,7 @@ const Dashboard = () => {
               0
             }
             linkText={"view more"}
-            linkHref={"/"}
+            linkHref={"tasks/TODO"}
             Icon={FaBusinessTime}
             bg="alert-bg"
             clr={"alert-txt"}
@@ -131,7 +136,7 @@ const Dashboard = () => {
                 ?.status || 0
             }
             linkText={"view more"}
-            linkHref={"/"}
+            linkHref={"tasks/IN_PROGRESS"}
             Icon={RiProgress2Line}
             bg="warning-bg"
             clr={"warning-txt"}
@@ -143,7 +148,7 @@ const Dashboard = () => {
                 ?.status || 0
             }
             linkText={"view more"}
-            linkHref={"/"}
+            linkHref={"tasks/JIRA_TICKET"}
             Icon={SiJirasoftware}
             bg="info-bg"
             clr={"info-txt"}
@@ -155,7 +160,7 @@ const Dashboard = () => {
                 ?.status || 0
             }
             linkText={"view more"}
-            linkHref={"/"}
+            linkHref={"tasks/COMPLETED"}
             Icon={IoCheckmarkDoneCircle}
             bg="success-bg"
             clr={"success-txt"}
@@ -163,7 +168,9 @@ const Dashboard = () => {
         </div>
         <div className="dash-row">
           <div className="dash-chart">
-            <h3>Pending Tasks</h3>
+            <Link to={"tasks/pending"}>
+              <h3>Pending Tasks</h3>
+            </Link>
             <div
               style={{
                 flex: "1",
@@ -175,7 +182,9 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="dash-chart" style={{ gridColumn: "3/5" }}>
-            <h3>Tasks by Priority</h3>
+            <Link to={"tasks/priority"}>
+              <h3>Tasks by Priority</h3>
+            </Link>
             <div
               style={{
                 flex: "1",
@@ -201,66 +210,16 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Signal performance fee not working</td>
-                    <td>To-do</td>
-                    <td>High</td>
-                    <td>Marko Janjic</td>
-                  </tr>
-                  <tr>
-                    <td>Fix chart</td>
-                    <td>In Progress</td>
-                    <td>Medium</td>
-                    <td>Marko Janjic</td>
-                  </tr>
-                  <tr>
-                    <td>Create new groups</td>
-                    <td>In Progrss</td>
-                    <td>Medium</td>
-                    <td>Marko Janjic</td>
-                  </tr>
-                  <tr>
-                    <td>PAMM profit share issue</td>
-                    <td>IT ticket</td>
-                    <td>Medium</td>
-                    <td>Marko Janjic</td>
-                  </tr>
-                  <tr>
-                    <td>Fix email template</td>
-                    <td>To-do</td>
-                    <td>Medium</td>
-                    <td>Marko Janjic</td>
-                  </tr>
-                  <tr>
-                    <td>Import new groups</td>
-                    <td>In progress</td>
-                    <td>High</td>
-                    <td>Marko Janjic</td>
-                  </tr>
-                  <tr>
-                    <td>Add new adapter</td>
-                    <td>To-do</td>
-                    <td>Low</td>
-                    <td>Marko Janjic</td>
-                  </tr>
-                  <tr>
-                    <td>Transaction not auto approved</td>
-                    <td>CS Ticket</td>
-                    <td>Medium</td>
-                    <td>Marko Janjic</td>
-                  </tr>
-                  <tr>
-                    <td>Check signal close delay</td>
-                    <td>IT Ticket</td>
-                    <td>High</td>
-                    <td>Marko Janjic</td>
-                  </tr>
-                  <tr>
-                    <td>Add new symbol MT5</td>
-                    <td>To-do</td>
-                    <td>Low</td>
-                    <td>Marko Janjic</td>
-                  </tr>
+                  {latestTasks.map((task) => (
+                    <tr key={task.id}>
+                      <td>{task.title}</td>
+                      <td>{task.status}</td>
+                      <td>{task.priority}</td>
+                      <td>
+                        {task.user.firstname} {task.user.lastname}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -278,26 +237,15 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Marko Janjic</td>
-                    <td>marko.m.janjic@gmail.com</td>
-                    <td>Admin</td>
-                  </tr>
-                  <tr>
-                    <td>Marko Janjic</td>
-                    <td>marko.m.janjic@gmail.com</td>
-                    <td>Admin</td>
-                  </tr>
-                  <tr>
-                    <td>Marko Janjic</td>
-                    <td>marko.m.janjic@gmail.com</td>
-                    <td>Admin</td>
-                  </tr>
-                  <tr>
-                    <td>Marko Janjic</td>
-                    <td>marko.m.janjic@gmail.com</td>
-                    <td>Admin</td>
-                  </tr>
+                  {recentUsers.map((user) => (
+                    <tr key={user.id}>
+                      <td>
+                        {user.firstname} {user.lastname}
+                      </td>
+                      <td>{user.email}</td>
+                      <td>{user.role}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

@@ -22,6 +22,7 @@ import FeatureDetails from "./pages/FeatureDetails";
 import EditFeature from "./pages/EditFeature";
 import IndexPageRedirect from "./components/IndexPageRedirect";
 import Dashboard from "./pages/Dashboard";
+import AdminTasks from "./pages/AdminTasks";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
         element: <Protected roles={["ADMIN", "MANAGER"]} />,
         children: [
           { path: "dashboard", element: <Dashboard /> },
+          {
+            path: "dashboard/tasks/:type",
+            element: <AdminTasks />,
+          },
           { path: "users", element: <Users /> },
           { path: "users/add", element: <AddUser /> },
           { path: "users/edit/:id", element: <EditUser /> },
