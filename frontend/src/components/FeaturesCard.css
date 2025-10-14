@@ -13,6 +13,9 @@
   text-align: left;
   cursor: pointer;
 }
+.features-card a{
+  width: 100%;
+}
 .features-card:hover {
   background: var(--accent-color);
   transition: all 0.2s ease;

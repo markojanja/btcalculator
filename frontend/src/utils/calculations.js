@@ -20,6 +20,23 @@ export const calculatePipValue = (
   return formatPipValue(pipValue);
 };
 
+export const calculateProfitAndLoss = (
+  open,
+  close,
+  tradeSize,
+  contractSize,
+  tradeType
+) => {
+  if (tradeType === "BUY") {
+    return (close - open) * (tradeSize * contractSize);
+  }
+  if (tradeType === "SELL") {
+    return (open - close) * (tradeSize * contractSize);
+  }
+
+  return 0;
+};
+
 export const marginCalculationForex = (
   contractSize,
   lotSize,
@@ -60,7 +77,9 @@ export const marginCalculationCFD = (
     return parseFloat(contractSize * lotSize * price * (margin / 100));
   }
   console.log("T");
-  return parseFloat(contractSize * lotSize * price * (margin / 100)) * conversion;
+  return (
+    parseFloat(contractSize * lotSize * price * (margin / 100)) * conversion
+  );
 };
 
 const calculateSwapByMoney = (long, short, lots) => {
@@ -84,9 +103,18 @@ const calculateSwapByPercentage = (contractSize, lots, long, short, price) => {
   };
 };
 
-export const calculateDailySwap = (calctype, contractSize, pipSize, long, short, lots, price) => {
+export const calculateDailySwap = (
+  calctype,
+  contractSize,
+  pipSize,
+  long,
+  short,
+  lots,
+  price
+) => {
   if (calctype === "money") return calculateSwapByMoney(long, short, lots);
-  if (calctype === "points") return calculateSwapByPoints(contractSize, pipSize, long, short, lots);
+  if (calctype === "points")
+    return calculateSwapByPoints(contractSize, pipSize, long, short, lots);
   if (calctype === "percentage")
     return calculateSwapByPercentage(contractSize, lots, long, short, price);
 };

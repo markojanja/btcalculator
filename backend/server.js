@@ -13,6 +13,7 @@ import LoginRouter from "./routes/auth.route.js";
 import TasksRouter from "./routes/tasks.route.js";
 import UsersRouter from "./routes/users.route.js";
 import FeaturesRouter from "./routes/features.route.js";
+import AdminData from "./routes/adminData.route.js";
 import { createFolders } from "./utils/createFolders.js";
 
 import { isAuth } from "./middleware/isAuth.js";
@@ -68,6 +69,7 @@ app.use("/", isAuth, DownloadRouter);
 app.use("/", isAuth, TasksRouter);
 app.use("/", isAuth, UsersRouter);
 app.use("/", isAuth, FeaturesRouter);
+app.use("/", isAuth, AdminData);
 
 const PORT = process.env.PORT || 3500;
 

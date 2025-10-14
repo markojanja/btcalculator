@@ -6,7 +6,13 @@ import Input from "../components/Input";
 import Select from "../components/Select";
 import Info from "../components/Info";
 import Modal from "../components/Modal";
-import { allCurrencyPairs, uniqueCurrencies, tradeTypeList, pnlHowTo } from "../utils/helpers";
+import {
+  allCurrencyPairs,
+  uniqueCurrencies,
+  tradeTypeList,
+  pnlHowTo,
+} from "../utils/helpers";
+import { calculateProfitAndLoss } from "../utils/calculations";
 
 const PnlCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
@@ -19,6 +25,7 @@ const PnlCalculator = () => {
   const [editMode, setEditMode] = useState(false);
   const [conversionRate, setConverisonRate] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [contractSize, setContractSize] = useState(100000);
 
   const API_KEY = import.meta.env.VITE_API_KEY;
 
@@ -30,46 +37,22 @@ const PnlCalculator = () => {
     return res.data.rate;
   };
 
-  const handleOpenPrice = (e) => {
-    setOpenPrice(parseFloat(e.target.value));
-  };
-  const handleClosePrice = (e) => {
-    setClosePrice(parseFloat(e.target.value));
+  const handleChange = (setter) => (e) => {
+    setter(e.target.value);
   };
 
-  const handleTradeSize = (e) => {
-    setTradeSize(e.target.value);
-  };
-
-  const handleCurrencySelect = (e) => {
-    setCurrnecyPair(e.target.value);
-  };
-
-  const handleDepositSelect = (e) => {
-    setDepositCurrency(e.target.value);
-  };
-  const handleTradeType = (e) => {
-    setTradeType(e.target.value);
-  };
-  const handleConverisonPrice = (e) => {
-    setConverisonRate(e.target.value);
-  };
   const calculatePnl = async () => {
-    let contractSize = 100000;
-
     const [, quote] = currencyPair.split("/");
 
-    let result;
-    if (tradeType === "BUY") {
-      result = (closePrice - openPrice) * (tradeSize * contractSize);
+    let result = calculateProfitAndLoss(
+      openPrice,
+      closePrice,
+      tradeSize,
+      contractSize,
+      tradeType
+    );
+    setPnl(parseFloat(result).toFixed(2));
 
-      setPnl(parseFloat(result).toFixed(2));
-    }
-    if (tradeType === "SELL") {
-      result = (openPrice - closePrice) * (tradeSize * contractSize);
-
-      setPnl(parseFloat(result).toFixed(2));
-    }
     if (quote !== depositCurrency) {
       setPnl("");
       let pair = `${quote}/${depositCurrency}`;
@@ -78,18 +61,12 @@ const PnlCalculator = () => {
         pair = `${depositCurrency}/${quote}`;
       }
       let conversion = await fetchData(pair);
-
       if (conversionRate) {
         conversion = conversionRate;
       }
 
-      if (depositCurrency === "JPY") {
-        result = result * conversion;
-        setPnl(parseFloat(result).toFixed(2));
-      } else {
-        result = result / conversion;
-        setPnl(parseFloat(result).toFixed(2));
-      }
+      result = result * conversion;
+      setPnl(parseFloat(result).toFixed(2));
     }
   };
   return (
@@ -104,19 +81,44 @@ const PnlCalculator = () => {
           visible={true}
           setShowModal={setShowModal}
         />
+        {editMode ? (
+          <div className="input-group flex-col">
+            <label>symbol</label>
+            <input
+              type="text"
+              value={currencyPair}
+              placeholder={""}
+              onChange={handleChange(setCurrnecyPair)}
+              name="input"
+              disabled={false}
+            />
+          </div>
+        ) : (
+          <div className="input-group flex-col">
+            <Select
+              label={"symbol"}
+              value={currencyPair}
+              onChange={handleChange(setCurrnecyPair)}
+              array={allCurrencyPairs}
+            />
+          </div>
+        )}
+
         <div className="input-group flex-col">
-          <Select
-            label={"symol"}
-            value={currencyPair}
-            onChange={handleCurrencySelect}
-            array={allCurrencyPairs}
+          <Input
+            label={"contract size"}
+            placeholder={"100000"}
+            value={contractSize}
+            onChange={handleChange(setContractSize)}
+            disabled={false}
           />
         </div>
+
         <div className="input-group flex-col">
           <Select
             label={"buy or sell"}
             value={tradeType}
-            onChange={handleTradeType}
+            onChange={handleChange(setTradeType)}
             array={tradeTypeList}
           />
         </div>
@@ -125,7 +127,7 @@ const PnlCalculator = () => {
             label={"open price"}
             placeholder={"example: 1.03215"}
             value={openPrice}
-            onChange={handleOpenPrice}
+            onChange={handleChange(setOpenPrice)}
             disabled={false}
           />
         </div>
@@ -134,7 +136,7 @@ const PnlCalculator = () => {
             label={"close price"}
             placeholder={"example: 1.03218"}
             value={closePrice}
-            onChange={handleClosePrice}
+            onChange={handleChange(setClosePrice)}
             disabled={false}
           />
         </div>
@@ -143,7 +145,7 @@ const PnlCalculator = () => {
             label={"trade size(lots)"}
             placeholder={"example: 0.01"}
             value={tradeSize}
-            onChange={handleTradeSize}
+            onChange={handleChange(setTradeSize)}
             disabled={false}
           />
         </div>
@@ -151,7 +153,7 @@ const PnlCalculator = () => {
           <Select
             label={"account currency"}
             value={depositCurrency}
-            onChange={handleDepositSelect}
+            onChange={handleChange(setDepositCurrency)}
             array={uniqueCurrencies}
           />
         </div>
@@ -159,13 +161,19 @@ const PnlCalculator = () => {
           <Input
             label={"currency conversion pair price"}
             placeholder={"e.g. price of USD/JPY"}
-            onChange={handleConverisonPrice}
+            onChange={handleChange(setConverisonRate)}
             disabled={false}
           />
         )}
         <button onClick={calculatePnl}>Calculate</button>
       </div>
-      {pnl && <ResultsDisplay text={"PNL"} value={pnl} depositCurrency={depositCurrency} />}
+      {pnl && (
+        <ResultsDisplay
+          text={"PNL"}
+          value={pnl}
+          depositCurrency={depositCurrency}
+        />
+      )}
     </>
   );
 };

@@ -139,6 +139,7 @@ select {
   background: transparent;
   padding: 0.3rem 0.6rem;
   vertical-align: middle;
+  border-radius: 8px;
 }
 .btn-outline svg {
   fill: var(--accent-color);
@@ -482,4 +483,34 @@ select {
 
 .ql-syntax {
   color: var(--text-color);
+}
+
+/*wrapper*/
+.m-wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  padding: 2rem;
+  flex: 1;
+}
+
+.m-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 0rem;
+  gap: 1rem;
+  flex: 1;
+}
+
+.m-heading {
+  display: flex;
+  align-items: start;
+  padding: 1rem 2rem;
+  justify-content: space-between;
+  border-bottom: 1px solid lightgray;
+}
+.capitalize {
+  text-transform: capitalize !important;
 }

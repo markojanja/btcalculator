@@ -9,8 +9,6 @@ const EditUser = () => {
   const [lastname, setLastname] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
   const [role, setRole] = useState("ADMIN");
   const [activeUser, setActiveUser] = useState(false);
   const [centroid, setCentroid] = useState(false);
@@ -18,8 +16,6 @@ const EditUser = () => {
 
   const navigate = useNavigate();
   const { id } = useParams();
-
-  const matchPwd = password === repeatPassword && repeatPassword.length > 3 ? true : false;
 
   useEffect(() => {
     const getUser = async () => {
@@ -53,8 +49,6 @@ const EditUser = () => {
       lastname,
       username,
       email,
-      password,
-      repeatPassword,
       role,
       active: activeUser,
       centroid,
@@ -131,35 +125,6 @@ const EditUser = () => {
             />
           </div>
           <div className="form-group">
-            <label>password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              style={{
-                borderColor: matchPwd ? "limegreen" : repeatPassword.length > 4 ? "red" : "",
-              }}
-            />
-          </div>
-          <div className="form-group">
-            <label>repeat password</label>
-            <input
-              type="password"
-              value={repeatPassword}
-              onChange={(e) => {
-                setRepeatPassword(e.target.value);
-              }}
-              style={{
-                borderColor: matchPwd ? "limegreen" : repeatPassword.length > 4 ? "red" : "",
-              }}
-            />
-            {!matchPwd && repeatPassword.length > 4 && (
-              <p style={{ color: "oklch(50.5% 0.213 27.518)" }}>passwords do not match</p>
-            )}
-          </div>
-          <div className="form-group">
             <label>Role</label>
             <select
               name="role"
@@ -197,14 +162,17 @@ const EditUser = () => {
               }}
             />
           </div>
-          <button disabled={!matchPwd} type="submit" style={{ opacity: !matchPwd ? "0.7" : "1" }}>
-            Edit
-          </button>
+          <button type="submit">Edit</button>
         </form>
       </div>
       <div className="modal-link">
         <Link
-          style={{ display: "flex", alignSelf: "end", marginRight: "16px", alignItems: "center" }}
+          style={{
+            display: "flex",
+            alignSelf: "end",
+            marginRight: "16px",
+            alignItems: "center",
+          }}
           to={"/users"}
         >
           <IoMdArrowRoundBack /> Back to users

@@ -12,7 +12,8 @@
 }
 .feature-heading {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
   margin: 0 auto;
   text-align: left;
   width: 100%;

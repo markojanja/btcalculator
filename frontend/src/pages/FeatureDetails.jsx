@@ -3,10 +3,12 @@ import axios from "axios";
 import DOMPurify from "dompurify";
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const FeatureDetails = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { id } = useParams();
+  const {user} = useAuth();
   const [feature, setFeature] = useState({});
   useEffect(() => {
     const getFeature = async () => {
@@ -29,7 +31,9 @@ const FeatureDetails = () => {
     <div className="feature-wrapper">
       <div className="feature-heading">
         <h2>{feature.title}</h2>
-        <Link to={`/features/${feature.id}/edit`}>Edit</Link>
+        {
+          (user?.role === "ADMIN" || user?.role === "MANAGER") &&  <Link to={`/features/${feature.id}/edit`} className="btn btn-outline">Edit</Link>
+        }
       </div>
       <div className="feature-desc" dangerouslySetInnerHTML={{ __html: clean }} />
       <div style={{ textAlign: "left" }}>

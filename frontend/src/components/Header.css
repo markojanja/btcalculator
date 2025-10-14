@@ -71,7 +71,7 @@
   z-index: 999;
   flex-direction: column;
   transition: all 0.2s ease;
-  gap: 1rem;
+  gap: 1.5rem;
   border-radius: 4px;
   align-self: flex-start;
   transition: all 0.2s ease;
@@ -91,4 +91,5 @@
 
 .profile-menu:hover .profile-submenu {
   display: flex;
+  box-shadow: var(--box-shadow);
 }

@@ -1,9 +1,9 @@
-import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import useAuth from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
 
-const Protected = ({roles=[]}) => {
+const IndexPageRedirect = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -13,14 +13,17 @@ const Protected = ({roles=[]}) => {
     if (!user) {
       navigate("/login", { replace: true });
     }
-    else if(roles.length && !roles.includes(user.role)){
-      navigate('/login',{replace:true})
+    if (user?.role === "ADMIN" || user?.role === "MANAGER") {
+      navigate("/dashboard", { replace: true });
+    }
+    if (user?.role === "SUPPORT") {
+      navigate("/tasks", { replace: true });
     }
   }, [user, loading, navigate]);
 
   if (loading) return <Loading />;
 
-  return user && (!roles.length || roles.includes(user.role))? <Outlet /> : null;
+  return null;
 };
 
-export default Protected;
+export default IndexPageRedirect;

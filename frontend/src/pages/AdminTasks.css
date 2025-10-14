@@ -1,0 +1,30 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 14px;
+  white-space: normal;
+  vertical-align: top;
+  color: var(--text-color);
+}
+.table th,
+td {
+  padding: 4px 8px;
+  text-align: left;
+  height: max-content;
+}
+.table tbody tr {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: var(--accent-color);
+  color: #ffffff;
+}
+.table thead {
+  border-bottom: 1px solid gray;
+}
+.table th {
+  font-weight: bold;
+}
