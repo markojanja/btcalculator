@@ -3,6 +3,7 @@ import { FaBusinessTime } from "react-icons/fa";
 import { RiProgress2Line } from "react-icons/ri";
 import { SiJirasoftware } from "react-icons/si";
 import { IoCheckmarkDoneCircle } from "react-icons/io5";
+import { FaRegEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import DashCard from "../components/DashCard";
 
@@ -218,14 +219,17 @@ const Dashboard = () => {
                       <td>
                         {task.user.firstname} {task.user.lastname}
                       </td>
+                      <td>
+                        <Link to={`/dashboard/task/${task.id}`}>view task</Link>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <a href="/">view all tasks</a>
+            <Link to="tasks/ALL">view all tasks</Link>
           </div>
-          <div className="users">
+          <div className="users" style={{ fontSize: "12px" }}>
             <h4>Recent Users</h4>
             <div style={{ flex: "1" }}>
               <table className="dash-table">
@@ -239,17 +243,20 @@ const Dashboard = () => {
                 <tbody>
                   {recentUsers.map((user) => (
                     <tr key={user.id}>
-                      <td>
-                        {user.firstname} {user.lastname}
-                      </td>
+                      <td>{user.firstname}</td>
                       <td>{user.email}</td>
-                      <td>{user.role}</td>
+                      <td className="capitalize">{user.role.toLowerCase()}</td>
+                      <td>
+                        <Link to={`/users/edit/${user.id}`}>
+                          <FaRegEdit />
+                        </Link>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <a href="/">view all users</a>
+            <Link to="/users">view all users</Link>
           </div>
         </div>
       </div>

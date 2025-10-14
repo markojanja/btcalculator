@@ -23,6 +23,7 @@ import EditFeature from "./pages/EditFeature";
 import IndexPageRedirect from "./components/IndexPageRedirect";
 import Dashboard from "./pages/Dashboard";
 import AdminTasks from "./pages/AdminTasks";
+import AdminTask from "./pages/AdminTask";
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
           {
             path: "dashboard/tasks/:type",
             element: <AdminTasks />,
+          },
+          {
+            path: "dashboard/task/:id",
+            element: <AdminTask />,
           },
           { path: "users", element: <Users /> },
           { path: "users/add", element: <AddUser /> },

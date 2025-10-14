@@ -5,7 +5,9 @@ import {
   getTasksByUser,
   getLatestTasks,
   getRecentUsers,
+  getTasksStatusAndPriority,
 } from "../services/adminData.service.js";
+import prisma from "../db/prisma.js";
 
 export const getAdminData = async (req, res) => {
   try {
@@ -47,15 +49,34 @@ export const getAdminTasks = async (req, res) => {
   } else if (type === "COMPLETED") {
     filter.status = type;
     excludeCompleted = false;
+  } else if (type === "ALL") {
+    filter = {};
+    excludeCompleted = false;
   } else {
     filter.status = type;
   }
-  console.log(filter);
+
   try {
     const tasks = await getTasksStatusAndPriority(filter, excludeCompleted);
 
-    return res.status(200).json(tasks);
+    return res.status(200).json({ page_title: type, tasks });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getAdminTask = async (req, res) => {
+  const { id } = req.params;
+  // console.log(req.params);
+  try {
+    const task = await prisma.tasks.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    return res.status(200).json({ task });
+  } catch (error) {
+    res.status(500).json({ error: "Something went wrong!" });
   }
 };

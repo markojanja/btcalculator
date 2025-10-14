@@ -32,14 +32,24 @@ const Sidebar = () => {
       </div>
       <ul className="sidebar-wrapper">
         {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
-          <li id="mobile-hidden">
-            <NavLink
-              className={({ isActive }) => (isActive ? "is-active" : "")}
-              to="/dashboard"
-            >
-              Dashboard
-            </NavLink>
-          </li>
+          <>
+            <li id="mobile-hidden">
+              <NavLink
+                className={({ isActive }) => (isActive ? "is-active" : "")}
+                to="/dashboard"
+              >
+                Dashboard
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                className={({ isActive }) => (isActive ? "is-active" : "")}
+                to="/dashboard/tasks/ALL"
+              >
+                Tasks
+              </NavLink>
+            </li>
+          </>
         )}
         {user?.role === "SUPPORT" && (
           <li id="mobile-hidden">
