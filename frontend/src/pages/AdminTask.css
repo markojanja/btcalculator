@@ -23,3 +23,7 @@
   flex: 1;
   padding: 1rem;
 }
+
+.task-card p {
+  text-align: left;
+}
