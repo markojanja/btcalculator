@@ -1,3 +1,15 @@
+.task-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0 auto;
+  align-items: flex-start;
+  flex: 1;
+  padding: 1rem;
+  box-shadow: none;
+  background-color: var(--secondary-color);
+}
+
 .task-desc {
   display: flex;
   flex-direction: column;

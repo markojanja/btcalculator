@@ -40,7 +40,7 @@ const AdminTask = () => {
         <div className="task-desc">
           <h2>{task.title}</h2>
           <div
-            className="feature-desc"
+            className="task-card"
             dangerouslySetInnerHTML={{ __html: clean }}
           />
         </div>
