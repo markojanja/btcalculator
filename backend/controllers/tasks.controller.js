@@ -67,19 +67,20 @@ export const addTask = async (req, res) => {
 };
 
 export const editTask = async (req, res) => {
-  const data = req.body;
+  const { id, title, description, status, priority, userId } = req.body;
   try {
+    const updatedFields = {};
+    if (title) updatedFields.title = title;
+    if (description) updatedFields.description = description;
+    if (status) updatedFields.status = status;
+    if (priority) updatedFields.priority = priority;
+    if (userId) updatedFields.userId = userId;
+
     const updatedTask = await prisma.tasks.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        title: data.title,
-        description: data.description,
-        status: data.status,
-        priority: data.priority,
-      },
+      where: { id },
+      data: updatedFields,
     });
+
     res.status(200).json({ message: "Task updated", task: updatedTask });
   } catch (error) {
     return res.status(500).json({ error: "Something went wrong" });
