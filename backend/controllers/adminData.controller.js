@@ -75,7 +75,13 @@ export const getAdminTask = async (req, res) => {
       },
     });
 
-    return res.status(200).json({ task });
+    const users = await prisma.user.findMany({
+      where: {
+        role: "SUPPORT",
+      },
+    });
+
+    return res.status(200).json({ task, users });
   } catch (error) {
     res.status(500).json({ error: "Something went wrong!" });
   }

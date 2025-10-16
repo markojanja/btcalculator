@@ -1,13 +1,98 @@
-.task-desc {
+.task-desc-admin {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 1rem;
-  width: 60%;
-  margin: 0 auto;
-  align-items: flex-start;
+  gap: 1.5rem;
+  width: 80%;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
   background-color: var(--secondary-color);
   box-shadow: var(--box-shadow);
+  border-radius: 10px;
   flex: 1;
+}
+
+.task-desc-admin h2 {
+  font-size: 1.6rem;
+  margin: 0;
+  text-align: left;
+  font-weight: 600;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid lightgray;
+}
+
+.task-card-admin {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.5rem;
+  align-items: flex-start;
+  background-color: var(--secondary-color);
+  box-shadow: none;
   padding: 1rem;
+  flex: 1;
+  border-bottom: 1px solid lightgray;
+}
+
+.task-card-admin p {
+  text-align: left;
+  line-height: 1.5;
+}
+
+.task-card-admin ul {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  list-style: disc;
+  margin-left: 2rem;
+  padding-left: 0;
+  text-align: left;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.edit-form div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-start;
+  margin-bottom: 0;
+}
+
+.edit-form select,
+.edit-form button {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.edit-form select:focus {
+  outline: none;
+}
+
+.edit-form button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-form button:hover {
+  filter: brightness(0.9);
+}
+
+@media (max-width: 600px) {
+  .edit-form div {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .edit-form select,
+  .edit-form button {
+    width: 100%;
+  }
 }
