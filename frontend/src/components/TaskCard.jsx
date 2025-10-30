@@ -20,7 +20,7 @@ const TaskCard = ({ task, onDragStart }) => {
   return (
     <div className="task-card" draggable onDragStart={() => onDragStart(task)}>
       <div className="task-card-header">
-        <h4 style={{ fontSize: "20px" }}>{task.title}</h4>
+        <h4>{task.title}</h4>
         <div className="tasks-btn-group">
           <FaRegEdit onClick={() => toggleModal(task)} />
           <MdDeleteOutline
@@ -47,7 +47,8 @@ const TaskCard = ({ task, onDragStart }) => {
         )}
         {task.priority === "MEDIUM" && (
           <>
-            <TiEquals style={{ fill: "cyan" }} /> <span className="task-span">{task.priority}</span>
+            <TiEquals style={{ fill: "cyan" }} />{" "}
+            <span className="task-span">{task.priority}</span>
           </>
         )}
         {task.priority === "HIGH" && (
@@ -60,7 +61,14 @@ const TaskCard = ({ task, onDragStart }) => {
       <span style={{ color: "gray", fontSize: "12px" }}>
         {new Date(task.createdAt).toLocaleString()}
       </span>
-      <p style={{ display: "flex", alignItems: "center", gap: "0.3rem", color: "gray" }}>
+      <p
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.3rem",
+          color: "gray",
+        }}
+      >
         <CgProfile /> <span>{task.user.username}</span>
       </p>
     </div>
