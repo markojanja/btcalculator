@@ -24,6 +24,7 @@ import IndexPageRedirect from "./components/IndexPageRedirect";
 import Dashboard from "./pages/Dashboard";
 import AdminTasks from "./pages/AdminTasks";
 import AdminTask from "./pages/AdminTask";
+import UserGuides from "./pages/UserGuides";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,7 @@ const router = createBrowserRouter([
           { path: "profile", element: <Profile /> },
           { path: "features/", element: <NewFeatures /> },
           { path: "features/:id", element: <FeatureDetails /> },
+          { path: "guides", element: <UserGuides /> },
         ],
       },
       {
