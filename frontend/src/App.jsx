@@ -25,6 +25,7 @@ import Dashboard from "./pages/Dashboard";
 import AdminTasks from "./pages/AdminTasks";
 import AdminTask from "./pages/AdminTask";
 import UserGuides from "./pages/UserGuides";
+import AddGuide from "./pages/AddGuide";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,7 @@ const router = createBrowserRouter([
           { path: "features/", element: <NewFeatures /> },
           { path: "features/:id", element: <FeatureDetails /> },
           { path: "guides", element: <UserGuides /> },
+          { path: "guides/new", element: <AddGuide /> },
         ],
       },
       {
