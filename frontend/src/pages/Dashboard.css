@@ -119,3 +119,8 @@ td {
   height: 350px;
   padding: 0.5rem;
 }
+
+.pending-tasks a,
+.users a {
+  font-size: 14px;
+}
