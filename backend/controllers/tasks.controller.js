@@ -2,7 +2,14 @@ import prisma from "../db/prisma.js";
 
 export const myTasks = async (req, res) => {
   const user = req.user;
-  console.log("Fetching tasks...");
+  // console.log("Fetching tasks...");
+
+  const dayStart = new Date();
+  const dayEnd = new Date();
+
+  dayStart.setHours(0, 0, 0, 0);
+  dayEnd.setHours(23, 59, 59, 999);
+
   const COLUMNS = [
     { title: "TODO", colStatus: "TODO" },
     { title: "IN PROGRESS", colStatus: "IN_PROGRESS" },
@@ -15,7 +22,12 @@ export const myTasks = async (req, res) => {
     const tasks = await prisma.tasks.findMany({
       where: {
         userId: user.id,
+        createdAt: {
+          gte: dayStart,
+          lte: dayEnd,
+        },
       },
+
       include: {
         user: {
           select: {

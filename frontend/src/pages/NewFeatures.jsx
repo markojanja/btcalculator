@@ -8,11 +8,11 @@ import useAuth from "../hooks/useAuth";
 
 const NewFeatures = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-   const { user } = useAuth();
+  const { user } = useAuth();
   const [features, setFeatures] = useState([]);
   useEffect(() => {
     const getPubFeatures = async () => {
-      const pubFeatures = await axios.get(`${BACKEND_URL}/features/published`, {
+      const pubFeatures = await axios.get(`${BACKEND_URL}/features/all`, {
         withCredentials: true,
       });
       setFeatures(pubFeatures.data);
@@ -25,7 +25,11 @@ const NewFeatures = () => {
       <div className="feature-header">
         <h3>Feature Announcements</h3>
         {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
-          <Link className="btn-outline" style={{ borderRadius: "8px" }} to="/features/new">
+          <Link
+            className="btn-outline"
+            style={{ borderRadius: "8px" }}
+            to="/features/new"
+          >
             New feature
           </Link>
         )}

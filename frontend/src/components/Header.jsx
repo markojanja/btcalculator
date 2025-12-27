@@ -46,7 +46,7 @@ const Header = () => {
               onColor="#c70036"
               handleDiameter={14}
               onChange={toggleTheme}
-              checked={theme === "" ? false : true}
+              checked={theme === "dark" ? false : true}
             />
           </li>
           <li className="profile-menu">
