@@ -23,6 +23,9 @@
   display: flex;
   gap: 0.3rem;
   margin-top: 1px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .task-span::first-letter {

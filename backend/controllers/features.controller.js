@@ -1,10 +1,27 @@
 import prisma from "../db/prisma.js";
 
-export const getFeatures = async (req, res) => {};
+export const getFeatures = async (req, res) => {
+  if (req.user.role === "ADMIN" || req.user.role === "MANAGER") {
+    const getAllFeatures = await prisma.features.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        user: {
+          select: { username: true },
+        },
+      },
+    });
 
-export const getPublishedFeatures = async (req, res) => {
+    return res.status(200).json(getAllFeatures);
+  }
   const publishedFeatures = await prisma.features.findMany({
-
+    orderBy: {
+      createdAt: "desc",
+    },
+    where: {
+      published: true,
+    },
     include: {
       user: {
         select: {
@@ -14,7 +31,9 @@ export const getPublishedFeatures = async (req, res) => {
     },
   });
   if (!publishedFeatures) {
-    return res.status(200).json({ message: "No new features are published yet!" });
+    return res
+      .status(200)
+      .json({ message: "No new features are published yet!" });
   }
   return res.status(200).json(publishedFeatures);
 };
