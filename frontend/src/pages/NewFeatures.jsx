@@ -42,13 +42,13 @@ const NewFeatures = () => {
         )}
       </div>
       <div className="feature-list">
-        {currentItems.length === 0 && (
+        {currentItems?.length === 0 && (
           <div className="features-wrapper">
             <h2>No new features yet</h2>
           </div>
         )}
 
-        {currentItems.map((feature) => (
+        {currentItems?.map((feature) => (
           <FeaturesCard key={feature.id} feature={feature} />
         ))}
       </div>
