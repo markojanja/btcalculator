@@ -4,17 +4,14 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Quill from "quill";
 import ReactQuill from "react-quill";
-import CustomDatePicker from "../components/CustomDatePicker";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
-const EditFeature = () => {
+const EditGuide = () => {
   const { id } = useParams();
   const quillRef = useRef(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [released, setReleased] = useState(false);
   const [published, setPublished] = useState(false);
-  const [releaseDate, setReleaseDate] = useState("");
 
   const navigate = useNavigate();
 
@@ -53,15 +50,14 @@ const EditFeature = () => {
   useEffect(() => {
     const getFeature = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/features/${id}/edit`, {
+        const response = await axios.get(`${BACKEND_URL}/guides/${id}/edit`, {
           withCredentials: true,
         });
-        const feature = response.data;
-        setTitle(feature.title);
-        setDescription(feature.description);
-        setReleased(feature.released);
-        setReleaseDate(new Date(feature.releaseDate));
-        setPublished(feature.published);
+        const guide = response.data;
+        console.log(guide);
+        setTitle(guide.title);
+        setDescription(guide.description);
+        setPublished(guide.published);
       } catch (error) {
         console.log(error);
       }
@@ -75,17 +71,13 @@ const EditFeature = () => {
     const data = {
       title,
       description,
-      releaseDate: releaseDate
-        ? new Date(releaseDate).toISOString().split("T")[0]
-        : null,
-      released,
       published,
     };
     try {
-      await axios.put(`${BACKEND_URL}/features/${id}/edit`, data, {
+      await axios.put(`${BACKEND_URL}/guides/${id}/edit`, data, {
         withCredentials: true,
       });
-      navigate("/features");
+      navigate("/guides");
     } catch (error) {
       console.log(error);
     }
@@ -115,26 +107,6 @@ const EditFeature = () => {
               formats={formats}
             />
           </div>
-          <div className="form-group">
-            <CustomDatePicker
-              setter={setReleaseDate}
-              placeholder={"select release date"}
-              initialValue={releaseDate}
-            />
-          </div>
-
-          <div className="checkbox-group">
-            <label htmlFor="checkbox">Released</label>
-            <input
-              id="checkbox"
-              type="checkbox"
-              checked={released}
-              className="w-auto"
-              onChange={() => {
-                setReleased(!released);
-              }}
-            />
-          </div>
           <div className="checkbox-group">
             <label htmlFor="checkbox">Published</label>
             <input
@@ -160,11 +132,11 @@ const EditFeature = () => {
           }}
           to={"/features"}
         >
-          <IoMdArrowRoundBack /> Back to features
+          <IoMdArrowRoundBack /> Back to guides
         </Link>
       </div>
     </div>
   );
 };
 
-export default EditFeature;
+export default EditGuide;
