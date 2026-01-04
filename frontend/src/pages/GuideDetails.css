@@ -1,4 +1,4 @@
-.feature-wrapper {
+.guide-wrapper {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -11,7 +11,7 @@
   gap: 1rem;
   text-align: left;
 }
-.feature-heading {
+.guide-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -20,7 +20,7 @@
   width: 100%;
 }
 
-.feature-desc {
+.guide-desc {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -33,14 +33,14 @@
   padding: 1rem;
 }
 
-.feature-desc ul {
+.guide-desc ul {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   margin-left: 1.5rem;
   list-style: disc;
 }
-.feature-desc ol {
+.guide-desc ol {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -48,12 +48,12 @@
   list-style: disc;
 }
 
-.feature-desc p img {
+.guide-desc p img {
   width: 100%;
 }
 
-.feature-desc pre,
-.feature-desc code {
+.guide-desc pre,
+.guide-desc code {
   padding: 0.5rem 1rem;
   box-sizing: border-box;
   padding: 1rem;

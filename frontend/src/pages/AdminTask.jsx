@@ -18,7 +18,7 @@ const AdminTask = () => {
     userId: "",
   });
 
-  const STATUS = ["TODO", "IN_PROGRESS", "CS_TICKET", "IT_TICKET"];
+  const STATUS = ["TODO", "IN_PROGRESS", "CS_TICKET", "IT_TICKET", "COMPLETED"];
   const PRIORITY = ["LOW", "MEDIUM", "HIGH"];
 
   useEffect(() => {
