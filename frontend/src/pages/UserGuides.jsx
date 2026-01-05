@@ -26,7 +26,7 @@ const UserGuides = () => {
 
   const { currentItems, pageCount, handlePageChange } = usePagination(
     guides,
-    2
+    5
   );
 
   return (

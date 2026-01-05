@@ -3,12 +3,18 @@ import { Link, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
+import Pagination from "../components/Pagination";
+import usePagination from "../hooks/usePagination";
 
 const AdminTasks = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { type } = useParams();
   const [title, setTitle] = useState("");
   const [tasks, setTasks] = useState([]);
+  const { currentItems, pageCount, handlePageChange } = usePagination(
+    tasks,
+    20
+  );
 
   useEffect(() => {
     const testData = async () => {
@@ -45,7 +51,7 @@ const AdminTasks = () => {
             </tr>
           </thead>
           <tbody>
-            {tasks.map((task) => (
+            {currentItems.map((task) => (
               <tr key={task.id}>
                 <td>{task.title}</td>
                 <td>{task.status}</td>
@@ -61,6 +67,7 @@ const AdminTasks = () => {
           </tbody>
         </table>
       </div>
+      <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
     </div>
   );
 };
