@@ -45,7 +45,7 @@ const GuideDetails = () => {
         <p>created: {new Date(guide.createdAt).toLocaleDateString()}</p>
       </div>
       <Link style={{ alignSelf: "flex-end" }} to={"/guides"}>
-        Back to features
+        Back to guides
       </Link>
     </div>
   );

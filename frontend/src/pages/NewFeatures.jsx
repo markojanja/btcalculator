@@ -24,7 +24,7 @@ const NewFeatures = () => {
 
   const { currentItems, pageCount, handlePageChange } = usePagination(
     features,
-    2
+    5
   );
 
   return (

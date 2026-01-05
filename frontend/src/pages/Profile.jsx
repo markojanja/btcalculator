@@ -4,11 +4,21 @@ import { FaUserCircle } from "react-icons/fa";
 import { IoBriefcase } from "react-icons/io5";
 import { MdOutlineEmail } from "react-icons/md";
 import { GrStatusGoodSmall } from "react-icons/gr";
+import PasswordModal from "../components/PasswordModal";
+import { useState } from "react";
 
 const Profile = () => {
   const { user } = useAuth();
+  const [modal, setModal] = useState(false);
 
   const role = user.role;
+
+  const handleToggleModal = () => {
+    setModal(!modal);
+  };
+  if (modal) {
+    return <PasswordModal />;
+  }
 
   return (
     <div className="profile">
@@ -31,7 +41,9 @@ const Profile = () => {
           </div>
           <div className="profile-info-group">
             <IoBriefcase />
-            <h3>{role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()}</h3>
+            <h3>
+              {role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()}
+            </h3>
           </div>
           <div className="profile-info-group">
             {user?.active ? (
@@ -46,7 +58,7 @@ const Profile = () => {
       </div>
       <div className="password-card">
         <h3>Change password</h3>
-        <button>Change Password</button>
+        <button onClick={handleToggleModal}>Change Password</button>
       </div>
     </div>
   );

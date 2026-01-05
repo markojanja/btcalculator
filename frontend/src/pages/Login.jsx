@@ -1,3 +1,4 @@
+import "./Login.css";
 import { useState, useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -23,28 +24,8 @@ const Login = () => {
   };
 
   return (
-    <div
-      className=""
-      style={{
-        display: "flex",
-        flex: "1",
-        flexDirection: "column",
-        width: "70%",
-        margin: "0 auto",
-        justifyContent: "center",
-      }}
-    >
-      <form
-        action="POST"
-        className="login"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-        onSubmit={handleSubmit}
-      >
+    <div className="login-wrapper">
+      <form action="POST" className="login" onSubmit={handleSubmit}>
         <div className="logo">
           <h3>
             <span className="is-active">CS</span>Board

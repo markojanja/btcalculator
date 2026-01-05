@@ -13,8 +13,7 @@
 }
 .calculator,
 .results-display,
-.converter,
-.login {
+.converter {
   display: flex;
   flex-direction: column;
   align-items: start;
