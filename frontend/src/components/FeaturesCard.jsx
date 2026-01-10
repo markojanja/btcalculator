@@ -8,9 +8,11 @@ const FeaturesCard = ({ feature }) => {
         <h3>{feature.title}</h3>
         <p>Author: {feature.user?.username}</p>
         <p>Released:{feature.released ? "✅" : "❌"}</p>
-        <p>📅 {new Date(feature.releaseDate).toLocaleDateString()}</p>
         <p>Published:{feature.published ? "✅" : "❌"}</p>
-        <p>Created: {new Date(feature.createdAt).toLocaleDateString()}</p>
+        <p>
+          Release Date: {new Date(feature.releaseDate).toLocaleDateString()}
+        </p>
+        <p>Created Date: {new Date(feature.createdAt).toLocaleDateString()}</p>
       </Link>
     </div>
   );

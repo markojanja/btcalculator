@@ -76,14 +76,20 @@ const AddTaskModal = () => {
 
   return (
     <div className="add-task-modal">
-      <div style={{ display: "flex", justifyContent: "flex-end", padding: "0.5rem 3rem" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          padding: "0.5rem 3rem",
+        }}
+      >
         <IoMdClose size={24} onClick={() => toggleAddTaskModal()} />
       </div>
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          width: "60%",
+          width: "700px",
           alignItems: "flex-start",
           justifyContent: "center",
           margin: "0 auto",
@@ -99,7 +105,10 @@ const AddTaskModal = () => {
         <input
           type="text"
           placeholder="title"
-          style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
+          style={{
+            backgroundColor: "var(--secondary-color)",
+            boxShadow: "none",
+          }}
           onChange={(e) => {
             setTitle(e.target.value);
           }}
@@ -115,7 +124,10 @@ const AddTaskModal = () => {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
+            style={{
+              backgroundColor: "var(--secondary-color)",
+              boxShadow: "none",
+            }}
           >
             {STATUS.map((stat) => (
               <option key={stat} value={stat}>
@@ -129,7 +141,10 @@ const AddTaskModal = () => {
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
-            style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
+            style={{
+              backgroundColor: "var(--secondary-color)",
+              boxShadow: "none",
+            }}
           >
             {PRIORITY.map((prior) => (
               <option key={prior} value={prior}>

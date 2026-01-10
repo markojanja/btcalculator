@@ -59,7 +59,9 @@ const AddFeature = () => {
         released,
         published,
       };
-      await axios.post(`${BACKEND_URL}/features/new`, newFeature, { withCredentials: true });
+      await axios.post(`${BACKEND_URL}/features/new`, newFeature, {
+        withCredentials: true,
+      });
       navigate("/features");
     } catch (error) {
       console.log(error);
@@ -91,7 +93,10 @@ const AddFeature = () => {
             />
           </div>
           <div className="form-group">
-            <CustomDatePicker setter={setReleaseDate} placeholder={"select release date"} />
+            <CustomDatePicker
+              setter={setReleaseDate}
+              placeholder={"select release date"}
+            />
           </div>
 
           <div className="checkbox-group">
@@ -120,14 +125,19 @@ const AddFeature = () => {
           </div>
           <button style={{ alignSelf: "self-start" }}>Save</button>
         </form>
-      </div>
-      <div className="modal-link">
-        <Link
-          style={{ display: "flex", alignSelf: "end", marginRight: "16px", alignItems: "center" }}
-          to={"/features"}
-        >
-          <IoMdArrowRoundBack /> Back to features
-        </Link>
+        <div className="modal-link">
+          <Link
+            style={{
+              display: "flex",
+              alignSelf: "end",
+              marginRight: "16px",
+              alignItems: "center",
+            }}
+            to={"/features"}
+          >
+            <IoMdArrowRoundBack /> Back to features
+          </Link>
+        </div>
       </div>
     </div>
   );

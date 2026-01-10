@@ -10,6 +10,7 @@
   box-shadow: var(--box-shadow);
   gap: 1rem;
   text-align: left;
+  width: 700px;
 }
 .feature-heading {
   display: flex;

@@ -22,7 +22,7 @@ const Users = () => {
     getUsers();
   }, []);
 
-  const { currentItems, pageCount, handlePageChange } = usePagination(users, 1);
+  const { currentItems, pageCount, handlePageChange } = usePagination(users, 4);
 
   return (
     <div className="users-wrapper">

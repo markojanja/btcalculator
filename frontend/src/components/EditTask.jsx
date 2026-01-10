@@ -56,9 +56,17 @@ const EditTask = () => {
 
   const handleSave = async () => {
     try {
-      const updatedTask = { ...activeTask, title, description: content, status, priority };
+      const updatedTask = {
+        ...activeTask,
+        title,
+        description: content,
+        status,
+        priority,
+      };
       updateTask(updatedTask);
-      await axios.put(`${BACKEND_URL}/tasks/edit_task`, updatedTask, { withCredentials: true });
+      await axios.put(`${BACKEND_URL}/tasks/edit_task`, updatedTask, {
+        withCredentials: true,
+      });
     } catch (error) {
       console.log(error);
     } finally {
@@ -69,14 +77,20 @@ const EditTask = () => {
 
   return (
     <div className="edit-task-modal">
-      <div style={{ display: "flex", justifyContent: "flex-end", padding: "0.5rem 3rem" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          padding: "0.5rem 3rem",
+        }}
+      >
         <IoMdClose size={24} onClick={() => toggleEditTaskModal()} />
       </div>
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          width: "60%",
+          width: "700px",
           alignItems: "flex-start",
           justifyContent: "center",
           margin: "0 auto",
@@ -92,7 +106,10 @@ const EditTask = () => {
         <input
           type="text"
           placeholder="title"
-          style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
+          style={{
+            backgroundColor: "var(--secondary-color)",
+            boxShadow: "none",
+          }}
           onChange={(e) => {
             setTitle(e.target.value);
           }}
@@ -110,7 +127,10 @@ const EditTask = () => {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
+            style={{
+              backgroundColor: "var(--secondary-color)",
+              boxShadow: "none",
+            }}
           >
             {STATUS.map((stat) => (
               <option key={stat} value={stat}>
@@ -124,7 +144,10 @@ const EditTask = () => {
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
-            style={{ backgroundColor: "var(--secondary-color)", boxShadow: "none" }}
+            style={{
+              backgroundColor: "var(--secondary-color)",
+              boxShadow: "none",
+            }}
           >
             {PRIORITY.map((prior) => (
               <option key={prior} value={prior}>

@@ -101,19 +101,19 @@ const AddGuide = () => {
           </div>
           <button style={{ alignSelf: "self-start" }}>Save</button>
         </form>
-      </div>
-      <div className="modal-link">
-        <Link
-          style={{
-            display: "flex",
-            alignSelf: "end",
-            marginRight: "16px",
-            alignItems: "center",
-          }}
-          to={"/guides"}
-        >
-          <IoMdArrowRoundBack /> Back to guides
-        </Link>
+        <div className="modal-link">
+          <Link
+            style={{
+              display: "flex",
+              alignSelf: "end",
+              marginRight: "16px",
+              alignItems: "center",
+            }}
+            to={"/guides"}
+          >
+            <IoMdArrowRoundBack /> Back to guides
+          </Link>
+        </div>
       </div>
     </div>
   );
