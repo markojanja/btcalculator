@@ -164,19 +164,19 @@ const EditUser = () => {
           </div>
           <button type="submit">Edit</button>
         </form>
-      </div>
-      <div className="modal-link">
-        <Link
-          style={{
-            display: "flex",
-            alignSelf: "end",
-            marginRight: "16px",
-            alignItems: "center",
-          }}
-          to={"/users"}
-        >
-          <IoMdArrowRoundBack /> Back to users
-        </Link>
+        <div className="modal-link">
+          <Link
+            style={{
+              display: "flex",
+              alignSelf: "end",
+              marginRight: "16px",
+              alignItems: "center",
+            }}
+            to={"/users"}
+          >
+            <IoMdArrowRoundBack /> Back to users
+          </Link>
+        </div>
       </div>
     </div>
   );

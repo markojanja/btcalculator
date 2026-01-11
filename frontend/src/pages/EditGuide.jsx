@@ -121,19 +121,19 @@ const EditGuide = () => {
           </div>
           <button style={{ alignSelf: "self-start" }}>Save</button>
         </form>
-      </div>
-      <div className="modal-link">
-        <Link
-          style={{
-            display: "flex",
-            alignSelf: "end",
-            marginRight: "16px",
-            alignItems: "center",
-          }}
-          to={"/features"}
-        >
-          <IoMdArrowRoundBack /> Back to guides
-        </Link>
+        <div className="modal-link">
+          <Link
+            style={{
+              display: "flex",
+              alignSelf: "end",
+              marginRight: "16px",
+              alignItems: "center",
+            }}
+            to={"/features"}
+          >
+            <IoMdArrowRoundBack /> Back to guides
+          </Link>
+        </div>
       </div>
     </div>
   );
