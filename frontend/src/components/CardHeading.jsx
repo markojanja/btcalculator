@@ -1,7 +1,13 @@
 import SettingsButton from "./SettingsButton";
 import { FaRegQuestionCircle } from "react-icons/fa";
 
-const CardHeading = ({ title, editMode, setEditMode, visible, setShowModal }) => {
+const CardHeading = ({
+  title,
+  editMode,
+  setEditMode,
+  visible,
+  setShowModal,
+}) => {
   const handleToggleModal = () => {
     setShowModal(true);
   };
@@ -11,7 +17,9 @@ const CardHeading = ({ title, editMode, setEditMode, visible, setShowModal }) =>
       <div className="header-btn" onClick={handleToggleModal}>
         <FaRegQuestionCircle style={{ cursor: "pointer" }} />
       </div>
-      {visible && <SettingsButton editMode={editMode} setEditMode={setEditMode} />}
+      {visible && (
+        <SettingsButton editMode={editMode} setEditMode={setEditMode} />
+      )}
     </div>
   );
 };
