@@ -104,15 +104,28 @@ const AddTaskModal = () => {
       const items = e.clipboardData?.items;
       if (!items) return;
 
-      for (const item of items) {
-        if (item.type.startsWith("image/")) {
-          const file = item.getAsFile();
-          if (!file) return; // IMPORTANT
+      let handled = false;
 
+      for (const item of items) {
+        if (item.kind === "file" && item.type.startsWith("image/")) {
+          const file = item.getAsFile();
+          if (!file) continue;
+
+          handled = true;
           e.preventDefault();
-          const url = await uploadImage(file);
-          insertImage(url);
+
+          try {
+            const url = await uploadImage(file);
+            insertImage(url);
+          } catch (err) {
+            console.error("Upload failed:", err);
+          }
         }
+      }
+
+      // If no real image file, do nothing and let Quill paste normally
+      if (!handled) {
+        return;
       }
     };
 
