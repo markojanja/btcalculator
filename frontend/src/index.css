@@ -21,6 +21,7 @@
   --background-color: oklch(98.5% 0 0);
   --text-color: oklch(14.1% 0.005 285.823);
   --secondary-color: oklch(97% 0 0);
+  --third-color: oklch(86.9% 0.022 252.894);
   --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 

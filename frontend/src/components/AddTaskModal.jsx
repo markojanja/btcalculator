@@ -1,6 +1,6 @@
 import "./AddTaskModal.css";
 import axios from "axios";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import ReactQuill from "react-quill";
 import Quill from "quill";
 import ImageResize from "quill-image-resize-module-react";
@@ -15,21 +15,66 @@ const AddTaskModal = () => {
   const { toggleAddTaskModal, addTask } = useKanban();
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ indent: "-1" }, { indent: "+1" }],
-      [{ align: [] }],
-      ["link", "image", "code-block"],
-      ["clean"], // remove formatting button
-    ],
-    imageResize: {
-      parchment: Quill.import("parchment"), // required for Quill v2
-      modules: ["Resize", "DisplaySize"],
-    },
+  const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
+  const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET;
+
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    const res = await axios.post(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+      formData
+    );
+
+    return res.data.secure_url;
   };
+  const insertImage = (url) => {
+    const editor = quillRef.current.getEditor();
+    const range = editor.getSelection(true);
+    editor.insertEmbed(range.index, "image", url);
+    editor.setSelection(range.index + 1);
+  };
+
+  // Toolbar image
+  const imageHandler = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+      const url = await uploadImage(file);
+      insertImage(url);
+    };
+  };
+
+  const modules = useMemo(
+    () => ({
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, false] }],
+          ["bold", "italic", "underline", "strike"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          [{ indent: "-1" }, { indent: "+1" }],
+          [{ align: [] }],
+          ["link", "image", "code-block"],
+          ["clean"],
+        ],
+        handlers: {
+          image: imageHandler,
+        },
+      },
+      imageResize: {
+        parchment: Quill.import("parchment"),
+        modules: ["Resize", "DisplaySize"],
+      },
+    }),
+    []
+  );
 
   const formats = [
     "header",
@@ -114,7 +159,7 @@ const AddTaskModal = () => {
           }}
         />
         <ReactQuill
-          forwardedRef={quillRef}
+          ref={quillRef}
           value={content}
           onChange={setContent}
           modules={modules}
