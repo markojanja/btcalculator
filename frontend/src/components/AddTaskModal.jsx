@@ -100,15 +100,16 @@ const AddTaskModal = () => {
 
   useEffect(() => {
     const quill = quillRef.current.getEditor();
-
     const handlePaste = async (e) => {
       const items = e.clipboardData?.items;
       if (!items) return;
 
       for (const item of items) {
         if (item.type.startsWith("image/")) {
-          e.preventDefault();
           const file = item.getAsFile();
+          if (!file) return; // IMPORTANT
+
+          e.preventDefault();
           const url = await uploadImage(file);
           insertImage(url);
         }
