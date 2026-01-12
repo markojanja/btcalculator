@@ -14,7 +14,7 @@ const AddTaskModal = () => {
   const quillRef = useRef(null);
   const { toggleAddTaskModal, addTask } = useKanban();
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
+  // cloudinary
   const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
   const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET;
 
