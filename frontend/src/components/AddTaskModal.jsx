@@ -1,6 +1,6 @@
 import "./AddTaskModal.css";
 import axios from "axios";
-import { useState, useRef, useMemo, useEffect } from "react";
+import { useState, useRef, useMemo } from "react";
 import ReactQuill from "react-quill";
 import Quill from "quill";
 import ImageResize from "quill-image-resize-module-react";
@@ -97,60 +97,6 @@ const AddTaskModal = () => {
   const [content, setContent] = useState("");
   const [status, setStatus] = useState(STATUS[0]);
   const [priority, setPriority] = useState(PRIORITY[0]);
-
-  useEffect(() => {
-    const quill = quillRef.current.getEditor();
-    const handlePaste = async (e) => {
-      const items = e.clipboardData?.items;
-      if (!items) return;
-
-      let handled = false;
-
-      for (const item of items) {
-        if (item.kind === "file" && item.type.startsWith("image/")) {
-          const file = item.getAsFile();
-          if (!file) continue;
-
-          handled = true;
-          e.preventDefault();
-
-          try {
-            const url = await uploadImage(file);
-            insertImage(url);
-          } catch (err) {
-            console.error("Upload failed:", err);
-          }
-        }
-      }
-
-      // If no real image file, do nothing and let Quill paste normally
-      if (!handled) {
-        return;
-      }
-    };
-
-    const handleDrop = async (e) => {
-      const files = e.dataTransfer?.files;
-      if (!files) return;
-
-      for (const file of files) {
-        if (file.type.startsWith("image/")) {
-          e.preventDefault();
-          const url = await uploadImage(file);
-          insertImage(url);
-        }
-      }
-    };
-
-    const root = quill.root;
-    root.addEventListener("paste", handlePaste);
-    root.addEventListener("drop", handleDrop);
-
-    return () => {
-      root.removeEventListener("paste", handlePaste);
-      root.removeEventListener("drop", handleDrop);
-    };
-  }, []);
 
   const handleSubmit = async () => {
     try {
