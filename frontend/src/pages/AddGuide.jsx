@@ -1,50 +1,21 @@
 import "./AddFeature.css";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Quill from "quill";
-import ReactQuill from "react-quill";
+
 import { IoMdArrowRoundBack } from "react-icons/io";
+import RichTextEditor from "../components/RichTextEditor";
+import useCloudinary from "../hooks/useCloudinary";
 
 const AddGuide = () => {
-  const quillRef = useRef(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [published, setPublished] = useState(false);
 
   const navigate = useNavigate();
+  const { uploadImage } = useCloudinary();
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ indent: "-1" }, { indent: "+1" }],
-      [{ align: [] }],
-      ["link", "image", "code-block"],
-      ["clean"], // remove formatting button
-    ],
-    imageResize: {
-      parchment: Quill.import("parchment"), // required for Quill v2
-      modules: ["Resize", "DisplaySize"],
-    },
-  };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "indent",
-    "align",
-    "link",
-    "image",
-    "code-block",
-  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,12 +50,10 @@ const AddGuide = () => {
             />
           </div>
           <div className="form-group">
-            <ReactQuill
-              forwardedRef={quillRef}
+            <RichTextEditor
               value={description}
               onChange={setDescription}
-              modules={modules}
-              formats={formats}
+              uploadImage={uploadImage}
             />
           </div>
           <div className="checkbox-group">
