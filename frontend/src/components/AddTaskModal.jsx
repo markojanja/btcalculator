@@ -1,20 +1,15 @@
 import "./AddTaskModal.css";
 import axios from "axios";
-import { useState, useRef, useMemo } from "react";
-import ReactQuill from "react-quill";
-import Quill from "quill";
-import ImageResize from "quill-image-resize-module-react";
+import { useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import { IoMdClose } from "react-icons/io";
 import useKanban from "../hooks/useKanban";
-
-Quill.register("modules/imageResize", ImageResize);
+import RichTextEditor from "./RichTextEditor";
 
 const AddTaskModal = () => {
-  const quillRef = useRef(null);
   const { toggleAddTaskModal, addTask } = useKanban();
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  // cloudinary
+
   const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
   const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET;
 
@@ -30,66 +25,7 @@ const AddTaskModal = () => {
 
     return res.data.secure_url;
   };
-  const insertImage = (url) => {
-    const editor = quillRef.current.getEditor();
-    const range = editor.getSelection(true);
-    editor.insertEmbed(range.index, "image", url);
-    editor.setSelection(range.index + 1);
-  };
 
-  // Toolbar image
-  const imageHandler = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.click();
-
-    input.onchange = async () => {
-      const file = input.files[0];
-      if (!file) return;
-      const url = await uploadImage(file);
-      insertImage(url);
-    };
-  };
-
-  const modules = useMemo(
-    () => ({
-      toolbar: {
-        container: [
-          [{ header: [1, 2, 3, false] }],
-          ["bold", "italic", "underline", "strike"],
-          [{ list: "ordered" }, { list: "bullet" }],
-          [{ indent: "-1" }, { indent: "+1" }],
-          [{ align: [] }],
-          ["link", "image", "code-block"],
-          ["clean"],
-        ],
-        handlers: {
-          image: imageHandler,
-        },
-      },
-      imageResize: {
-        parchment: Quill.import("parchment"),
-        modules: ["Resize", "DisplaySize"],
-      },
-    }),
-    []
-  );
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "indent",
-    "align",
-    "link",
-    "image",
-    "code-block",
-  ];
   const STATUS = ["TODO", "IN_PROGRESS", "CS_TICKET", "IT_TICKET"];
   const PRIORITY = ["LOW", "MEDIUM", "HIGH"];
 
@@ -158,12 +94,10 @@ const AddTaskModal = () => {
             setTitle(e.target.value);
           }}
         />
-        <ReactQuill
-          ref={quillRef}
+        <RichTextEditor
           value={content}
           onChange={setContent}
-          modules={modules}
-          formats={formats}
+          uploadImage={uploadImage}
         />
         <div className="input-group flex-col">
           <select

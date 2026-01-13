@@ -1,50 +1,30 @@
 import "./EditTask.css";
 import axios from "axios";
-import { useState, useRef } from "react";
-import ReactQuill from "react-quill";
-import Quill from "quill";
-import ImageResize from "quill-image-resize-module-react";
+import { useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import { IoMdClose } from "react-icons/io";
 import useKanban from "../hooks/useKanban";
-
-Quill.register("modules/imageResize", ImageResize);
+import RichTextEditor from "./RichTextEditor";
 
 const EditTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { toggleEditTaskModal, updateTask, activeTask, getTasks } = useKanban();
-  const quillRef = useRef(null);
 
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ indent: "-1" }, { indent: "+1" }],
-      [{ align: [] }],
-      ["link", "image", "code-block"],
-      ["clean"], // remove formatting button
-    ],
-    imageResize: {
-      parchment: Quill.import("parchment"), // required for Quill v2
-      modules: ["Resize", "DisplaySize"],
-    },
+  const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
+  const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET;
+
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    const res = await axios.post(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+      formData
+    );
+
+    return res.data.secure_url;
   };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "indent",
-    "align",
-    "link",
-    "image",
-    "code-block",
-  ];
 
   const STATUS = ["TODO", "IN_PROGRESS", "CS_TICKET", "IT_TICKET"];
   const PRIORITY = ["LOW", "MEDIUM", "HIGH"];
@@ -115,12 +95,10 @@ const EditTask = () => {
           }}
           value={title || ""}
         />
-        <ReactQuill
-          forwardedRef={quillRef}
+        <RichTextEditor
           value={content}
           onChange={setContent}
-          modules={modules}
-          formats={formats}
+          uploadImage={uploadImage}
         />
 
         <div className="input-group flex-col">
