@@ -16,7 +16,9 @@ const AddTaskModal = () => {
   const PRIORITY = ["LOW", "MEDIUM", "HIGH"];
 
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(
+    "<strong>Affected platform:</strong><br><br><strong>Problem Description:</strong><br><br><br><strong>Actions done:</strong><br><br><br><strong>How to reproduce:</strong><br><br><br><strong>Logs:</strong><br><br><br>"
+  );
   const [status, setStatus] = useState(STATUS[0]);
   const [priority, setPriority] = useState(PRIORITY[0]);
 
