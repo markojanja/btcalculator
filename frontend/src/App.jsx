@@ -28,6 +28,8 @@ import UserGuides from "./pages/UserGuides";
 import AddGuide from "./pages/AddGuide";
 import GuideDetails from "./pages/GuideDetails";
 import EditGuide from "./pages/EditGuide";
+import { NotificationProvider } from "./contexts/NotificationContext";
+import { ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
   {
@@ -99,9 +101,20 @@ function App() {
   return (
     <ThemeContextProvider>
       <AuthProvider>
-        <div className="App">
-          <RouterProvider router={router} />
-        </div>
+        <NotificationProvider>
+          <ToastContainer
+            position="top-right"
+            autoClose={false}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            pauseOnHover
+            draggable
+          />
+          <div className="App">
+            <RouterProvider router={router} />
+          </div>
+        </NotificationProvider>
       </AuthProvider>
     </ThemeContextProvider>
   );

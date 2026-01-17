@@ -5,25 +5,29 @@ import axios from "axios";
 import { useState } from "react";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
+import useNotification from "../hooks/useNotification";
 
 const AdminTasks = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { type } = useParams();
   const [title, setTitle] = useState("");
   const [tasks, setTasks] = useState([]);
+
+  const { lastEvent } = useNotification();
+
   const { currentItems, pageCount, handlePageChange } = usePagination(
     tasks,
-    20
+    20,
   );
 
   useEffect(() => {
-    const testData = async () => {
+    const getData = async () => {
       try {
         const response = await axios.get(
           `${BACKEND_URL}/admindata/tasks/${type}`,
           {
             withCredentials: true,
-          }
+          },
         );
         console.log(response);
         setTitle(response.data.page_title);
@@ -32,8 +36,27 @@ const AdminTasks = () => {
         console.log(error);
       }
     };
-    testData();
+    getData();
   }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await axios.get(
+          `${BACKEND_URL}/admindata/tasks/${type}`,
+          {
+            withCredentials: true,
+          },
+        );
+        console.log(response);
+        setTitle(response.data.page_title);
+        setTasks(response.data.tasks);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getData();
+  }, [lastEvent]);
 
   return (
     <div className="m-wrapper">

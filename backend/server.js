@@ -1,3 +1,5 @@
+import http, { createServer } from "http";
+import { Server } from "socket.io";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -23,6 +25,25 @@ const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const server = createServer(app);
+
+export const io = new Server(server, {
+  cors: {
+    origin: [`${process.env.CORS}`],
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  socket.on("join", ({ userId, role }) => {
+    socket.join(`user:${userId}`); // personal room
+    socket.join(role); // e.g., "role:ADMIN"
+
+    console.log(`User ${userId} joined rooms: user:${userId}, ${role}`);
+  });
+});
 
 app.use(
   session({
@@ -75,6 +96,6 @@ app.use("/", isAuth, UserGuidesRouter);
 
 const PORT = process.env.PORT || 3500;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

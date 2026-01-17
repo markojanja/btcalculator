@@ -6,6 +6,7 @@ import { IoCheckmarkDoneCircle } from "react-icons/io5";
 import { FaRegEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import DashCard from "../components/DashCard";
+import useNotification from "../hooks/useNotification";
 
 import {
   Chart as ChartJS,
@@ -28,6 +29,7 @@ const Dashboard = () => {
   const [pieChartdata, setPieChartData] = useState([]);
   const [latestTasks, setLatestTask] = useState([]);
   const [recentUsers, setRecentUsers] = useState([]);
+  const { lastEvent } = useNotification();
 
   useEffect(() => {
     const getData = async () => {
@@ -47,6 +49,26 @@ const Dashboard = () => {
     };
     getData();
   }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/admindata/`, {
+          withCredentials: true,
+        });
+        console.log(response);
+        setDataCard(response.data.tasksByStatus);
+        setBarChartData(response.data.tasksByPriority);
+        setPieChartData(response.data.rawByUser);
+        setLatestTask(response.data.latestTasks);
+        setRecentUsers(response.data.recentUsers);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getData();
+  }, [lastEvent]);
+
   const labels1 = pieChartdata.map((obj) => obj.firstname);
   const data = {
     labels: labels1,

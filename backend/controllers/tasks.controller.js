@@ -1,4 +1,10 @@
 import prisma from "../db/prisma.js";
+import {
+  notifyTaskCreated,
+  notifyTaskUpdate,
+  notifyTaskUpdatedAdmin,
+  notifyTaskUpdatedSupport,
+} from "../services/notification.services.js";
 
 export const myTasks = async (req, res) => {
   const user = req.user;
@@ -72,6 +78,10 @@ export const addTask = async (req, res) => {
       },
     });
 
+    if (req.user.role === "SUPPORT") {
+      notifyTaskCreated(newTask);
+    }
+
     return res.status(200).json({ message: "Task created", task: newTask });
   } catch (error) {
     return res.status(500).json({ error: "Something went wrong" });
@@ -80,21 +90,36 @@ export const addTask = async (req, res) => {
 
 export const editTask = async (req, res) => {
   const { id, title, description, status, priority, userId } = req.body;
+
   try {
-    const updatedFields = {};
-    if (title) updatedFields.title = title;
-    if (description) updatedFields.description = description;
-    if (status) updatedFields.status = status;
-    if (priority) updatedFields.priority = priority;
-    if (userId) updatedFields.userId = userId;
+    const oldTask = await prisma.tasks.findUnique({ where: { id } });
+
+    const updatedFields = {
+      ...(title && { title }),
+      ...(description && { description }),
+      ...(status && { status }),
+      ...(priority && { priority }),
+      ...(userId && { userId }),
+    };
 
     const updatedTask = await prisma.tasks.update({
       where: { id },
       data: updatedFields,
     });
 
+    if (req.user.role === "ADMIN") {
+      if (userId && userId !== oldTask.userId) {
+        notifyTaskUpdate(oldTask.userId, updatedTask, req.user);
+      } else {
+        notifyTaskUpdatedAdmin(updatedTask);
+      }
+    } else {
+      notifyTaskUpdatedSupport(updatedTask, req.user);
+    }
+
     res.status(200).json({ message: "Task updated", task: updatedTask });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
