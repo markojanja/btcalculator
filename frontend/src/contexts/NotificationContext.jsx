@@ -14,7 +14,9 @@ const NotificationProvider = ({ children }) => {
   useEffect(() => {
     if (!user) return;
 
-    const newSocket = io("http://localhost:3000");
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+    const newSocket = io(`${BACKEND_URL}`);
     setSocket(newSocket);
 
     // Join personal room + role room (prepend "role:" to match backend)
