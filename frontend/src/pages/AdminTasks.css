@@ -19,8 +19,8 @@ td {
 }
 
 .table tbody tr:hover {
-  background-color: var(--accent-color);
-  color: #ffffff;
+  background-color: var(--third-color);
+  color: var(--text-color);
 }
 .table thead {
   border-bottom: 1px solid gray;

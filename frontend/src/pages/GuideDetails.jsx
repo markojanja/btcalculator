@@ -40,8 +40,8 @@ const GuideDetails = () => {
       </div>
       <div className="guide-desc" dangerouslySetInnerHTML={{ __html: clean }} />
       <div style={{ textAlign: "left" }}>
-        <p>published: {guide.published ? "✅" : "❌"}</p>
         <p>author:{guide.user?.username}</p>
+        <p>published: {guide.published ? "✅" : "❌"}</p>
         <p>created: {new Date(guide.createdAt).toLocaleDateString()}</p>
       </div>
       <Link style={{ alignSelf: "flex-end" }} to={"/guides"}>

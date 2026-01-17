@@ -21,15 +21,11 @@ const TaskCard = ({ task, onDragStart }) => {
     <div className="task-card" draggable onDragStart={() => onDragStart(task)}>
       <div className="task-card-header">
         <h4>{task.title}</h4>
-        <div className="tasks-btn-group">
-          <FaRegEdit onClick={() => toggleModal(task)} />
-          <MdDeleteOutline
-            onClick={() => {
-              deleteTask(task);
-            }}
-          />
-        </div>
       </div>
+
+      <span style={{ color: "gray", fontSize: "12px" }}>
+        {new Date(task.createdAt).toLocaleString()}
+      </span>
       <p
         style={{
           display: "flex",
@@ -58,19 +54,32 @@ const TaskCard = ({ task, onDragStart }) => {
           </>
         )}
       </p>
-      <span style={{ color: "gray", fontSize: "12px" }}>
-        {new Date(task.createdAt).toLocaleString()}
-      </span>
-      <p
+      <div
         style={{
           display: "flex",
-          alignItems: "center",
-          gap: "0.3rem",
-          color: "gray",
+          justifyContent: "space-between",
+          width: "100%",
         }}
       >
-        <CgProfile /> <span>{task.user.username}</span>
-      </p>
+        <p
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.3rem",
+            color: "gray",
+          }}
+        >
+          <CgProfile /> <span>{task.user.username}</span>
+        </p>
+        <div style={{ width: "100%" }} className="tasks-btn-group">
+          <FaRegEdit onClick={() => toggleModal(task)} />
+          <MdDeleteOutline
+            onClick={() => {
+              deleteTask(task);
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };

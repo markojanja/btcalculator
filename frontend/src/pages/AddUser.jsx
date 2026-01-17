@@ -17,7 +17,8 @@ const AddUser = () => {
   const [centroid, setCentroid] = useState(false);
   const [errorPopup, setErrorPopup] = useState("");
 
-  const matchPwd = password === repeatPassword && repeatPassword.length > 3 ? true : false;
+  const matchPwd =
+    password === repeatPassword && repeatPassword.length > 3 ? true : false;
 
   useEffect(() => {
     if (firstname || lastname) {
@@ -122,7 +123,11 @@ const AddUser = () => {
                 setPassword(e.target.value);
               }}
               style={{
-                borderColor: matchPwd ? "limegreen" : repeatPassword.length > 4 ? "red" : "",
+                borderColor: matchPwd
+                  ? "limegreen"
+                  : repeatPassword.length > 4
+                  ? "red"
+                  : "",
               }}
             />
           </div>
@@ -134,11 +139,17 @@ const AddUser = () => {
                 setRepeatPassword(e.target.value);
               }}
               style={{
-                borderColor: matchPwd ? "limegreen" : repeatPassword.length > 4 ? "red" : "",
+                borderColor: matchPwd
+                  ? "limegreen"
+                  : repeatPassword.length > 4
+                  ? "red"
+                  : "",
               }}
             />
             {!matchPwd && repeatPassword.length > 4 && (
-              <p style={{ color: "oklch(50.5% 0.213 27.518)" }}>passwords do not match</p>
+              <p style={{ color: "oklch(50.5% 0.213 27.518)" }}>
+                passwords do not match
+              </p>
             )}
           </div>
           <div className="form-group">
@@ -179,18 +190,27 @@ const AddUser = () => {
               }}
             />
           </div>
-          <button disabled={!matchPwd} type="submit" style={{ opacity: !matchPwd ? "0.7" : "1" }}>
+          <button
+            disabled={!matchPwd}
+            type="submit"
+            style={{ opacity: !matchPwd ? "0.7" : "1" }}
+          >
             Save
           </button>
         </form>
-      </div>
-      <div className="modal-link">
-        <Link
-          style={{ display: "flex", alignSelf: "end", marginRight: "16px", alignItems: "center" }}
-          to={"/users"}
-        >
-          <IoMdArrowRoundBack /> Back to users
-        </Link>
+        <div className="modal-link">
+          <Link
+            style={{
+              display: "flex",
+              alignSelf: "end",
+              marginRight: "16px",
+              alignItems: "center",
+            }}
+            to={"/users"}
+          >
+            <IoMdArrowRoundBack /> Back to users
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -19,15 +19,25 @@
   text-align: left;
 }
 
+.task-card-header h4 {
+  font-size: 1.1rem;
+}
+
 .tasks-btn-group {
   display: flex;
   gap: 0.3rem;
   margin-top: 1px;
   height: 100%;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  font-size: 14px;
 }
 
 .task-span::first-letter {
   text-transform: capitalize;
+}
+
+.task-card span,
+.task-card p {
+  font-size: 14px;
 }

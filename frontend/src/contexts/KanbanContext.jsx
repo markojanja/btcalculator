@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import useNotification from "../hooks/useNotification";
 
 const KanbanContext = createContext(null);
 
@@ -9,9 +10,12 @@ const KanbanContextProvider = ({ children }) => {
   const [taskModal, setTaskModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [activeTask, setActiveTask] = useState("");
+  const { lastEvent } = useNotification();
 
   const getTasks = async () => {
-    const res = await axios.get(`${BACKEND_URL}/tasks/my_tasks`, { withCredentials: true });
+    const res = await axios.get(`${BACKEND_URL}/tasks/my_tasks`, {
+      withCredentials: true,
+    });
 
     setColumns(res.data);
   };
@@ -19,6 +23,19 @@ const KanbanContextProvider = ({ children }) => {
   useEffect(() => {
     getTasks();
   }, []);
+
+  useEffect(() => {
+    if (!lastEvent) return;
+
+    if (
+      lastEvent.type === "TASK_UPDATED" ||
+      lastEvent.type === "TASK_CREATED" ||
+      lastEvent.tpe === "TASK_ASSIGNED"
+    ) {
+      console.log("Refreshing kanban because of notification");
+      getTasks(); // your existing function
+    }
+  }, [lastEvent]);
 
   const toggleAddTaskModal = () => {
     setTaskModal(!taskModal);
@@ -48,7 +65,9 @@ const KanbanContextProvider = ({ children }) => {
     setColumns((prevCols) => {
       return prevCols.map((col) => {
         const updatedTasks = col.tasks.map((task) => {
-          return task.id === updatedTask.id ? { ...task, ...updatedTask } : task;
+          return task.id === updatedTask.id
+            ? { ...task, ...updatedTask }
+            : task;
         });
         return { ...col, tasks: updatedTasks };
       });
@@ -65,7 +84,11 @@ const KanbanContextProvider = ({ children }) => {
       return updatedCols;
     });
 
-    await axios.put(`${BACKEND_URL}/tasks/delete_task/${task.id}`, {}, { withCredentials: true });
+    await axios.put(
+      `${BACKEND_URL}/tasks/delete_task/${task.id}`,
+      {},
+      { withCredentials: true },
+    );
   };
 
   const value = {
@@ -83,7 +106,9 @@ const KanbanContextProvider = ({ children }) => {
     getTasks,
   };
 
-  return <KanbanContext.Provider value={value}>{children}</KanbanContext.Provider>;
+  return (
+    <KanbanContext.Provider value={value}>{children}</KanbanContext.Provider>
+  );
 };
 
 export { KanbanContext, KanbanContextProvider };

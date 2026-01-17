@@ -30,7 +30,7 @@ const FeatureDetails = () => {
   return (
     <div className="feature-wrapper">
       <div className="feature-heading">
-        <h2>{feature.title}</h2>
+        <h3>{feature.title}</h3>
         {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
           <Link to={`/features/${feature.id}/edit`} className="btn btn-outline">
             Edit
@@ -42,8 +42,8 @@ const FeatureDetails = () => {
         dangerouslySetInnerHTML={{ __html: clean }}
       />
       <div style={{ textAlign: "left" }}>
-        <p>published: {feature.published ? "✅" : "❌"}</p>
         <p>author:{feature.user?.username}</p>
+        <p>published: {feature.published ? "✅" : "❌"}</p>
         <p>released: {feature.released ? "✅" : "❌"}</p>
         <p>
           release date: {new Date(feature.releaseDate).toLocaleDateString()}

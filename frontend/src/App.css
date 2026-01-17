@@ -199,9 +199,13 @@ select {
 
 .settings-btn {
   background-color: transparent;
-  color: var(--accent-color);
+  color: var(--text-color);
+  fill: var(--text-color);
   border: none;
   outline: none;
+}
+.settings-btn svg {
+  fill: var(--text-color);
 }
 .active-border {
   border-color: var(--accent-color);
@@ -498,7 +502,7 @@ select {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 0rem;
+  padding: 1rem 2rem;
   gap: 1rem;
   flex: 1;
 }

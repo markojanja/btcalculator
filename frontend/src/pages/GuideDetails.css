@@ -3,7 +3,7 @@
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
-  width: 60%;
+  width: 700px;
   margin: 0 auto;
   background: var(--secondary-color);
   padding: 1rem 3rem;

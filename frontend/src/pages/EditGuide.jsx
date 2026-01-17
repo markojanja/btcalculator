@@ -1,51 +1,23 @@
 import "./AddFeature.css";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Quill from "quill";
-import ReactQuill from "react-quill";
+
 import { IoMdArrowRoundBack } from "react-icons/io";
+import useCloudinary from "../hooks/useCloudinary";
+import RichTextEditor from "../components/RichTextEditor";
 
 const EditGuide = () => {
   const { id } = useParams();
-  const quillRef = useRef(null);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [published, setPublished] = useState(false);
 
   const navigate = useNavigate();
+  const { uploadImage } = useCloudinary();
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ indent: "-1" }, { indent: "+1" }],
-      [{ align: [] }],
-      ["link", "image", "code-block"],
-      ["clean"], // remove formatting button
-    ],
-    imageResize: {
-      parchment: Quill.import("parchment"), // required for Quill v2
-      modules: ["Resize", "DisplaySize"],
-    },
-  };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "indent",
-    "align",
-    "link",
-    "image",
-    "code-block",
-  ];
 
   useEffect(() => {
     const getFeature = async () => {
@@ -99,12 +71,10 @@ const EditGuide = () => {
             />
           </div>
           <div className="form-group">
-            <ReactQuill
-              forwardedRef={quillRef}
+            <RichTextEditor
               value={description}
               onChange={setDescription}
-              modules={modules}
-              formats={formats}
+              uploadImage={uploadImage}
             />
           </div>
           <div className="checkbox-group">
@@ -121,19 +91,19 @@ const EditGuide = () => {
           </div>
           <button style={{ alignSelf: "self-start" }}>Save</button>
         </form>
-      </div>
-      <div className="modal-link">
-        <Link
-          style={{
-            display: "flex",
-            alignSelf: "end",
-            marginRight: "16px",
-            alignItems: "center",
-          }}
-          to={"/features"}
-        >
-          <IoMdArrowRoundBack /> Back to guides
-        </Link>
+        <div className="modal-link">
+          <Link
+            style={{
+              display: "flex",
+              alignSelf: "end",
+              marginRight: "16px",
+              alignItems: "center",
+            }}
+            to={"/features"}
+          >
+            <IoMdArrowRoundBack /> Back to guides
+          </Link>
+        </div>
       </div>
     </div>
   );

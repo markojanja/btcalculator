@@ -12,6 +12,14 @@ export const login = async (req, res, next) => {
       return res.status(400).json({ errors: [{ message: info.message }] });
     }
 
+    if (!user.active) {
+      return res.status(403).json({
+        errors: [
+          { message: "Your account is inactive. Please contact admin." },
+        ],
+      });
+    }
+
     req.logIn(user, (err) => {
       if (err) return next(err);
       return res.status(200).json({ message: "login ok", user: user });
