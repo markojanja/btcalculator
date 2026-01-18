@@ -92,7 +92,11 @@ export const editTask = async (req, res) => {
   const { id, title, description, status, priority, userId } = req.body;
 
   try {
-    const oldTask = await prisma.tasks.findUnique({ where: { id } });
+    const oldTask = await prisma.tasks.findUnique({
+      where: { id },
+      include: { user: { select: { username: true } } },
+    });
+    console.log(oldTask.user.username, "this is oldtask username");
 
     const updatedFields = {
       ...(title && { title }),
@@ -105,11 +109,18 @@ export const editTask = async (req, res) => {
     const updatedTask = await prisma.tasks.update({
       where: { id },
       data: updatedFields,
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
     });
 
     if (req.user.role === "ADMIN") {
       if (userId && userId !== oldTask.userId) {
-        notifyTaskUpdate(oldTask.userId, updatedTask, req.user);
+        notifyTaskUpdate(oldTask, updatedTask, req.user);
       } else {
         notifyTaskUpdatedAdmin(updatedTask);
       }

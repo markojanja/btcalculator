@@ -37,12 +37,12 @@ export const notifyTaskUpdatedAdmin = (task) => {
   }
 };
 
-export const notifyTaskUpdate = (oldUserId, newTask, actor) => {
+export const notifyTaskUpdate = (oldTask, newTask, actor) => {
   if (!io) return;
 
   try {
-    if (oldUserId) {
-      io.to(`user:${oldUserId}`).emit("notification", {
+    if (oldTask) {
+      io.to(`user:${oldTask.userId}`).emit("notification", {
         type: "TASK_UPDATED",
         message: `Task "${newTask.title}" has been reassigned`,
         taskId: newTask.id,
@@ -61,7 +61,7 @@ export const notifyTaskUpdate = (oldUserId, newTask, actor) => {
       .to("role:MANAGER")
       .emit("notification", {
         type: "TASK_UPDATED",
-        message: `Task "${newTask.title}" has been reassigned from ${oldUserId} to ${newTask.userId}`,
+        message: `Task "${newTask.title}" has been reassigned from ${oldTask.user.username} to ${newTask.user.username}`,
         taskId: newTask.id,
         actor: actor.username,
       });
