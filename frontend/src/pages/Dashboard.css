@@ -89,7 +89,7 @@ td {
 }
 
 .dash-table tbody tr:hover {
-  background-color: var(--background-color);
+  background-color: var(--third-color);
   color: var(--text-color);
 }
 .dash-table thead {

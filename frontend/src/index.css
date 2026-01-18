@@ -12,6 +12,7 @@
   --accent-color: oklch(51.4% 0.222 16.935);
   --secondary-color: oklch(21% 0.006 285.885);
   --box-shadow: 0 2px 5px rgb(245, 245, 244, 0.1);
+  --third-color: oklch(37.1% 0 0);
   color: var(--text-color);
 }
 
