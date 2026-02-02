@@ -10,6 +10,9 @@ export const getClients = async (req, res) => {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return res.status(200).json(data);
@@ -40,6 +43,38 @@ export const addClient = async (req, res) => {
   }
 };
 
-export const editClientGet = async (req, res) => {};
+export const editClientGet = async (req, res) => {
+  const { id } = req.params;
 
-export const editClientPost = async (req, res) => {};
+  try {
+    const client = await prisma.clients.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    return res.status(200).json(client);
+  } catch (error) {
+    return res.status(500).json("Something went wrong!");
+  }
+};
+
+export const editClientPost = async (req, res) => {
+  const { id } = req.params;
+  const { name, status, server, platform } = req.body;
+  console.log(req.body);
+
+  try {
+    const data = { name, status, server: [server], platform: platform };
+    console.log(data);
+    await prisma.clients.update({
+      where: {
+        id: id,
+      },
+      data: data,
+    });
+    return res.status(201).json({ message: "client updated" });
+  } catch (error) {
+    return res.status(500).json("Something went wrong!");
+  }
+};

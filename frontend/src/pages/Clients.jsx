@@ -46,32 +46,33 @@ const Clients = () => {
       <div className="flex flex-col justify-start gap-2 py-6">
         {currentItems && currentItems?.length > 0 ? (
           currentItems.map((client) => (
-            <Card
-              key={client.id}
-              className={"w-1/3 text-left items-start justify-start mx-auto"}
-            >
-              <CardContent className={"w-full"}>
-                <CardTitle className={"mb-2"}>
-                  <h3 className="text-lg">{client.name}</h3>
-                </CardTitle>
-                <Separator className={"w-full mb-2"} />
-                <p>Status:</p>
-                <Badge variant="secondary">{client.status}</Badge>
+            <Link key={client.id} to={`${client.id}/edit`}>
+              <Card
+                className={"w-1/3 text-left items-start justify-start mx-auto"}
+              >
+                <CardContent className={"w-full"}>
+                  <CardTitle className={"mb-2"}>
+                    <h3 className="text-lg">{client.name}</h3>
+                  </CardTitle>
+                  <Separator className={"w-full mb-2"} />
+                  <p>Status:</p>
+                  <Badge variant="secondary">{client.status}</Badge>
 
-                <p>Server:</p>
-                <Badge className="bg-purple-300 text-purple-700 dark:bg-purple-950 dark:text-purple-300">
-                  {client.server[0]}
-                </Badge>
-                <p>Platform:</p>
-
-                {client.platform.map((p) => (
-                  <Badge className={"mr-1.5"} key={p}>
-                    {p}
+                  <p>Server:</p>
+                  <Badge className="bg-purple-300 text-purple-700 dark:bg-purple-950 dark:text-purple-300">
+                    {client.server[0]}
                   </Badge>
-                ))}
-                <p>Added: {client.user.username}</p>
-              </CardContent>
-            </Card>
+                  <p>Platform:</p>
+
+                  {client.platform.map((p) => (
+                    <Badge className={"mr-1.5"} key={p}>
+                      {p}
+                    </Badge>
+                  ))}
+                  <p>Added: {client.user.username}</p>
+                </CardContent>
+              </Card>
+            </Link>
           ))
         ) : (
           <h2>No clients at the moment!</h2>

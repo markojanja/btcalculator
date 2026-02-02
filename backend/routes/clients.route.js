@@ -12,6 +12,6 @@ router.get("/clients/", getClients);
 router.post("/clients/new", addClient);
 router
   .get("/clients/:id/edit", editClientGet)
-  .put("/users/:id/edit", editClientPost);
+  .put("/clients/:id/edit", editClientPost);
 
 export default router;
