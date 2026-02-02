@@ -1,4 +1,3 @@
-import "./Kanban.css";
 import axios from "axios";
 import { useState } from "react";
 import KanbanColumn from "./KanbanColumn";
@@ -41,7 +40,7 @@ const Kanban = () => {
           };
         }
         return col;
-      })
+      }),
     );
 
     setDraggedTask(null);
@@ -52,7 +51,6 @@ const Kanban = () => {
       });
     } catch (err) {
       console.error("Failed to update task status:", err);
-      // Optionally rollback the optimistic UI update or notify the user
     }
   };
 
@@ -65,7 +63,7 @@ const Kanban = () => {
   }
 
   return (
-    <div className="kanban-wrapper">
+    <div className="flex flex-row flex-1 justify-evenly w-full h-screen p-6 gap-6 overflow-x-auto bg-background">
       {columns.map((col) => (
         <KanbanColumn
           key={col.colStatus}

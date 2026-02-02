@@ -73,7 +73,7 @@ const RichTextEditor = ({ value, onChange, uploadImage }) => {
         handler: imageDropPasteHandler,
       },
     }),
-    []
+    [],
   );
 
   const formats = [

@@ -6,7 +6,7 @@
   top: 0;
   left: 0;
   flex: 1;
-  background: var(--background-color);
+  background: var(--background);
   box-shadow: 2px 0 6px -2px rgba(0, 0, 0, 0.3);
   z-index: 999;
   height: 100%;

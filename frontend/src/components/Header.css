@@ -18,7 +18,7 @@
 }
 
 .is-active {
-  color: var(--accent-color) !important;
+  color: var(--primary) !important;
   transition: color 0.2s ease;
 }
 

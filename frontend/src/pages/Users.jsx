@@ -25,18 +25,18 @@ const Users = () => {
   const { currentItems, pageCount, handlePageChange } = usePagination(users, 4);
 
   return (
-    <div className="users-wrapper">
-      <div className="users-header">
-        <h3>Users</h3>
+    <div className="flex flex-1 flex-col w-full p-6">
+      <div className="flex justify-between items-start border-b border-b-muted py-3">
+        <h2 className="text-2xl font-bold">Users</h2>
         <Link
-          className="btn-outline"
+          className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
           style={{ borderRadius: "8px" }}
           to={"/users/add"}
         >
           New user
         </Link>
       </div>
-      <div className="users-list">
+      <div className="flex flex-col flex-1 justify-start gap-2 py-6">
         {currentItems.map((user) => (
           <UsersCard key={user.id} user={user} />
         ))}

@@ -161,6 +161,14 @@ const Sidebar = () => {
             </NavLink>
           </li>
         )}
+        <li id="mobile-hidden">
+          <NavLink
+            className={({ isActive }) => (isActive ? "is-active" : "")}
+            to="/clients"
+          >
+            ClientList
+          </NavLink>
+        </li>
       </ul>
     </div>
   );
