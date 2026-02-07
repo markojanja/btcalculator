@@ -70,6 +70,11 @@ export const getLatestTasks = async () => {
           lastname: true,
         },
       },
+      client: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 };
@@ -109,6 +114,11 @@ export const getTasksStatusAndPriority = async (filter, excludeCompleted) => {
       user: {
         select: {
           firstname: true,
+        },
+      },
+      client: {
+        select: {
+          name: true,
         },
       },
     },

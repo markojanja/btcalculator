@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 const AdminTasks = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -75,6 +76,7 @@ const AdminTasks = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
+              <TableHead>Client</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Priority</TableHead>
               <TableHead>Created At</TableHead>
@@ -86,6 +88,9 @@ const AdminTasks = () => {
             {currentItems.map((task) => (
               <TableRow key={task.id}>
                 <TableCell>{task.title}</TableCell>
+                <TableCell>
+                  <Badge>{task.client?.name}</Badge>
+                </TableCell>
                 <TableCell>{task.status}</TableCell>
                 <TableCell>{task.priority}</TableCell>
                 <TableCell>
@@ -99,7 +104,9 @@ const AdminTasks = () => {
                   {task.user.firstname} {task.user.lastname}
                 </TableCell>
                 <TableCell>
-                  <Link to={`/dashboard/task/${task.id}`}>view task</Link>
+                  <Link to={`/dashboard/task/${task.id}`}>
+                    <Badge variant="secondary">view task</Badge>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}

@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const TaskCard = ({ task, onDragStart }) => {
   const { toggleEditTaskModal, deleteTask, setActiveTask } = useKanban();
@@ -29,12 +30,13 @@ const TaskCard = ({ task, onDragStart }) => {
       draggable
       onDragStart={() => onDragStart(task)}
     >
-      <CardHeader className={"items-start text-left "}>
+      <CardHeader className={"items-start text-left px-4"}>
         <CardTitle>
           <h4>{task.title}</h4>
         </CardTitle>
+        <Badge>{task.client?.name}</Badge>
       </CardHeader>
-      <CardContent className={"items-start text-left gap-4"}>
+      <CardContent className={"items-start text-left gap-4 px-4"}>
         <span className="flex items-center gap-0.5 text-sm">
           <Calendar size={12} /> {format(task.createdAt, "dd/MM/yyyy")}
         </span>
@@ -67,7 +69,9 @@ const TaskCard = ({ task, onDragStart }) => {
           )}
         </p>
       </CardContent>
-      <CardFooter className={"justify-between items-center flex-0 text-sm"}>
+      <CardFooter
+        className={"justify-between items-center flex-0 text-sm px-4"}
+      >
         <p className="flex items-center justify-center gap-0.5">
           <CgProfile /> <span>{task.user.username}</span>
         </p>

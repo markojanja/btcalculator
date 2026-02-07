@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Field, FieldGroup } from "@/components/ui/field";
+import { Badge } from "@/components/ui/badge";
 
 const AdminTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -81,6 +82,7 @@ const AdminTask = () => {
     <div className="flex flex-col w-187.5 mx-auto gap-4">
       <CardTitle className="flex justify-between items-center w-full bg-card shadow-sm p-4 rounded-md">
         <h2 className="text-2xl font-bold">{task.title}</h2>
+        <Badge>{task.client?.name}</Badge>
       </CardTitle>
       <Card>
         <div

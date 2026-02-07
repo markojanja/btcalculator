@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  activeClients,
   addClient,
   editClientGet,
   editClientPost,
@@ -13,5 +14,7 @@ router.post("/clients/new", addClient);
 router
   .get("/clients/:id/edit", editClientGet)
   .put("/clients/:id/edit", editClientPost);
+
+router.get("/clients/active", activeClients);
 
 export default router;

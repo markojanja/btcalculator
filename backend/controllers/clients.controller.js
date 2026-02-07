@@ -78,3 +78,21 @@ export const editClientPost = async (req, res) => {
     return res.status(500).json("Something went wrong!");
   }
 };
+
+export const activeClients = async (req, res) => {
+  try {
+    const activeClients = await prisma.clients.findMany({
+      where: {
+        status: "ACTIVE",
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    return res.status(200).json(activeClients);
+  } catch (error) {
+    return res.status(500).json("Something went wrong!");
+  }
+};

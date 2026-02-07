@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 
 import useKanban from "../hooks/useKanban";
@@ -33,6 +33,25 @@ const AddTaskModal = () => {
   );
   const [status, setStatus] = useState(STATUS[0]);
   const [priority, setPriority] = useState(PRIORITY[0]);
+  const [client, setClient] = useState("");
+
+  const [activeClients, setActiveClients] = useState([]);
+
+  useEffect(() => {
+    const getActiveClients = async () => {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/clients/active`, {
+          withCredentials: true,
+        });
+        console.log(res.data);
+        setActiveClients(res.data);
+      } catch (error) {
+        console.error("Failed to fetch active clients:", error.response?.data);
+      }
+    };
+
+    getActiveClients();
+  }, [BACKEND_URL]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,6 +61,7 @@ const AddTaskModal = () => {
         `${BACKEND_URL}/tasks/add_task`,
         {
           title,
+          client,
           description: content,
           status,
           priority,
@@ -82,6 +102,24 @@ const AddTaskModal = () => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
+              </Field>
+            </FieldGroup>
+
+            <FieldGroup className="w-full">
+              <Field>
+                <Label>Client</Label>
+                <Select value={client.id} onValueChange={setClient}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {activeClients.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
             </FieldGroup>
 

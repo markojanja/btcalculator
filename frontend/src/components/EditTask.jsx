@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 
 import useKanban from "../hooks/useKanban";
@@ -32,6 +32,25 @@ const EditTask = () => {
   const [content, setContent] = useState(activeTask?.description ?? "");
   const [status, setStatus] = useState(activeTask?.status ?? STATUS[0]);
   const [priority, setPriority] = useState(activeTask?.priority ?? PRIORITY[0]);
+  const [client, setClient] = useState(activeTask?.clientId ?? "");
+
+  const [activeClients, setActiveClients] = useState([]);
+
+  useEffect(() => {
+    const getActiveClients = async () => {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/clients/active`, {
+          withCredentials: true,
+        });
+        console.log(res.data);
+        setActiveClients(res.data);
+      } catch (error) {
+        console.error("Failed to fetch active clients:", error.response?.data);
+      }
+    };
+
+    getActiveClients();
+  }, [BACKEND_URL]);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -40,6 +59,7 @@ const EditTask = () => {
       const updatedTask = {
         ...activeTask,
         title,
+        client,
         description: content,
         status,
         priority,
@@ -83,6 +103,24 @@ const EditTask = () => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
+                </Field>
+              </FieldGroup>
+
+              <FieldGroup className="w-full">
+                <Field>
+                  <Label>Client</Label>
+                  <Select value={client} onValueChange={setClient}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {activeClients.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>
+                          {p.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </Field>
               </FieldGroup>
 

@@ -40,6 +40,11 @@ export const myTasks = async (req, res) => {
             username: true,
           },
         },
+        client: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 
@@ -57,7 +62,7 @@ export const myTasks = async (req, res) => {
 
 export const addTask = async (req, res) => {
   try {
-    const { title, description, priority, status } = req.body;
+    const { title, client, description, priority, status } = req.body;
 
     console.log(req.body);
 
@@ -68,11 +73,17 @@ export const addTask = async (req, res) => {
         priority,
         status,
         userId: req.user.id,
+        clientId: client,
       },
       include: {
         user: {
           select: {
             username: true,
+          },
+        },
+        client: {
+          select: {
+            name: true,
           },
         },
       },
@@ -89,7 +100,7 @@ export const addTask = async (req, res) => {
 };
 
 export const editTask = async (req, res) => {
-  const { id, title, description, status, priority, userId } = req.body;
+  const { id, title, description, status, priority, userId, client } = req.body;
 
   try {
     const oldTask = await prisma.tasks.findUnique({
@@ -104,6 +115,7 @@ export const editTask = async (req, res) => {
       ...(status && { status }),
       ...(priority && { priority }),
       ...(userId && { userId }),
+      clientId: client,
     };
 
     const updatedTask = await prisma.tasks.update({
