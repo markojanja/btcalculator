@@ -1,4 +1,3 @@
-import "./Dashboard.css";
 import { FaBusinessTime } from "react-icons/fa";
 import { RiProgress2Line } from "react-icons/ri";
 import { SiJirasoftware } from "react-icons/si";
@@ -19,6 +18,15 @@ import {
 import { Pie, Bar } from "react-chartjs-2";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale, BarElement);
 
@@ -134,12 +142,12 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="dashboard-wrapper">
-      <div className="dashboard-heading">
-        <h2>Dashboard</h2>
+    <div className="flex flex-1 flex-col w-full p-6">
+      <div className="flex justify-between items-start border-b border-b-muted py-3">
+        <h2 className="text-2xl font-bold">Dashboard</h2>
       </div>
-      <div className="dash-content">
-        <div className="dash-row">
+      <div className="flex flex-col items-center">
+        <div className="grid grid-cols-4 w-full gap-2 py-4">
           <DashCard
             title={"Todo"}
             value={
@@ -149,8 +157,8 @@ const Dashboard = () => {
             linkText={"view more"}
             linkHref={"tasks/TODO"}
             Icon={FaBusinessTime}
-            bg="alert-bg"
-            clr={"alert-txt"}
+            bg="bg-red-500/20"
+            clr={"text-red-500/80"}
           />
           <DashCard
             title={"In Progress"}
@@ -161,8 +169,8 @@ const Dashboard = () => {
             linkText={"view more"}
             linkHref={"tasks/IN_PROGRESS"}
             Icon={RiProgress2Line}
-            bg="warning-bg"
-            clr={"warning-txt"}
+            bg="bg-yellow-500/20"
+            clr={"text-yellow-500/80"}
           />
           <DashCard
             title={"Jira Ticket"}
@@ -173,8 +181,8 @@ const Dashboard = () => {
             linkText={"view more"}
             linkHref={"tasks/JIRA_TICKET"}
             Icon={SiJirasoftware}
-            bg="info-bg"
-            clr={"info-txt"}
+            bg="bg-teal-500/20"
+            clr={"text-teal-500/80"}
           />
           <DashCard
             title={"Completed"}
@@ -185,101 +193,118 @@ const Dashboard = () => {
             linkText={"view more"}
             linkHref={"tasks/COMPLETED"}
             Icon={IoCheckmarkDoneCircle}
-            bg="success-bg"
-            clr={"success-txt"}
+            bg="bg-green-500/20"
+            clr={"text-green-500/80"}
           />
         </div>
-        <div className="dash-row">
-          <div className="dash-chart">
-            <Link to={"tasks/pending"}>
-              <h3>Pending Tasks</h3>
-            </Link>
-            <div
-              style={{
-                flex: "1",
-                padding: "0.5rem",
-                height: "300px",
-              }}
-            >
-              <Pie data={data} options={options} />
-            </div>
-          </div>
-          <div className="dash-chart" style={{ gridColumn: "3/5" }}>
-            <Link to={"tasks/priority"}>
-              <h3>Tasks by Priority</h3>
-            </Link>
-            <div
-              style={{
-                flex: "1",
-                padding: "0.5rem",
-                height: "300px",
-              }}
-            >
-              <Bar data={barData} options={options} />
-            </div>
-          </div>
+        <div className="grid grid-cols-4 w-full gap-2 py-4">
+          <Card className={" col-span-2 "}>
+            <CardTitle className={"text-left px-6 text-2xl"}>
+              <Link to={"tasks/pending"}>
+                <h3>Pending Tasks</h3>
+              </Link>
+            </CardTitle>
+            <CardContent>
+              <div className="flex p-2 h-75">
+                <Pie data={data} options={options} />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className={" col-span-2 "}>
+            <CardTitle className={"text-left px-6 text-2xl"}>
+              <Link to={"tasks/priority"}>
+                <h3>Tasks by Priority</h3>
+              </Link>
+            </CardTitle>
+            <CardContent>
+              <div className="flex p-2 h-75">
+                <Bar data={barData} options={options} />
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        <div className="dash-row">
-          <div className="pending-tasks">
-            <h4>Recent tasks</h4>
-            <div style={{ flex: "1" }}>
-              <table className="dash-table">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Status</th>
-                    <th>Priority</th>
-                    <th>Assigne</th>
-                  </tr>
-                </thead>
-                <tbody>
+        <div className="grid grid-cols-4 w-full gap-2 py-4">
+          <Card className={"col-span-3"}>
+            <CardTitle className={"text-left px-6"}>
+              <h4>Recent tasks</h4>
+            </CardTitle>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Priority</TableHead>
+                    <TableHead>Created At</TableHead>
+                    <TableHead>Assigne</TableHead>
+                    <TableHead>Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {latestTasks.map((task) => (
-                    <tr key={task.id}>
-                      <td>{task.title}</td>
-                      <td>{task.status}</td>
-                      <td>{task.priority}</td>
-                      <td>
+                    <TableRow key={task.id}>
+                      <TableCell>{task.title}</TableCell>
+                      <TableCell>{task.status}</TableCell>
+                      <TableCell>{task.priority}</TableCell>
+                      <TableCell>
+                        {new Date(task.createdAt).toLocaleDateString("en-GB", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })}
+                      </TableCell>
+                      <TableCell>
                         {task.user.firstname} {task.user.lastname}
-                      </td>
-                      <td>
+                      </TableCell>
+                      <TableCell>
                         <Link to={`/dashboard/task/${task.id}`}>view task</Link>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
-            <Link to="tasks/ALL">view all tasks</Link>
-          </div>
-          <div className="users" style={{ fontSize: "12px" }}>
-            <h4>Recent Users</h4>
-            <div style={{ flex: "1" }}>
-              <table className="dash-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                  </tr>
-                </thead>
-                <tbody>
+                </TableBody>
+              </Table>
+            </CardContent>
+            <CardFooter className={"mb-0 mt-auto"}>
+              <Link to="tasks/ALL">view all tasks</Link>
+            </CardFooter>
+          </Card>
+
+          <Card className={"col-span-1"}>
+            <CardTitle className={"text-left px-6"}>
+              <h4>Recent Users</h4>
+            </CardTitle>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Edit</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {recentUsers.map((user) => (
-                    <tr key={user.id}>
-                      <td>{user.firstname}</td>
-                      <td>{user.email}</td>
-                      <td className="capitalize">{user.role.toLowerCase()}</td>
-                      <td>
+                    <TableRow key={user.id}>
+                      <TableCell>{user.firstname}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell className="capitalize">
+                        {user.role.toLowerCase()}
+                      </TableCell>
+                      <TableCell>
                         <Link to={`/users/edit/${user.id}`}>
                           <FaRegEdit />
                         </Link>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
-            <Link to="/users">view all users</Link>
-          </div>
+                </TableBody>
+              </Table>
+            </CardContent>
+            <CardFooter className={"mb-0 mt-auto"}>
+              <Link to="/users">view all users</Link>
+            </CardFooter>
+          </Card>
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ const Modal = ({ setShowModal, content }) => {
     setShowModal(false);
   };
   return (
-    <div className="modal">
+    <div className="absolute inset-0 bg-background z-50 h-screen">
       <div className="modal-container">
         <div className="modal-header">
           <div className="modal-btn" onClick={handleClick}>

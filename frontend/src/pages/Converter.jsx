@@ -1,11 +1,18 @@
 import { useState } from "react";
 import axios from "axios";
-import CardHeading from "../components/CardHeading";
 import Modal from "../components/Modal";
 import DownloadButton from "../components/DownloadButton";
 import { ImSpinner9 } from "react-icons/im";
 import { converterHowTo } from "../utils/helpers";
 import SymbolList from "../components/SymbolList";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+
+import { Field, FieldGroup, FieldSeparator } from "@/components/ui/field";
+import { FaRegQuestionCircle } from "react-icons/fa";
+
+import FileInput from "../components/FileInput";
 
 const Converter = () => {
   const [jsonFile, setJsonFile] = useState(null);
@@ -18,14 +25,14 @@ const Converter = () => {
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-  const handleFileChange = (e) => {
-    if (e.target.name === "jsonFile") {
-      setJsonFile(e.target.files[0]); // Use `files[0]`
-    }
-    if (e.target.name === "excelFile") {
-      setExcelFile(e.target.files[0]); // Use `files[0]`
-    }
-  };
+  // const handleFileChange = (e) => {
+  //   if (e.target.name === "jsonFile") {
+  //     setJsonFile(e.target.files[0]); // Use `files[0]`
+  //   }
+  //   if (e.target.name === "excelFile") {
+  //     setExcelFile(e.target.files[0]); // Use `files[0]`
+  //   }
+  // };
 
   const handleUpload = async () => {
     if (!jsonFile || !excelFile) {
@@ -54,39 +61,68 @@ const Converter = () => {
     }
   };
 
+  const handleToggleModal = () => {
+    setShowModal(!showModal);
+  };
+
   return (
-    <>
-      {showModal && <Modal setShowModal={setShowModal} content={converterHowTo} />}
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <div className="converter">
-          <CardHeading
-            title={"Excel to JSON Swap Converter"}
-            editMode={false}
-            setEditMode={null}
-            visible={false}
-            setShowModal={setShowModal}
-          />
-          <div className="input-group flex-col">
-            <label>Upload valid JSON</label>
-            <input type="file" name="jsonFile" accept=".json" onChange={handleFileChange} />
+    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4">
+      {showModal && (
+        <Modal setShowModal={setShowModal} content={converterHowTo} />
+      )}
+      <Card className={`w-1/3 p-4`}>
+        <CardHeader>
+          <div className="flex gap-1">
+            <h3 className="text-lg font-bold">Excel to JSON Swap converter</h3>
+            <div
+              className="flex items-center justify-center mt-1"
+              onClick={handleToggleModal}
+            >
+              <FaRegQuestionCircle style={{ cursor: "pointer" }} />
+            </div>
           </div>
-          <div className="input-group flex-col">
-            <label>Upload valid Excel</label>
-            <input type="file" name="excelFile" accept=".xlsx" onChange={handleFileChange} />
-          </div>
-          <button onClick={handleUpload} style={{ minWidth: "190px" }}>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2">
+          <FieldGroup>
+            <Field>
+              <Label>Upload valid JSON</Label>
+              <FileInput
+                label="Upload valid JSON"
+                accept=".json"
+                fileName={jsonFile?.name}
+                onChange={(e) => setJsonFile(e.target.files[0])}
+              />
+            </Field>
+          </FieldGroup>
+          <FieldGroup>
+            <Field>
+              <Label>Upload valid Excel</Label>
+              <FileInput
+                label="Upload valid Excel"
+                accept=".xlsx"
+                fileName={excelFile?.name}
+                onChange={(e) => setExcelFile(e.target.files[0])}
+              />
+            </Field>
+            <FieldSeparator />
+          </FieldGroup>
+          <Button onClick={handleUpload}>
             {loading ? "Loading..." : "Upload and Update"}
-          </button>
+          </Button>
           {success && (
             <>
               <p>{success}</p>
               <DownloadButton jsonFile={jsonFile} />
             </>
           )}
-        </div>
+        </CardContent>
         <div
           className="flex-col"
-          style={{ alignItems: "center", position: "relative", padding: "2rem 0" }}
+          style={{
+            alignItems: "center",
+            position: "relative",
+            padding: "2rem 0",
+          }}
         >
           {loading && (
             <div className="loading-container">
@@ -96,8 +132,8 @@ const Converter = () => {
           {message && <h3 className="list-heading">{message}</h3>}
           {symbols.length > 0 && <SymbolList symbols={symbols} />}
         </div>
-      </div>
-    </>
+      </Card>
+    </div>
   );
 };
 

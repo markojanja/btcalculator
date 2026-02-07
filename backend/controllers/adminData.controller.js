@@ -73,6 +73,13 @@ export const getAdminTask = async (req, res) => {
       where: {
         id: id,
       },
+      include: {
+        client: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
     const users = await prisma.user.findMany({

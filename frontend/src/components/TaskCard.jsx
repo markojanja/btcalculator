@@ -1,12 +1,19 @@
-import "./TaskCard.css";
-
+import { format } from "date-fns";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { FaAnglesUp, FaAnglesDown } from "react-icons/fa6";
 import { TiEquals } from "react-icons/ti";
-
+import { Calendar } from "lucide-react";
 import useKanban from "../hooks/useKanban";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const TaskCard = ({ task, onDragStart }) => {
   const { toggleEditTaskModal, deleteTask, setActiveTask } = useKanban();
@@ -18,60 +25,57 @@ const TaskCard = ({ task, onDragStart }) => {
   };
 
   return (
-    <div className="task-card" draggable onDragStart={() => onDragStart(task)}>
-      <div className="task-card-header">
-        <h4>{task.title}</h4>
-      </div>
-
-      <span style={{ color: "gray", fontSize: "12px" }}>
-        {new Date(task.createdAt).toLocaleString()}
-      </span>
-      <p
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.3rem",
-          textTransform: "lowercase",
-          color: "gray",
-        }}
-      >
-        {task.priority === "LOW" && (
-          <>
-            <FaAnglesDown style={{ fill: "lime" }} />{" "}
-            <span className="task-span">{task.priority}</span>
-          </>
-        )}
-        {task.priority === "MEDIUM" && (
-          <>
-            <TiEquals style={{ fill: "cyan" }} />{" "}
-            <span className="task-span">{task.priority}</span>
-          </>
-        )}
-        {task.priority === "HIGH" && (
-          <>
-            <FaAnglesUp style={{ fill: "red" }} />{" "}
-            <span className="task-span">{task.priority}</span>
-          </>
-        )}
-      </p>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          width: "100%",
-        }}
-      >
+    <Card
+      className={"p-2 gap-2 border border-muted flex-0 min-w-65"}
+      draggable
+      onDragStart={() => onDragStart(task)}
+    >
+      <CardHeader className={"items-start text-left px-4"}>
+        <CardTitle>
+          <h4>{task.title}</h4>
+        </CardTitle>
+        <Badge>{task.client?.name}</Badge>
+      </CardHeader>
+      <CardContent className={"items-start text-left gap-4 px-4"}>
+        <span className="flex items-center gap-0.5 text-sm">
+          <Calendar size={12} /> {format(task.createdAt, "dd/MM/yyyy")}
+        </span>
         <p
           style={{
             display: "flex",
             alignItems: "center",
             gap: "0.3rem",
+            textTransform: "lowercase",
             color: "gray",
           }}
         >
+          {task.priority === "LOW" && (
+            <>
+              <FaAnglesDown style={{ fill: "lime" }} />{" "}
+              <span className="task-span">{task.priority}</span>
+            </>
+          )}
+          {task.priority === "MEDIUM" && (
+            <>
+              <TiEquals style={{ fill: "cyan" }} />{" "}
+              <span className="task-span">{task.priority}</span>
+            </>
+          )}
+          {task.priority === "HIGH" && (
+            <>
+              <FaAnglesUp style={{ fill: "red" }} />{" "}
+              <span className="task-span">{task.priority}</span>
+            </>
+          )}
+        </p>
+      </CardContent>
+      <CardFooter
+        className={"justify-between items-center flex-0 text-sm px-4"}
+      >
+        <p className="flex items-center justify-center gap-0.5">
           <CgProfile /> <span>{task.user.username}</span>
         </p>
-        <div style={{ width: "100%" }} className="tasks-btn-group">
+        <div className="flex items-center justify-center gap-1">
           <FaRegEdit onClick={() => toggleModal(task)} />
           <MdDeleteOutline
             onClick={() => {
@@ -79,8 +83,8 @@ const TaskCard = ({ task, onDragStart }) => {
             }}
           />
         </div>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };
 

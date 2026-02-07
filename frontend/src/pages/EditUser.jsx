@@ -1,8 +1,20 @@
 import { useEffect, useState } from "react";
-import "./AddUser.css";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const EditUser = () => {
   const [firstname, setFirstname] = useState("");
@@ -12,7 +24,6 @@ const EditUser = () => {
   const [role, setRole] = useState("ADMIN");
   const [activeUser, setActiveUser] = useState(false);
   const [centroid, setCentroid] = useState(false);
-  const [errorPopup, setErrorPopup] = useState("");
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -34,7 +45,7 @@ const EditUser = () => {
         setActiveUser(user.active);
         setCentroid(user.centroid);
       } catch (error) {
-        setErrorPopup(error);
+        console.log(error);
       }
     };
     getUser();
@@ -58,126 +69,115 @@ const EditUser = () => {
       const res = await axios.put(
         `${BACKEND_URL}/users/${id}/edit`,
         { ...editedUser },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       console.log(res.data);
-      setErrorPopup("");
+
       navigate("/users");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
         console.log(err.response.data.message);
-        setErrorPopup(err.response.data.message);
       } else {
         console.log("Something went wrong. Please try again.");
-        setErrorPopup("Something went wrong. Please try again.");
       }
     }
   };
 
   return (
-    <div className="modal-wrapper">
-      <div className="form-container">
-        {errorPopup && (
-          <div className="error-popup">
-            <p>{errorPopup}</p>
-          </div>
-        )}
-        <h3 style={{ textAlign: "left" }}>Edit User</h3>
-        <form action="post" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>firstname</label>
-            <input
-              type="text"
-              value={firstname}
-              onChange={(e) => {
-                setFirstname(e.target.value);
-              }}
-            />
-          </div>
-          <div className="form-group">
-            <label>lastname</label>
-            <input
-              type="text"
-              value={lastname}
-              onChange={(e) => {
-                setLastname(e.target.value);
-              }}
-            />
-          </div>
-          <div className="form-group">
-            <label>username</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
-            />
-          </div>
-          <div className="form-group">
-            <label>email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-            />
-          </div>
-          <div className="form-group">
-            <label>Role</label>
-            <select
-              name="role"
-              value={role}
-              onChange={(e) => {
-                setRole(e.target.value);
-              }}
-            >
-              <option value="ADMIN">Admin</option>
-              <option value="MANAGER">Manager</option>
-              <option value="SUPPORT">Support</option>
-            </select>
-          </div>
-          <div className="checkbox-group">
-            <label htmlFor="checkbox">Active</label>
-            <input
-              id="checkbox"
-              type="checkbox"
-              checked={activeUser}
-              className="w-auto"
-              onChange={() => {
-                setActiveUser(!activeUser);
-              }}
-            />
-          </div>
-          <div className="checkbox-group">
-            <label htmlFor="checkbox2">Centroid</label>
-            <input
-              id="checkbox2"
-              type="checkbox"
-              checked={centroid}
-              className="w-auto"
-              onChange={() => {
-                setCentroid(!centroid);
-              }}
-            />
-          </div>
-          <button type="submit">Edit</button>
-        </form>
-        <div className="modal-link">
-          <Link
-            style={{
-              display: "flex",
-              alignSelf: "end",
-              marginRight: "16px",
-              alignItems: "center",
-            }}
-            to={"/users"}
+    <div className="flex flex-col w-full">
+      <Card className="w-187.5 mx-auto">
+        <CardTitle className="px-6">
+          <h3 className="text-left font-bold">Edit User</h3>
+        </CardTitle>
+        <CardContent>
+          <form
+            action="post"
+            className="flex flex-col gap-4"
+            onSubmit={handleSubmit}
           >
-            <IoMdArrowRoundBack /> Back to users
-          </Link>
-        </div>
-      </div>
+            <FieldGroup>
+              <Field>
+                <Label>Firstname</Label>
+                <Input
+                  type="text"
+                  value={firstname}
+                  onChange={(e) => {
+                    setFirstname(e.target.value);
+                  }}
+                />
+              </Field>
+
+              <Field>
+                <Label>Lastname</Label>
+                <Input
+                  type="text"
+                  value={lastname}
+                  onChange={(e) => {
+                    setLastname(e.target.value);
+                  }}
+                />
+              </Field>
+
+              <Field>
+                <Label>Username</Label>
+                <Input
+                  type="text"
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                  }}
+                />
+              </Field>
+
+              <Field>
+                <Label>Email</Label>
+                <Input
+                  type="text"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
+                />
+              </Field>
+              <Field>
+                <Label>Role</Label>
+                <Select value={role} onValueChange={setRole}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ADMIN">Admin</SelectItem>
+                    <SelectItem value="MANAGER">Manager</SelectItem>
+                    <SelectItem value="SUPPORT">Support</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field orientation="horizontal">
+                <Checkbox
+                  checked={activeUser}
+                  onCheckedChange={(checked) => setActiveUser(!!checked)}
+                />
+                <Label>Active</Label>
+              </Field>
+
+              <Field orientation="horizontal">
+                <Checkbox
+                  checked={centroid}
+                  onCheckedChange={(checked) => setCentroid(!!checked)}
+                />
+                <Label>Centroid</Label>
+              </Field>
+              <Button className="w-full" type="submit">
+                Edit
+              </Button>
+            </FieldGroup>
+
+            <Link className="flex self-end mr-4 items-center" to={"/users"}>
+              <IoMdArrowRoundBack /> Back to users
+            </Link>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

@@ -1,13 +1,24 @@
 import { useState, useEffect } from "react";
-import Input from "../components/Input";
-import ResultsDisplay from "../components/ResultsDisplay";
-import Select from "../components/Select";
-import CardHeading from "../components/CardHeading";
 import Info from "../components/Info";
 import Modal from "../components/Modal";
 import { allCurrencyPairs, uniqueCurrencies, pipHowTo } from "../utils/helpers";
 import { fetchExchangeRate, fetchConversionRate } from "../utils/fetchData";
 import { calculatePipValue } from "../utils/calculations";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { FaRegQuestionCircle } from "react-icons/fa";
+import SettingsButton from "../components/SettingsButton";
 
 const PipCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
@@ -48,7 +59,11 @@ const PipCalculator = () => {
           }
         } else {
           setExchangeRate(parseFloat(prevExchangeRate));
-          const rate = await fetchExchangeRate(currencyPair, API_KEY, prevExchangeRate);
+          const rate = await fetchExchangeRate(
+            currencyPair,
+            API_KEY,
+            prevExchangeRate,
+          );
           if (rate !== null) {
             setExchangeRate(parseFloat(rate.toFixed(5)));
             setPrevExchangeRate(parseFloat(rate.toFixed(5)));
@@ -58,7 +73,14 @@ const PipCalculator = () => {
     };
 
     handleFetchData();
-  }, [showConversion, prevExchangeRate, base, depositCurrency, quote, editMode]);
+  }, [
+    showConversion,
+    prevExchangeRate,
+    base,
+    depositCurrency,
+    quote,
+    editMode,
+  ]);
 
   useEffect(() => {
     if (depositCurrency === quote) {
@@ -75,9 +97,11 @@ const PipCalculator = () => {
     }
   }, [depositCurrency, quote, prevExchangeRate, editMode]);
 
-  const handleCurrencySelect = (e) => {
-    setCurrnecyPair(e.target.value);
-    const [baseCurrency, quoteCurrency] = e.target.value.split("/");
+  const handleCurrencySelect = (value) => {
+    setCurrnecyPair(value);
+
+    const [baseCurrency, quoteCurrency] = value.split("/");
+
     setBase(baseCurrency);
     setQuote(quoteCurrency);
     setDepositCurrency(baseCurrency);
@@ -90,7 +114,7 @@ const PipCalculator = () => {
       setPipSize(0.0001);
     }
 
-    if (depositCurrency === base || depositCurrency === quote) {
+    if (baseCurrency === baseCurrency || baseCurrency === quoteCurrency) {
       setShowConversion(false);
       setCheckBoxChecked(false);
       setCheckboxDisabled(false);
@@ -101,8 +125,8 @@ const PipCalculator = () => {
     }
   };
 
-  const handleDepositCurrency = (e) => {
-    const newDepositCurrency = e.target.value;
+  const handleDepositCurrency = (value) => {
+    const newDepositCurrency = value;
 
     setDepositCurrency(newDepositCurrency);
     setIsJPY(newDepositCurrency === "JPY");
@@ -130,13 +154,13 @@ const PipCalculator = () => {
       exchangeRate,
       conversionRate,
       showConversion,
-      isJPY
+      isJPY,
     );
     setPipValue(res);
   };
 
-  const handleCheckbox = (e) => {
-    setShowConversion(e.target.checked);
+  const handleCheckbox = (value) => {
+    setShowConversion(value);
     setCheckBoxChecked(!checkBoxChecked);
 
     setDepositCurrency(prevDepositCurrency);
@@ -157,80 +181,129 @@ const PipCalculator = () => {
     setConversionRate(parseFloat(e.target.value));
   };
 
+  const handleToggleModal = () => {
+    setShowModal(true);
+  };
+
   return (
-    <>
+    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4">
       {showModal && <Modal setShowModal={setShowModal} content={pipHowTo} />}
       <Info editMode={editMode} />
-      <div className={`calculator ${editMode ? "active-border" : ""}`}>
-        <CardHeading
-          title={"Pip Value Calculator"}
-          editMode={editMode}
-          setEditMode={setEditMode}
-          visible={true}
-          setShowModal={setShowModal}
-        />
-        <Select
-          label={"symbol"}
-          value={currencyPair}
-          onChange={handleCurrencySelect}
-          array={allCurrencyPairs}
-        />
-        <Input
-          label={"exchange rate"}
-          placeholder={"e.g. 1.1008"}
-          value={exchangeRate}
-          onChange={handleExchangeRateInput}
-          disabled={!editMode}
-        />
-        <Input
-          label={"position size"}
-          placeholder={"e.g 100,000"}
-          value={positionSize}
-          onChange={handlePositionSizeInput}
-          disabled={showConversion}
-        />
-        <Input
-          label={"pip size"}
-          placeholder={"e.g 0.0001"}
-          value={pipSize}
-          onChange={handlePipSizeInput}
-          disabled={showConversion}
-        />
-        <Select
-          label={"account currency"}
-          value={depositCurrency}
-          onChange={handleDepositCurrency}
-          array={uniqueCurrencies}
-        />
-        <div className="input-group flex-col">
-          <label htmlFor="checkbox">show conversion rate</label>
-          <input
-            id="checkbox"
-            type="checkbox"
-            checked={checkBoxChecked}
-            disabled={checkboxDisabled}
-            onChange={handleCheckbox}
-            className="w-auto"
-          />
-        </div>
-        {showConversion && (
-          <Input
-            label={`conversion rate ${conversionPair}`}
-            placeholder={"e.g 1.10018"}
-            value={conversionRate}
-            onChange={handleConverisonInput}
-            disabled={!editMode}
-          />
-        )}
-        <button className="btn" onClick={handleClick}>
-          Calculate
-        </button>
-      </div>
 
+      <Card className={`w-1/3 p-4  ${editMode ? "border-primary border" : ""}`}>
+        <CardHeader className="flex justify-between items-center">
+          <div className="flex gap-1">
+            <h3 className="text-lg font-bold">Pip Value Calculator</h3>
+            <div
+              className="flex items-center justify-center mt-1"
+              onClick={handleToggleModal}
+            >
+              <FaRegQuestionCircle style={{ cursor: "pointer" }} />
+            </div>
+          </div>
+          <SettingsButton editMode={editMode} setEditMode={setEditMode} />
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2">
+          <Label>Symbol</Label>
+          <Select value={currencyPair} onValueChange={handleCurrencySelect}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select symbol" />
+            </SelectTrigger>
+
+            <SelectContent>
+              {allCurrencyPairs.map((pair) => (
+                <SelectItem key={pair} value={pair}>
+                  {pair}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Label>Exchange Rate</Label>
+          <Input
+            className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            value={exchangeRate}
+            onChange={handleExchangeRateInput}
+            disabled={!editMode}
+            type="number"
+            inputMode="decimal"
+          />
+          <Label>Position Size</Label>
+          <Input
+            className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            placeholder={"e.g 100,000"}
+            value={positionSize}
+            onChange={handlePositionSizeInput}
+            disabled={showConversion}
+            type="number"
+            inputMode="decimal"
+          />
+          <Label>Pip Size</Label>
+          <Input
+            className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            placeholder={"e.g 0.0001"}
+            value={pipSize}
+            onChange={handlePipSizeInput}
+            disabled={showConversion}
+            type="number"
+            inputMode="decimal"
+          />
+          <Label>Accont Currency</Label>
+          <Select value={depositCurrency} onValueChange={handleDepositCurrency}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select symbol" />
+            </SelectTrigger>
+
+            <SelectContent>
+              {uniqueCurrencies.map((pair) => (
+                <SelectItem key={pair} value={pair}>
+                  {pair}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <FieldGroup className="max-w-sm">
+            <Field orientation="horizontal">
+              <Checkbox
+                id="conversion-change"
+                name="conversion-change"
+                checked={checkBoxChecked}
+                disabled={checkboxDisabled}
+                onCheckedChange={handleCheckbox}
+              />
+              <Label htmlFor="converision-change">show conversion rate</Label>
+            </Field>
+          </FieldGroup>
+
+          {showConversion && (
+            <>
+              <Label>
+                Conversion Rate{conversionPair ? ` for: ${conversionPair}` : ""}
+              </Label>
+              <Input
+                className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                placeholder={"e.g 1.10018"}
+                value={conversionRate}
+                onChange={handleConverisonInput}
+                disabled={!editMode}
+                type="number"
+                inputMode="decimal"
+              />
+            </>
+          )}
+          <Button className="btn" onClick={handleClick}>
+            Calculate
+          </Button>
+        </CardContent>
+      </Card>
       {pipValue && (
-        <ResultsDisplay text={"Pip value"} value={pipValue} depositCurrency={depositCurrency} />
+        <Card className="w-1/3">
+          <CardContent>
+            <CardTitle>{`Pip value: ${pipValue} ${depositCurrency}`}</CardTitle>
+          </CardContent>
+        </Card>
       )}
-    </>
+    </div>
   );
 };
 

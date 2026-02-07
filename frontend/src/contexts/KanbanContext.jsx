@@ -16,7 +16,7 @@ const KanbanContextProvider = ({ children }) => {
     const res = await axios.get(`${BACKEND_URL}/tasks/my_tasks`, {
       withCredentials: true,
     });
-
+    console.log(res.data);
     setColumns(res.data);
   };
 

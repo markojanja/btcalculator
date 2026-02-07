@@ -1,10 +1,8 @@
-import "./Footer.css";
-
 const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="footer">
+    <footer className="flex items-center justify-center w-full p-4">
       <p>
         &copy; {year}{" "}
         <a href="https://github.com/markojanja/btcalculator" target="_blank">

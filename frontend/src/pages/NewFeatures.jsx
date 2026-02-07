@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-import "./NewFeatures.css";
 import axios from "axios";
 import FeaturesCard from "../components/FeaturesCard";
 import useAuth from "../hooks/useAuth";
@@ -24,16 +22,16 @@ const NewFeatures = () => {
 
   const { currentItems, pageCount, handlePageChange } = usePagination(
     features,
-    5
+    5,
   );
 
   return (
-    <div className="features-wrapper">
-      <div className="feature-header">
-        <h3>Feature Announcements</h3>
+    <div className="flex flex-1 flex-col w-full p-6">
+      <div className="flex justify-between items-start border-b border-b-muted py-3">
+        <h2 className="text-2xl font-bold">Feature Announcements</h2>
         {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
           <Link
-            className="btn-outline"
+            className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
             style={{ borderRadius: "8px" }}
             to="/features/new"
           >
@@ -41,10 +39,10 @@ const NewFeatures = () => {
           </Link>
         )}
       </div>
-      <div className="feature-list">
+      <div className="flex flex-col justify-start gap-2 py-6">
         {currentItems?.length === 0 && (
-          <div className="features-wrapper">
-            <h2>No new features yet</h2>
+          <div className="flex flex-col items-center justify-center">
+            <h2 className="text-2xl font-bold">No new features yet</h2>
           </div>
         )}
 

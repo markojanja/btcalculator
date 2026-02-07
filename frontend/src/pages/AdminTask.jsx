@@ -2,7 +2,18 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
-import "./AdminTask.css";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Badge } from "@/components/ui/badge";
 
 const AdminTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -28,7 +39,7 @@ const AdminTask = () => {
           `${BACKEND_URL}/admindata/task/${id}`,
           {
             withCredentials: true,
-          }
+          },
         );
         console.log(response);
         setUsers(response.data.users);
@@ -54,11 +65,6 @@ const AdminTask = () => {
 
   const clean = DOMPurify.sanitize(task.description);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = async () => {
     try {
       const res = await axios.put(`${BACKEND_URL}/tasks/edit_task`, formData, {
@@ -73,61 +79,87 @@ const AdminTask = () => {
   };
 
   return (
-    <div className="m-wrapper">
-      <div className="m-heading">
-        <h2>Task</h2>
-      </div>
-      <div className="m-content">
-        <div className="task-desc-admin">
-          <h2>{task.title}</h2>
-          <div
-            className="task-card-admin"
-            dangerouslySetInnerHTML={{ __html: clean }}
-          />
-          <div className="edit-form">
-            <div>
-              <select
-                name="userId"
-                id="user"
+    <div className="flex flex-col w-187.5 mx-auto gap-4">
+      <CardTitle className="flex justify-between items-center w-full bg-card shadow-sm p-4 rounded-md">
+        <h2 className="text-2xl font-bold">{task.title}</h2>
+        <Badge>{task.client?.name}</Badge>
+      </CardTitle>
+      <Card>
+        <div
+          className="flex flex-col overflow-y-scroll max-h-screen text-left p-4 gap-4 rte"
+          dangerouslySetInnerHTML={{ __html: clean }}
+        />
+      </Card>
+      <Card>
+        <CardContent className={"flex flex-col gap-4"}>
+          <FieldGroup className={"flex flex-row items-center"}>
+            <Field>
+              <Label>User</Label>
+              <Select
                 value={formData.userId}
-                onChange={handleChange}
+                onValueChange={(value) =>
+                  setFormData((p) => ({ ...p, userId: value }))
+                }
               >
-                {users?.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.firstname}
-                  </option>
-                ))}
-              </select>
-              <select
-                name="status"
-                id="status"
+                <SelectTrigger>
+                  <SelectValue placeholder="Select user" />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map((user) => (
+                    <SelectItem key={user.id} value={user.id}>
+                      {user.firstname}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field>
+              <Label>Status</Label>
+              <Select
                 value={formData.status}
-                onChange={handleChange}
+                onValueChange={(value) =>
+                  setFormData((p) => ({ ...p, status: value }))
+                }
               >
-                {STATUS.map((stat, i) => (
-                  <option key={i} value={stat}>
-                    {stat}
-                  </option>
-                ))}
-              </select>
-              <select
-                name="priority"
-                id="priority"
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUS.map((stat) => (
+                    <SelectItem key={stat} value={stat}>
+                      {stat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field>
+              <Label>Priority</Label>
+              <Select
                 value={formData.priority}
-                onChange={handleChange}
+                onValueChange={(value) =>
+                  setFormData((p) => ({ ...p, priority: value }))
+                }
               >
-                {PRIORITY.map((priority, i) => (
-                  <option key={i} value={priority}>
-                    {priority}
-                  </option>
-                ))}
-              </select>
-            </div>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PRIORITY.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          </FieldGroup>
 
-            <button onClick={handleSubmit}>Edit</button>
-          </div>
-        </div>
-      </div>
+          <Button className="w-full" onClick={handleSubmit}>
+            Edit
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };

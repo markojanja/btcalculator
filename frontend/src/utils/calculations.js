@@ -6,7 +6,7 @@ export const calculatePipValue = (
   exchangeRate,
   conversionRate,
   showConversion,
-  isJPY
+  isJPY,
 ) => {
   let pipValue = (pipSize * positionSize) / exchangeRate;
   pipValue = formatPipValue(parseFloat(pipValue));
@@ -25,7 +25,7 @@ export const calculateProfitAndLoss = (
   close,
   tradeSize,
   contractSize,
-  tradeType
+  tradeType,
 ) => {
   if (tradeType === "BUY") {
     return (close - open) * (tradeSize * contractSize);
@@ -44,7 +44,7 @@ export const marginCalculationForex = (
   leverage,
   pair,
   deposit,
-  conversion
+  conversion,
 ) => {
   const [base, quote] = pair.split("/");
 
@@ -67,7 +67,7 @@ export const marginCalculationCFD = (
   margin,
   pair,
   deposit,
-  conversion
+  conversion,
 ) => {
   const [base, quote] = pair.split("/");
   if (base === deposit) {
@@ -110,7 +110,7 @@ export const calculateDailySwap = (
   long,
   short,
   lots,
-  price
+  price,
 ) => {
   if (calctype === "money") return calculateSwapByMoney(long, short, lots);
   if (calctype === "points")

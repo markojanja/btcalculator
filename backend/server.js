@@ -17,6 +17,7 @@ import UsersRouter from "./routes/users.route.js";
 import FeaturesRouter from "./routes/features.route.js";
 import AdminData from "./routes/adminData.route.js";
 import UserGuidesRouter from "./routes/guides.route.js";
+import ClientRouter from "./routes/clients.route.js";
 import { createFolders } from "./utils/createFolders.js";
 
 import { isAuth } from "./middleware/isAuth.js";
@@ -60,7 +61,7 @@ app.use(
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
-  })
+  }),
 );
 
 app.use(passport.initialize());
@@ -70,7 +71,7 @@ app.use(
   cors({
     origin: process.env.CORS,
     credentials: true,
-  })
+  }),
 );
 
 // this line is required by render
@@ -93,6 +94,7 @@ app.use("/", isAuth, UsersRouter);
 app.use("/", isAuth, FeaturesRouter);
 app.use("/", isAuth, AdminData);
 app.use("/", isAuth, UserGuidesRouter);
+app.use("/", isAuth, ClientRouter);
 
 const PORT = process.env.PORT || 3500;
 

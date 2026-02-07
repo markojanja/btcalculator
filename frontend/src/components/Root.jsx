@@ -11,7 +11,7 @@ const Root = () => {
       <NavContextProvider>
         <KanbanContextProvider>
           <Header />
-          <main className="main">
+          <main className="flex flex-col flex-1">
             <Sidebar />
             <Outlet />
           </main>

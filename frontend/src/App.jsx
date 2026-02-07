@@ -28,6 +28,9 @@ import UserGuides from "./pages/UserGuides";
 import AddGuide from "./pages/AddGuide";
 import GuideDetails from "./pages/GuideDetails";
 import EditGuide from "./pages/EditGuide";
+import Clients from "./pages/Clients";
+import AddClients from "./pages/AddClients";
+import EditClient from "./pages/EditClient";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import { ToastContainer } from "react-toastify";
 
@@ -57,6 +60,7 @@ const router = createBrowserRouter([
           { path: "guides/:id", element: <GuideDetails /> },
           { path: "guides/new", element: <AddGuide /> },
           { path: "guides/:id/edit", element: <EditGuide /> },
+          { path: "clients", element: <Clients /> },
         ],
       },
       {
@@ -76,6 +80,8 @@ const router = createBrowserRouter([
           { path: "users/edit/:id", element: <EditUser /> },
           { path: "features/new", element: <AddFeature /> },
           { path: "features/:id/edit", element: <EditFeature /> },
+          { path: "clients/new", element: <AddClients /> },
+          { path: "clients/:id/edit", element: <EditClient /> },
         ],
       },
       {

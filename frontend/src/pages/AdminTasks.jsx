@@ -1,4 +1,3 @@
-import "./AdminTasks.css";
 import { Link, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
@@ -6,6 +5,15 @@ import { useState } from "react";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
 import useNotification from "../hooks/useNotification";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 const AdminTasks = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -59,36 +67,51 @@ const AdminTasks = () => {
   }, [lastEvent]);
 
   return (
-    <div className="m-wrapper">
-      <div className="m-heading">
-        <h2>Tasks ({title})</h2>
+    <div className="flex flex-1 flex-col w-full p-6">
+      <div className="flex justify-between items-start border-b border-b-muted py-3">
+        <h2 className="text-2xl font-bold">Tasks ({title})</h2>
       </div>
-      <div className="m-content">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Status</th>
-              <th>Priority</th>
-              <th>Assigne</th>
-            </tr>
-          </thead>
-          <tbody>
+      <div className="flex flex-col flex-1 items-center">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Client</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Priority</TableHead>
+              <TableHead>Created At</TableHead>
+              <TableHead>Assigne</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {currentItems.map((task) => (
-              <tr key={task.id}>
-                <td>{task.title}</td>
-                <td>{task.status}</td>
-                <td>{task.priority}</td>
-                <td>
+              <TableRow key={task.id}>
+                <TableCell>{task.title}</TableCell>
+                <TableCell>
+                  <Badge>{task.client?.name}</Badge>
+                </TableCell>
+                <TableCell>{task.status}</TableCell>
+                <TableCell>{task.priority}</TableCell>
+                <TableCell>
+                  {new Date(task.createdAt).toLocaleDateString("en-GB", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })}
+                </TableCell>
+                <TableCell>
                   {task.user.firstname} {task.user.lastname}
-                </td>
-                <td>
-                  <Link to={`/dashboard/task/${task.id}`}>view task</Link>
-                </td>
-              </tr>
+                </TableCell>
+                <TableCell>
+                  <Link to={`/dashboard/task/${task.id}`}>
+                    <Badge variant="secondary">view task</Badge>
+                  </Link>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
     </div>

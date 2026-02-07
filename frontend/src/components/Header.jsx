@@ -2,11 +2,18 @@ import "./Header.css";
 import useAuth from "../hooks/useAuth";
 import { useNavigate, NavLink, Link } from "react-router-dom";
 import { useContext } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LogOutIcon, UserIcon } from "lucide-react";
 
 import { RiMenu4Line } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
-import { FaPowerOff } from "react-icons/fa";
-import { FaUser } from "react-icons/fa";
 
 import ReactSwitch from "react-switch";
 import { ThemeContext } from "../contexts/ThemeContext";
@@ -16,28 +23,22 @@ const Header = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { toggleSidebar } = useContext(NavContext);
 
-  const { logout, user } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const handleLogOut = async () => {
     await logout();
     navigate("/login");
   };
   return (
-    <header className="header">
-      <nav className="nav">
+    <header className="flex w-full px-6 min-h-20">
+      <nav className="flex items-center justify-between w-full">
         <div className="logo">
           <NavLink to="/">
-            <span className="is-active">CS</span>Board
+            <span className="text-primary">CS</span>Board
           </NavLink>
         </div>
-        <ul>
-          <li
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+        <ul className="flex gap-3">
+          <li className="flex items-center justify-center">
             <ReactSwitch
               height={16}
               width={32}
@@ -49,25 +50,37 @@ const Header = () => {
               checked={theme === "dark" ? false : true}
             />
           </li>
-          <li className="profile-menu">
-            <FaUserCircle size={20} />
-
-            <div className="profile-submenu">
-              <Link to={"/profile"} style={{ justifyContent: "flex-start" }}>
-                <FaUser size={20} style={{ marginRight: "8px" }} />
-                <span>
-                  {user?.firstname} {user?.lastname}
-                </span>
-              </Link>
-              <div style={{ display: "flex", alignItems: "start" }}>
-                <a style={{ cursor: "pointer" }} onClick={handleLogOut}>
-                  <FaPowerOff size={20} style={{ marginRight: "8px" }} />
-                  <span>Log out</span>
-                </a>
-              </div>
-            </div>
-          </li>
-          <li id="mobile-hidden" onClick={toggleSidebar}>
+          <DropdownMenu className="bg-background border-none">
+            <DropdownMenuTrigger asChild>
+              <Button variant="nostyle">
+                <FaUserCircle />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="border-none shadow-md">
+              <DropdownMenuItem asChild>
+                <Link to="profile" className="flex items-center gap-2">
+                  <UserIcon />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant="destructive">
+                <Link
+                  onClick={handleLogOut}
+                  to={"#"}
+                  className="flex items-center gap-2"
+                >
+                  <LogOutIcon className="text-destructive" />
+                  Log out
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <li
+            id="mobile-hidden"
+            className="flex items-center justify-center"
+            onClick={toggleSidebar}
+          >
             <RiMenu4Line size={20} />
           </li>
         </ul>
