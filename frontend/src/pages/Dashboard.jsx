@@ -27,6 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale, BarElement);
 
@@ -35,8 +36,10 @@ const Dashboard = () => {
   const [dataCard, setDataCard] = useState([]);
   const [barChartData, setBarChartData] = useState([]);
   const [pieChartdata, setPieChartData] = useState([]);
+  const [pieChartdataCli, setPieChartDataCli] = useState([]);
   const [latestTasks, setLatestTask] = useState([]);
   const [recentUsers, setRecentUsers] = useState([]);
+  const [recentClients, setRecentClients] = useState([]);
   const { lastEvent } = useNotification();
 
   useEffect(() => {
@@ -49,27 +52,10 @@ const Dashboard = () => {
         setDataCard(response.data.tasksByStatus);
         setBarChartData(response.data.tasksByPriority);
         setPieChartData(response.data.rawByUser);
+        setPieChartDataCli(response.data.clientsTasks);
         setLatestTask(response.data.latestTasks);
         setRecentUsers(response.data.recentUsers);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getData();
-  }, []);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await axios.get(`${BACKEND_URL}/admindata/`, {
-          withCredentials: true,
-        });
-        console.log(response);
-        setDataCard(response.data.tasksByStatus);
-        setBarChartData(response.data.tasksByPriority);
-        setPieChartData(response.data.rawByUser);
-        setLatestTask(response.data.latestTasks);
-        setRecentUsers(response.data.recentUsers);
+        setRecentClients(response.data.recentClients);
       } catch (error) {
         console.log(error);
       }
@@ -84,6 +70,32 @@ const Dashboard = () => {
       {
         label: "Pending Tasks",
         data: pieChartdata.map((obj) => obj.count),
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.5)",
+          "rgba(54, 162, 235, 0.5)",
+          "rgba(255, 206, 86, 0.5)",
+          "rgba(75, 192, 192, 0.5)",
+          "rgba(153, 102, 255, 0.5)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const labels2 = pieChartdataCli.map((obj) => obj.name);
+  const clientsTasksData = {
+    labels: labels2,
+    datasets: [
+      {
+        label: "Pending Tasks by Client",
+        data: pieChartdataCli?.map((obj) => obj.count),
         backgroundColor: [
           "rgba(255, 99, 132, 0.5)",
           "rgba(54, 162, 235, 0.5)",
@@ -199,7 +211,7 @@ const Dashboard = () => {
         </div>
         <div className="grid grid-cols-4 w-full gap-2 py-4">
           <Card className={" col-span-2 "}>
-            <CardTitle className={"text-left px-6 text-2xl"}>
+            <CardTitle className={"text-left px-6"}>
               <Link to={"tasks/pending"}>
                 <h3>Pending Tasks</h3>
               </Link>
@@ -211,7 +223,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           <Card className={" col-span-2 "}>
-            <CardTitle className={"text-left px-6 text-2xl"}>
+            <CardTitle className={"text-left px-6"}>
               <Link to={"tasks/priority"}>
                 <h3>Tasks by Priority</h3>
               </Link>
@@ -303,6 +315,66 @@ const Dashboard = () => {
             </CardContent>
             <CardFooter className={"mb-0 mt-auto"}>
               <Link to="/users">view all users</Link>
+            </CardFooter>
+          </Card>
+        </div>
+        <div className="grid grid-cols-4 w-full gap-2 py-4">
+          <Card className={"col-span-2"}>
+            <CardTitle className={"text-left px-6"}>
+              <h3>Tasks by Clients</h3>
+            </CardTitle>
+            <CardContent>
+              <div className="flex p-2 h-75">
+                <Pie data={clientsTasksData} options={options} />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className={"col-span-2"}>
+            <CardTitle className={"text-left px-6"}>
+              <h4>Recent Clients</h4>
+            </CardTitle>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Server</TableHead>
+                    <TableHead>Platform</TableHead>
+                    <TableHead>Edit</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentClients.map((client) => (
+                    <TableRow key={client.id}>
+                      <TableCell>{client.name}</TableCell>
+                      <TableCell>{client.status}</TableCell>
+                      <TableCell>{client.server[0]}</TableCell>
+                      <TableCell>
+                        {client.platform.map((p, idx) => (
+                          <Badge
+                            variant="secondary"
+                            size="s"
+                            className={"mr-1"}
+                            key={idx}
+                          >
+                            {p}
+                          </Badge>
+                        ))}
+                      </TableCell>
+                      <TableCell>
+                        <Link to={`/clients/${client.id}/edit`}>
+                          <FaRegEdit />
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+            <CardFooter className={"mb-0 mt-auto"}>
+              <Link to="/clients">view all clients</Link>
             </CardFooter>
           </Card>
         </div>

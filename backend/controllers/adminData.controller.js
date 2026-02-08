@@ -6,6 +6,8 @@ import {
   getLatestTasks,
   getRecentUsers,
   getTasksStatusAndPriority,
+  getTasksByClient,
+  getRecentClients,
 } from "../services/adminData.service.js";
 import prisma from "../db/prisma.js";
 
@@ -21,12 +23,17 @@ export const getAdminData = async (req, res) => {
     const latestTasks = await getLatestTasks();
     const recentUsers = await getRecentUsers();
 
+    const clientsTasks = await getTasksByClient();
+    const recentClients = await getRecentClients();
+
     return res.status(200).json({
       tasksByStatus,
       tasksByPriority,
       rawByUser,
       latestTasks,
       recentUsers,
+      clientsTasks,
+      recentClients,
     });
   } catch (error) {
     console.log("error /admindata", error);
