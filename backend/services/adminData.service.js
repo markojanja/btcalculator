@@ -95,6 +95,22 @@ export const getRecentUsers = async () => {
   });
 };
 
+export const getRecentClients = async () => {
+  return await prisma.clients.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 5,
+    select: {
+      id: true,
+      name: true,
+      status: true,
+      server: true,
+      platform: true,
+    },
+  });
+};
+
 export const getTasksStatusAndPriority = async (filter, excludeCompleted) => {
   return await prisma.tasks.findMany({
     orderBy: {
@@ -123,4 +139,37 @@ export const getTasksStatusAndPriority = async (filter, excludeCompleted) => {
       },
     },
   });
+};
+
+export const getTasksByClient = async () => {
+  const clients = await prisma.clients.findMany({
+    where: {
+      tasks: {
+        some: {
+          status: {
+            in: ["TODO", "IN_PROGRESS"],
+          },
+        },
+      },
+    },
+    select: {
+      name: true,
+      _count: {
+        select: {
+          tasks: {
+            where: {
+              status: {
+                in: ["TODO", "IN_PROGRESS"],
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  return clients.map((client) => ({
+    userId: client.id,
+    name: client.name,
+    count: client._count.tasks,
+  }));
 };
