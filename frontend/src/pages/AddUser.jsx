@@ -1,12 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import SelectReact from "react-select";
-
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import {
@@ -17,150 +16,169 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const AddClients = () => {
-  const [name, setName] = useState("");
-  const [status, setStatus] = useState("ACTIVE");
-  const [server, setServer] = useState("live1");
-  const [platform, setPlatform] = useState([]);
+const AddUser = () => {
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
+  const [role, setRole] = useState("ADMIN");
+  const [activeUser, setActiveUser] = useState(true);
+  const [centroid, setCentroid] = useState(false);
+  const [errorPopup, setErrorPopup] = useState("");
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-  const STATUS = ["ONBOARDING", "ACTIVE", "SUSPENDED", "INACTIVE"];
-  const SERVERS = ["live1", "live2", "live5", "live7"];
-  const PLATFORMS = ["MT4", "MT5", "MT4SA", "MT5SA", "MTT", "cTrader", "ARK"];
+  const matchPwd = password === repeatPassword && repeatPassword.length > 3;
 
-  const platformOptions = PLATFORMS.map((p) => ({
-    value: p,
-    label: p,
-  }));
+  useEffect(() => {
+    if (firstname || lastname) {
+      setUsername(`${firstname.toLowerCase()}.${lastname.toLowerCase()}`);
+    } else {
+      setUsername("");
+    }
+  }, [firstname, lastname]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = {
-      name,
-      status,
-      server,
-      platform,
+    const newUser = {
+      firstname,
+      lastname,
+      username,
+      email,
+      password,
+      repeatPassword,
+      role,
+      active: activeUser,
+      centroid,
     };
 
     try {
-      await axios.post(`${BACKEND_URL}/clients/new`, payload, {
+      await axios.post(`${BACKEND_URL}/users/new`, newUser, {
         withCredentials: true,
       });
-      navigate("/clients");
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
-  const customStyles = {
-    container: (provided) => ({
-      ...provided,
-      width: "100%",
-      backgroundColor: "var(--secondary)",
-    }),
-    menu: (provided) => ({
-      ...provided,
-      backgroundColor: "var(--secondary)",
-      marginTop: 0,
-      borderRadius: 0,
-    }),
-    control: (provided) => ({
-      ...provided,
-      backgroundColor: "var(--secondary)",
-      boxShadow: "none",
-      borderColor: "var(--text-color)",
-      minHeight: "40px",
-      "&:hover": {
-        borderColor: "var(--accent-color)",
-      },
-    }),
-    multiValue: (provided) => ({
-      ...provided,
-      backgroundColor: "var(--primary)",
-    }),
-    multiValueLabel: (provided) => ({
-      ...provided,
-      color: "#fff",
-    }),
-    option: (provided) => ({
-      ...provided,
-      backgroundColor: "var(--secondary)",
-      color: "var(--primary)",
-      "&:hover": {
-        backgroundColor: "var(--primary)",
-        color: "#fff",
-      },
-    }),
+      setErrorPopup("");
+      navigate("/users");
+    } catch (err) {
+      if (err.response?.data?.message) {
+        setErrorPopup(err.response.data.message);
+      } else {
+        setErrorPopup("Something went wrong. Please try again.");
+      }
+    }
   };
 
   return (
     <div className="flex flex-col w-full">
       <Card className="w-187.5 mx-auto">
         <CardTitle className="px-6">
-          <h3 className="text-left font-bold">New Client</h3>
+          <h3 className="text-left font-bold">New User</h3>
         </CardTitle>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {errorPopup && (
+            <p className="text-sm text-red-500 mb-4">{errorPopup}</p>
+          )}
+
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
-                <Label>Name</Label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} />
-              </Field>
-
-              <Field>
-                <Label>Status</Label>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUS.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {s}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
-
-              <Field>
-                <Label>Server</Label>
-                <Select value={server} onValueChange={setServer}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select server" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SERVERS.map((srv) => (
-                      <SelectItem key={srv} value={srv}>
-                        {srv}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
-
-              <Field>
-                <Label>Platforms</Label>
-                <SelectReact
-                  isMulti
-                  options={platformOptions}
-                  value={platform.map((p) => ({ value: p, label: p }))}
-                  onChange={(selected) =>
-                    setPlatform(selected.map((s) => s.value))
-                  }
-                  styles={customStyles}
+                <Label>Firstname</Label>
+                <Input
+                  value={firstname}
+                  onChange={(e) => setFirstname(e.target.value)}
                 />
               </Field>
+
+              <Field>
+                <Label>Lastname</Label>
+                <Input
+                  value={lastname}
+                  onChange={(e) => setLastname(e.target.value)}
+                />
+              </Field>
+
+              <Field>
+                <Label>Username</Label>
+                <Input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </Field>
+
+              <Field>
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </Field>
+
+              <Field>
+                <Label>Password</Label>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </Field>
+
+              <Field>
+                <Label>Repeat Password</Label>
+                <Input
+                  type="password"
+                  value={repeatPassword}
+                  onChange={(e) => setRepeatPassword(e.target.value)}
+                />
+                {!matchPwd && repeatPassword.length > 3 && (
+                  <p className="text-sm text-red-500 mt-1">
+                    Passwords do not match
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <Label>Role</Label>
+                <Select value={role} onValueChange={setRole}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ADMIN">Admin</SelectItem>
+                    <SelectItem value="MANAGER">Manager</SelectItem>
+                    <SelectItem value="SUPPORT">Support</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+
+              <Field orientation="horizontal">
+                <Checkbox
+                  checked={activeUser}
+                  onCheckedChange={(checked) => setActiveUser(!!checked)}
+                />
+                <Label>Active</Label>
+              </Field>
+
+              <Field orientation="horizontal">
+                <Checkbox
+                  checked={centroid}
+                  onCheckedChange={(checked) => setCentroid(!!checked)}
+                />
+                <Label>Centroid</Label>
+              </Field>
+
+              <Button className="w-full" type="submit" disabled={!matchPwd}>
+                Create
+              </Button>
             </FieldGroup>
 
-            <Button type="submit">Save</Button>
-
-            <Link className="flex self-end mr-4 items-center" to="/clients">
-              <IoMdArrowRoundBack /> Back to clients
+            <Link className="flex self-end mr-4 items-center" to={"/users"}>
+              <IoMdArrowRoundBack /> Back to users
             </Link>
           </form>
         </CardContent>
@@ -169,4 +187,4 @@ const AddClients = () => {
   );
 };
 
-export default AddClients;
+export default AddUser;
