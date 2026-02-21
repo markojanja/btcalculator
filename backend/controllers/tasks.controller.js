@@ -102,6 +102,8 @@ export const addTask = async (req, res) => {
 export const editTask = async (req, res) => {
   const { id, title, description, status, priority, userId, client } = req.body;
 
+  console.log("this is client ID ", client);
+
   try {
     const oldTask = await prisma.tasks.findUnique({
       where: { id },
@@ -115,7 +117,7 @@ export const editTask = async (req, res) => {
       ...(status && { status }),
       ...(priority && { priority }),
       ...(userId && { userId }),
-      clientId: client,
+      ...(client && { clientId: client }), // only set if exists
     };
 
     const updatedTask = await prisma.tasks.update({
@@ -156,6 +158,29 @@ export const deleteTask = async (req, res) => {
       },
     });
     res.status(200).json({ message: "task deleted" });
+  } catch (error) {
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+};
+
+export const getHandover = async (req, res) => {
+  try {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+    const handover = await prisma.tasks.findMany({
+      where: {
+        status: "CS_TICKET",
+        createdAt: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+    });
+
+    res.status(200).json(handover);
   } catch (error) {
     return res.status(500).json({ error: "Something went wrong" });
   }
