@@ -145,7 +145,7 @@ const Dashboard = () => {
 
   const options = {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
     plugins: {
       legend: {
         position: "left",
@@ -159,7 +159,7 @@ const Dashboard = () => {
         <h2 className="text-2xl font-bold">Dashboard</h2>
       </div>
       <div className="flex flex-col items-center">
-        <div className="grid grid-cols-4 w-full gap-2 py-4">
+        <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
           <DashCard
             title={"Todo"}
             value={
@@ -209,34 +209,34 @@ const Dashboard = () => {
             clr={"text-green-500/80"}
           />
         </div>
-        <div className="grid grid-cols-4 w-full gap-2 py-4">
-          <Card className={" col-span-2 "}>
+        <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
+          <Card className={"col-span-2"}>
             <CardTitle className={"text-left px-6"}>
               <Link to={"tasks/pending"}>
                 <h3>Pending Tasks</h3>
               </Link>
             </CardTitle>
             <CardContent>
-              <div className="flex p-2 h-75">
+              <div className="flex p-2 h-75 w-full">
                 <Pie data={data} options={options} />
               </div>
             </CardContent>
           </Card>
-          <Card className={" col-span-2 "}>
+          <Card className={"col-span-2"}>
             <CardTitle className={"text-left px-6"}>
               <Link to={"tasks/priority"}>
                 <h3>Tasks by Priority</h3>
               </Link>
             </CardTitle>
             <CardContent>
-              <div className="flex p-2 h-75">
+              <div className="flex p-2 h-75 w-full">
                 <Bar data={barData} options={options} />
               </div>
             </CardContent>
           </Card>
         </div>
-        <div className="grid grid-cols-4 w-full gap-2 py-4">
-          <Card className={"col-span-3"}>
+        <div className="grid lg:grid-cols-4 w-full gap-2 py-4 mx-auto">
+          <Card className={"lg:col-span-3 w-full overflow-auto"}>
             <CardTitle className={"text-left px-6"}>
               <h4>Recent tasks</h4>
             </CardTitle>
@@ -281,7 +281,7 @@ const Dashboard = () => {
             </CardFooter>
           </Card>
 
-          <Card className={"col-span-1"}>
+          <Card className={"col-span-1 overflow-auto"}>
             <CardTitle className={"text-left px-6"}>
               <h4>Recent Users</h4>
             </CardTitle>
@@ -318,19 +318,19 @@ const Dashboard = () => {
             </CardFooter>
           </Card>
         </div>
-        <div className="grid grid-cols-4 w-full gap-2 py-4">
+        <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
           <Card className={"col-span-2"}>
             <CardTitle className={"text-left px-6"}>
               <h3>Tasks by Clients</h3>
             </CardTitle>
             <CardContent>
-              <div className="flex p-2 h-75">
+              <div className="flex p-2 h-75 w-full">
                 <Pie data={clientsTasksData} options={options} />
               </div>
             </CardContent>
           </Card>
 
-          <Card className={"col-span-2"}>
+          <Card className={"col-span-2 overflow-auto"}>
             <CardTitle className={"text-left px-6"}>
               <h4>Recent Clients</h4>
             </CardTitle>
