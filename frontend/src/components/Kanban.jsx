@@ -4,10 +4,18 @@ import KanbanColumn from "./KanbanColumn";
 import AddTaskModal from "./AddTaskModal.jsx";
 import EditTask from "./EditTask.jsx";
 import useKanban from "../hooks/useKanban.jsx";
+import HandoverModal from "./HandoverModal";
 
 const Kanban = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const { columns, activeTask, taskModal, editModal, setColumns } = useKanban();
+  const {
+    columns,
+    activeTask,
+    taskModal,
+    editModal,
+    setColumns,
+    handoverModal,
+  } = useKanban();
 
   const [draggedTask, setDraggedTask] = useState(null);
 
@@ -23,7 +31,11 @@ const Kanban = () => {
       return;
     }
 
-    const updatedTask = { ...draggedTask, status: targetStatus };
+    const updatedTask = {
+      ...draggedTask,
+      status: targetStatus,
+      client: draggedTask.clientId,
+    };
 
     setColumns((prevCols) =>
       prevCols.map((col) => {
@@ -60,6 +72,9 @@ const Kanban = () => {
 
   if (editModal && activeTask) {
     return <EditTask />;
+  }
+  if (handoverModal) {
+    return <HandoverModal />;
   }
 
   return (

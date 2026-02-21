@@ -9,6 +9,7 @@ const KanbanContextProvider = ({ children }) => {
   const [columns, setColumns] = useState([]);
   const [taskModal, setTaskModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
+  const [handoverModal, setHandoverModal] = useState(false);
   const [activeTask, setActiveTask] = useState("");
   const { lastEvent } = useNotification();
 
@@ -43,6 +44,10 @@ const KanbanContextProvider = ({ children }) => {
 
   const toggleEditTaskModal = () => {
     setEditModal(!editModal);
+  };
+  const toggleHandoverModal = () => {
+    setHandoverModal(!handoverModal);
+    console.log(handoverModal);
   };
 
   const addTask = (newTask) => {
@@ -104,6 +109,8 @@ const KanbanContextProvider = ({ children }) => {
     deleteTask,
     setColumns,
     getTasks,
+    handoverModal,
+    toggleHandoverModal,
   };
 
   return (
