@@ -66,11 +66,11 @@ const Converter = () => {
   };
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4">
+    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4 p-2">
       {showModal && (
         <Modal setShowModal={setShowModal} content={converterHowTo} />
       )}
-      <Card className={`w-1/3 p-4`}>
+      <Card className={`w-full lg:w-1/3 p-4`}>
         <CardHeader>
           <div className="flex gap-1">
             <h3 className="text-lg font-bold">Excel to JSON Swap converter</h3>

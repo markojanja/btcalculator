@@ -28,7 +28,7 @@ const FeatureDetails = () => {
   const clean = DOMPurify.sanitize(feature.description);
 
   return (
-    <div className="flex flex-col w-187.5 mx-auto gap-4">
+    <div className="flex flex-col w-full lg:w-187.5 mx-auto gap-4 p-2">
       <div
         className={
           "flex justify-between items-center w-full bg-card shadow-sm p-4 rounded-md"
@@ -52,7 +52,7 @@ const FeatureDetails = () => {
         />
       </Card>
 
-      <Card className={"text-left px-2 w-187.5"}>
+      <Card className={"text-left px-2 w-full lg:w-187.5 mx-auto"}>
         <CardContent className={"flex flex-col"}>
           <p>author:{feature.user?.username}</p>
           <p>published: {feature.published ? "✅" : "❌"}</p>

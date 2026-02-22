@@ -157,9 +157,9 @@ const MarginCalculator = () => {
   };
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4">
+    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4 p-2">
       {showModal && <Modal setShowModal={setShowModal} content={marginHowTo} />}
-      <Card className="w-1/3 p-4">
+      <Card className="w-full lg:w-1/3 p-4">
         <CardHeader className="flex justify-between items-center">
           <div className="flex gap-1">
             <h3 className="text-lg font-bold">Margin Calculator</h3>
@@ -332,7 +332,7 @@ const MarginCalculator = () => {
         </CardContent>
       </Card>
       {calculations.length > 0 && (
-        <Table className="max-w-[50%] mx-auto">
+        <Table className="lg:max-w-[50%] mx-auto">
           <TableHeader>
             <TableRow>
               <TableHead>Symbol</TableHead>

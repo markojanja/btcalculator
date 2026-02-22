@@ -145,10 +145,10 @@ const Dashboard = () => {
 
   const options = {
     responsive: true,
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "left",
+        position: window.innerWidth < 767 ? "bottom" : "left",
       },
     },
   };
@@ -210,26 +210,26 @@ const Dashboard = () => {
           />
         </div>
         <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
-          <Card className={"col-span-2"}>
+          <Card className={"col-span-2 min-w-0"}>
             <CardTitle className={"text-left px-6"}>
               <Link to={"tasks/pending"}>
                 <h3>Pending Tasks</h3>
               </Link>
             </CardTitle>
             <CardContent>
-              <div className="flex p-2 h-75 w-full">
+              <div className="relative flex p-2 h-75 w-full">
                 <Pie data={data} options={options} />
               </div>
             </CardContent>
           </Card>
-          <Card className={"col-span-2"}>
+          <Card className={"col-span-2 min-w-0"}>
             <CardTitle className={"text-left px-6"}>
               <Link to={"tasks/priority"}>
                 <h3>Tasks by Priority</h3>
               </Link>
             </CardTitle>
             <CardContent>
-              <div className="flex p-2 h-75 w-full">
+              <div className="relative flex p-2 h-75 w-full">
                 <Bar data={barData} options={options} />
               </div>
             </CardContent>
@@ -319,7 +319,7 @@ const Dashboard = () => {
           </Card>
         </div>
         <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
-          <Card className={"col-span-2"}>
+          <Card className={"col-span-2 min-w-0"}>
             <CardTitle className={"text-left px-6"}>
               <h3>Tasks by Clients</h3>
             </CardTitle>

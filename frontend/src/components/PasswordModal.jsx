@@ -33,8 +33,8 @@ const PasswordModal = ({ handleToggleModal }) => {
     }
   };
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-background">
-      <Card className={"w-1/4"}>
+    <div className="absolute inset-0 flex items-center justify-center bg-background p-2">
+      <Card className={"w-full lg:w-1/4"}>
         <CardTitle className={"flex justify-end mr-6"}>
           <CgClose onClick={handleToggleModal} />
         </CardTitle>

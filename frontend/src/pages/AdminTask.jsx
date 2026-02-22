@@ -79,7 +79,7 @@ const AdminTask = () => {
   };
 
   return (
-    <div className="flex flex-col w-187.5 mx-auto gap-4">
+    <div className="flex flex-col w-full md:w-187.5 mx-auto gap-4 p-2">
       <CardTitle className="flex justify-between items-center w-full bg-card shadow-sm p-4 rounded-md">
         <h2 className="text-2xl font-bold">{task.title}</h2>
         <Badge>{task.client?.name}</Badge>

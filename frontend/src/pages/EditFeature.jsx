@@ -75,8 +75,8 @@ const EditFeature = () => {
   };
 
   return (
-    <div className="flex flex-col w-full">
-      <Card className="w-187.5 mx-auto">
+    <div className="flex flex-col w-full p-2">
+      <Card className="w-full lg:w-187.5 mx-auto">
         <CardTitle className="px-6">
           <h3 className="text-left font-bold">Edit feature</h3>
         </CardTitle>

@@ -29,7 +29,7 @@ const GuideDetails = () => {
   const clean = DOMPurify.sanitize(guide.description);
 
   return (
-    <div className="flex flex-col w-187.5 mx-auto gap-4">
+    <div className="flex flex-col w-full lg:w-187.5 mx-auto gap-4 p-2">
       <div
         className={
           "flex justify-between items-center w-full bg-card shadow-sm p-4 rounded-md"
@@ -51,7 +51,7 @@ const GuideDetails = () => {
           dangerouslySetInnerHTML={{ __html: clean }}
         />
       </Card>
-      <Card className={"text-left px-2 w-187.5"}>
+      <Card className={"text-left px-2 w-full lg:w-187.5 mx-auto"}>
         <CardContent className={"flex flex-col"}>
           <p>author:{guide.user?.username}</p>
           <p>published: {guide.published ? "✅" : "❌"}</p>

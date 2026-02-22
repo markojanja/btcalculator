@@ -55,7 +55,7 @@ const HandoverModal = () => {
       >
         <IoMdClose size={22} />
       </button>
-      <div className="flex flex-1 flex-col gap-4 items-center w-full">
+      <div className="flex flex-1 flex-col gap-4 items-center w-full p-2">
         {csTasks.map((task) => {
           const clean = DOMPurify.sanitize(task.description);
           return (

@@ -186,11 +186,13 @@ const PipCalculator = () => {
   };
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4">
+    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4 p-2">
       {showModal && <Modal setShowModal={setShowModal} content={pipHowTo} />}
       <Info editMode={editMode} />
 
-      <Card className={`w-1/3 p-4  ${editMode ? "border-primary border" : ""}`}>
+      <Card
+        className={`w-full lg:w-1/3 p-4 ${editMode ? "border-primary border" : ""}`}
+      >
         <CardHeader className="flex justify-between items-center">
           <div className="flex gap-1">
             <h3 className="text-lg font-bold">Pip Value Calculator</h3>
@@ -297,7 +299,7 @@ const PipCalculator = () => {
         </CardContent>
       </Card>
       {pipValue && (
-        <Card className="w-1/3">
+        <Card className="w-full lg:w-1/3">
           <CardContent>
             <CardTitle>{`Pip value: ${pipValue} ${depositCurrency}`}</CardTitle>
           </CardContent>
