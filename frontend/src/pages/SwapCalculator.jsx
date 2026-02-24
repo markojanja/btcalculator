@@ -95,9 +95,9 @@ const SwapCalculator = () => {
   };
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4">
+    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4 p-2">
       {showModal && <Modal setShowModal={setShowModal} content={swapHowTo} />}
-      <Card className={`w-1/3 p-4`}>
+      <Card className={`w-full lg:w-1/3 p-4`}>
         <CardHeader className="flex justify-between items-center">
           <div className="flex gap-1">
             <h3 className="text-lg font-bold">Swap Calculator</h3>
@@ -114,7 +114,7 @@ const SwapCalculator = () => {
             Symbol settings
           </CardDescription>
 
-          <FieldGroup className="flex flex-row">
+          <FieldGroup className="flex flex-row gap-1 lg:gap-2">
             <Field>
               <Label>Symbol</Label>
               <Select value={symbol} onValueChange={handleSelect(setSymbol)}>
@@ -291,7 +291,7 @@ const SwapCalculator = () => {
         </CardContent>
       </Card>
       {result && (
-        <Card className="w-1/3">
+        <Card className="w-full lg:w-1/3">
           <CardContent className="flex flex-col items-start">
             <h4>Symbol: {result.symbol}</h4>
             <h4>Calculation Type: {result.activeCalculation}</h4>
@@ -302,10 +302,10 @@ const SwapCalculator = () => {
               Daily swap {parseFloat(result.dailySwap).toFixed(3)}{" "}
               {result.dailySwap < 0 ? "is charged" : "is paid"}
             </h4>
-            <h4>
+            <h4 className="text-left font-semibold">
               TotalSwaps:{parseFloat(test).toFixed(3)}{" "}
               {`from ${format(openDate, "dd/MM/yyyy")} to ${format(closeDate, "dd/MM/yyyy")} `}{" "}
-              {test < 0 ? "is being charged" : "is paid"}
+              {test < 0 ? " is being charged" : "is paid"}
             </h4>
           </CardContent>
         </Card>

@@ -14,6 +14,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Badge } from "@/components/ui/badge";
+import { getComments } from "../utils/fetchData.js";
+import CommentInput from "../components/CommentInput";
+import CommentCard from "../components/CommentCard";
 
 const AdminTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -21,6 +24,7 @@ const AdminTask = () => {
   const { id } = useParams();
   const [task, setTask] = useState({});
   const [users, setUsers] = useState([]);
+  const [comments, setComments] = useState([]);
 
   const [formData, setFormData] = useState({
     id: "",
@@ -63,6 +67,10 @@ const AdminTask = () => {
     }
   }, [task]);
 
+  useEffect(() => {
+    getComments(BACKEND_URL, task.id, setComments);
+  }, [task?.id]);
+
   const clean = DOMPurify.sanitize(task.description);
 
   const handleSubmit = async () => {
@@ -79,7 +87,7 @@ const AdminTask = () => {
   };
 
   return (
-    <div className="flex flex-col w-187.5 mx-auto gap-4">
+    <div className="flex flex-col w-full md:w-187.5 mx-auto gap-4 p-2">
       <CardTitle className="flex justify-between items-center w-full bg-card shadow-sm p-4 rounded-md">
         <h2 className="text-2xl font-bold">{task.title}</h2>
         <Badge>{task.client?.name}</Badge>
@@ -158,6 +166,21 @@ const AdminTask = () => {
           <Button className="w-full" onClick={handleSubmit}>
             Edit
           </Button>
+        </CardContent>
+      </Card>
+      <Card className="w-full relative h-auto">
+        <CardContent>
+          <CommentInput taskID={task?.id} setComments={setComments} />
+          <div className="flex flex-col gap-2">
+            {comments.length === 0 && <p>This task has no comments.</p>}
+            {comments.map((comm) => (
+              <CommentCard
+                key={comm.id}
+                comment={comm}
+                setComments={setComments}
+              />
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>

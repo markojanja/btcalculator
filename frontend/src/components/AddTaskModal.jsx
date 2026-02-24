@@ -77,8 +77,8 @@ const AddTaskModal = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-background pt-12 pb-12 overflow-y-auto">
-      <Card className="w-175 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background pt-12 pb-12 overflow-y-auto p-2 flex-col gap-6">
+      <Card className="w-full lg:w-175 relative">
         <button
           className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
           onClick={toggleAddTaskModal}

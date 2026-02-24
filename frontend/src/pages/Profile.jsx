@@ -20,15 +20,15 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <Card className={"w-[60%] mx-auto flex"}>
+    <div className="flex flex-col gap-4 p-2">
+      <Card className={"w-full lg:w-[60%] mx-auto flex"}>
         <CardContent
           className={"flex flex-row items-center justify-center p-6 gap-4"}
         >
-          <div className="flex items-center justify-center w-[30%]">
-            <FaUserCircle className="w-60 h-60 p-6 shrink-0" />
+          <div className="flex items-center justify-center w-[50%] lg:w-[30%] p-2">
+            <FaUserCircle className="w-30 h-30 p-3 lg:w-60 lg:h-60 lg:p-6 shrink-0" />
           </div>
-          <FieldGroup className={"w-[60%] text-left"}>
+          <FieldGroup className={"w-full text-left"}>
             <Field>
               <h3 className="font-bold text-2xl">
                 {user?.firstname} {user?.lastname}
@@ -69,7 +69,7 @@ const Profile = () => {
           </FieldGroup>
         </CardContent>
       </Card>
-      <Card className={"w-[60%] mx-auto"}>
+      <Card className={"w-full lg:w-[60%] mx-auto"}>
         <CardContent
           className={"flex flex-row items-center justify-between gap-2"}
         >

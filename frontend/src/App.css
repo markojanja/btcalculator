@@ -251,3 +251,19 @@
   text-align: left;
   background-color: var(--secondary);
 }
+
+/*comment editor*/
+
+.comment-editor .ql-container {
+  min-height: 80px;
+  height: auto !important;
+  width: 100%;
+}
+
+.comment-editor .ql-editor {
+  min-height: 60px;
+  height: auto;
+}
+.comment-editor .ql-editor.ql-blank::before {
+  color: var(--color-muted-foreground);
+}

@@ -9,7 +9,11 @@ import { Link } from "react-router-dom";
 const UsersCard = ({ user }) => {
   return (
     <Link to={`/users/edit/${user.id}`}>
-      <Card className={"w-1/3 text-left items-start justify-start mx-auto"}>
+      <Card
+        className={
+          "w-full lg:w-1/3 text-left items-start justify-start mx-auto"
+        }
+      >
         <CardContent>
           <CardTitle className={"mb-2"}>
             <h3>
