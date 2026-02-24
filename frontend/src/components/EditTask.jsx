@@ -6,7 +6,7 @@ import useKanban from "../hooks/useKanban";
 import RichTextEditor from "./RichTextEditor";
 import useCloudinary from "../hooks/useCloudinary";
 
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldGroup } from "@/components/ui/field";
@@ -18,6 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getComments } from "../utils/fetchData.js";
+import CommentInput from "./CommentInput";
+import CommentCard from "./CommentCard";
 
 const EditTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -33,8 +36,8 @@ const EditTask = () => {
   const [status, setStatus] = useState(activeTask?.status ?? STATUS[0]);
   const [priority, setPriority] = useState(activeTask?.priority ?? PRIORITY[0]);
   const [client, setClient] = useState(activeTask?.clientId ?? "");
-
   const [activeClients, setActiveClients] = useState([]);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const getActiveClients = async () => {
@@ -51,6 +54,10 @@ const EditTask = () => {
 
     getActiveClients();
   }, [BACKEND_URL]);
+
+  useEffect(() => {
+    getComments(BACKEND_URL, activeTask.id, setComments);
+  }, [activeTask?.id]);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -81,7 +88,7 @@ const EditTask = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-background pt-12 pb-12 overflow-y-auto">
-      <div className="relative w-full max-w-175 mx-4">
+      <div className="relative flex flex-col w-full max-w-175 mx-4 gap-6">
         <Card className="relative w-full">
           <button
             className="absolute right-4 top-4 text-muted-foreground hover:text-foreground z-10"
@@ -172,6 +179,21 @@ const EditTask = () => {
                 Save changes
               </Button>
             </form>
+          </CardContent>
+        </Card>
+        <Card className="w-full lg:w-175 relative h-auto">
+          <CardContent>
+            <CommentInput taskID={activeTask?.id} setComments={setComments} />
+            <div className="flex flex-col gap-2">
+              {comments.length === 0 && <p>This task has no comments.</p>}
+              {comments.map((comm) => (
+                <CommentCard
+                  key={comm.id}
+                  comment={comm}
+                  setComments={setComments}
+                />
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>

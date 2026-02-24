@@ -48,14 +48,20 @@ const HandoverModal = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-background pt-12 pb-12 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex flex-col items-start justify-center bg-background pt-12 pb-12 overflow-y-auto">
       <button
         className="absolute right-8 top-4 text-muted-foreground hover:text-foreground"
         onClick={toggleHandoverModal}
       >
         <IoMdClose size={22} />
       </button>
+      <h2 className="w-full font-bold text-2xl p-6">Handover</h2>
       <div className="flex flex-1 flex-col gap-4 items-center w-full p-2">
+        {csTasks.length === 0 && (
+          <div className="flex items-center justify-center text-2xl">
+            There are no CS Tickets for handover
+          </div>
+        )}
         {csTasks.map((task) => {
           const clean = DOMPurify.sanitize(task.description);
           return (
@@ -63,11 +69,11 @@ const HandoverModal = () => {
               key={task.id}
               type="single"
               collapsible
-              className="w-full md:w-3/4 lg:w-1/2 bg-secondary p-4 rounded-md"
+              className="w-full md:w-3/4 lg:w-1/2 bg-secondary py-2 px-4 rounded-md"
             >
               <AccordionItem value={task.id}>
                 <AccordionTrigger className={"text-2xl font-bold"}>
-                  {task.title}
+                  [{task.client?.name}] - {task.title}
                 </AccordionTrigger>
 
                 <AccordionContent className="text-left">

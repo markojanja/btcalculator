@@ -3,7 +3,7 @@ import axios from "axios";
 export const fetchExchangeRate = async (pair, API_KEY, prevExchangeRate) => {
   try {
     const res = await axios.get(
-      `https://api.twelvedata.com/exchange_rate?symbol=${pair}&apikey=${API_KEY}`
+      `https://api.twelvedata.com/exchange_rate?symbol=${pair}&apikey=${API_KEY}`,
     );
     if (res.data.rate) {
       return parseFloat(res.data.rate);
@@ -17,7 +17,7 @@ export const fetchExchangeRate = async (pair, API_KEY, prevExchangeRate) => {
 export const fetchConversionRate = async (pair, API_KEY) => {
   try {
     const res = await axios.get(
-      `https://api.twelvedata.com/exchange_rate?symbol=${pair}&apikey=${API_KEY}`
+      `https://api.twelvedata.com/exchange_rate?symbol=${pair}&apikey=${API_KEY}`,
     );
     if (res.data.rate) {
       return parseFloat(res.data.rate);
@@ -25,5 +25,18 @@ export const fetchConversionRate = async (pair, API_KEY) => {
   } catch (error) {
     console.error("Error fetching conversion rate:", error);
     return null; // Return null if the request fails
+  }
+};
+
+export const getComments = async (baseURL, taskID, setter) => {
+  if (!taskID) return;
+
+  try {
+    const res = await axios.get(`${baseURL}/tasks/${taskID}/comments/all`, {
+      withCredentials: true,
+    });
+    setter(res.data);
+  } catch (err) {
+    console.error("Failed to fetch comments:", err);
   }
 };

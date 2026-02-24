@@ -45,6 +45,16 @@ export const myTasks = async (req, res) => {
             name: true,
           },
         },
+        taskComments: {
+          select: {
+            description: true,
+            user: {
+              select: {
+                username: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -107,7 +117,11 @@ export const editTask = async (req, res) => {
   try {
     const oldTask = await prisma.tasks.findUnique({
       where: { id },
-      include: { user: { select: { username: true } } },
+      include: {
+        user: {
+          select: { username: true },
+        },
+      },
     });
     console.log(oldTask.user.username, "this is oldtask username");
 
@@ -176,6 +190,13 @@ export const getHandover = async (req, res) => {
         createdAt: {
           gte: startOfDay,
           lte: endOfDay,
+        },
+      },
+      include: {
+        client: {
+          select: {
+            name: true,
+          },
         },
       },
     });
