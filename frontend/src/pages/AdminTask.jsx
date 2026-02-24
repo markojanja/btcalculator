@@ -14,6 +14,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Badge } from "@/components/ui/badge";
+import { getComments } from "../utils/fetchData.js";
+import CommentInput from "../components/CommentInput";
+import CommentCard from "../components/CommentCard";
 
 const AdminTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -21,6 +24,7 @@ const AdminTask = () => {
   const { id } = useParams();
   const [task, setTask] = useState({});
   const [users, setUsers] = useState([]);
+  const [comments, setComments] = useState([]);
 
   const [formData, setFormData] = useState({
     id: "",
@@ -62,6 +66,10 @@ const AdminTask = () => {
       });
     }
   }, [task]);
+
+  useEffect(() => {
+    getComments(BACKEND_URL, task.id, setComments);
+  }, [task?.id]);
 
   const clean = DOMPurify.sanitize(task.description);
 
@@ -158,6 +166,21 @@ const AdminTask = () => {
           <Button className="w-full" onClick={handleSubmit}>
             Edit
           </Button>
+        </CardContent>
+      </Card>
+      <Card className="w-full relative h-auto">
+        <CardContent>
+          <CommentInput taskID={task?.id} setComments={setComments} />
+          <div className="flex flex-col gap-2">
+            {comments.length === 0 && <p>This task has no comments.</p>}
+            {comments.map((comm) => (
+              <CommentCard
+                key={comm.id}
+                comment={comm}
+                setComments={setComments}
+              />
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>

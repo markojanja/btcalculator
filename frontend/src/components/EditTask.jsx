@@ -6,7 +6,7 @@ import useKanban from "../hooks/useKanban";
 import RichTextEditor from "./RichTextEditor";
 import useCloudinary from "../hooks/useCloudinary";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldGroup } from "@/components/ui/field";
