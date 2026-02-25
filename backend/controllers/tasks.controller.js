@@ -9,12 +9,25 @@ import {
 export const myTasks = async (req, res) => {
   const user = req.user;
   // console.log("Fetching tasks...");
+  const now = new Date();
+  // Base endOfDay = today 23:00 local
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 0, 0, 0);
 
-  const dayStart = new Date();
-  const dayEnd = new Date();
+  // Base startOfDay = yesterday 23:00 local
+  const startOfDay = new Date(endOfDay);
+  startOfDay.setDate(startOfDay.getDate() - 1);
 
-  dayStart.setHours(0, 0, 0, 0);
-  dayEnd.setHours(23, 59, 59, 999);
+  // ✅ If current time is after 23:00, shift the window forward
+  if (now >= endOfDay) {
+    startOfDay.setDate(startOfDay.getDate() + 1);
+    endOfDay.setDate(endOfDay.getDate() + 1);
+  }
+
+  // Convert to UTC for Prisma
+  const offsetMs = endOfDay.getTimezoneOffset() * 60 * 1000;
+  const endUtc = new Date(endOfDay.getTime() - offsetMs);
+  const startUtc = new Date(startOfDay.getTime() - offsetMs);
 
   const COLUMNS = [
     { title: "TODO", colStatus: "TODO" },
@@ -29,8 +42,8 @@ export const myTasks = async (req, res) => {
       where: {
         userId: user.id,
         createdAt: {
-          gte: dayStart,
-          lte: dayEnd,
+          gte: startUtc,
+          lt: endUtc,
         },
       },
 
@@ -179,17 +192,33 @@ export const deleteTask = async (req, res) => {
 
 export const getHandover = async (req, res) => {
   try {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
+    const now = new Date();
 
+    // Base endOfDay = today 23:00 local
     const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    endOfDay.setHours(23, 0, 0, 0);
+
+    // Base startOfDay = yesterday 23:00 local
+    const startOfDay = new Date(endOfDay);
+    startOfDay.setDate(startOfDay.getDate() - 1);
+
+    // ✅ If current time is after 23:00, shift the window forward
+    if (now >= endOfDay) {
+      startOfDay.setDate(startOfDay.getDate() + 1);
+      endOfDay.setDate(endOfDay.getDate() + 1);
+    }
+
+    // Convert to UTC for Prisma
+    const offsetMs = endOfDay.getTimezoneOffset() * 60 * 1000;
+    const endUtc = new Date(endOfDay.getTime() - offsetMs);
+    const startUtc = new Date(startOfDay.getTime() - offsetMs);
+
     const handover = await prisma.tasks.findMany({
       where: {
         status: "CS_TICKET",
         createdAt: {
-          gte: startOfDay,
-          lte: endOfDay,
+          gte: startUtc,
+          lt: endUtc,
         },
       },
       include: {
