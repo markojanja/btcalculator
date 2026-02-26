@@ -1,4 +1,5 @@
 import prisma from "../db/prisma.js";
+import { commentNotification } from "../services/notification.services.js";
 
 export const getComments = async (req, res) => {
   try {
@@ -37,6 +38,7 @@ export const addComment = async (req, res) => {
         description: description,
       },
     });
+    commentNotification(comment, id, req.user);
     return res.status(200).json(comment);
   } catch (error) {
     res.status(500).json("Comment not created!Server Error!");
@@ -71,6 +73,7 @@ export const deleteComment = async (req, res) => {
         id: id,
       },
     });
+
     return res.status(200).json("Comment deleted!");
   } catch (error) {
     res.status(500).json("Comment not deleted!Server Error!");

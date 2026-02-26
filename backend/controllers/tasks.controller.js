@@ -8,23 +8,20 @@ import {
 
 export const myTasks = async (req, res) => {
   const user = req.user;
-  // console.log("Fetching tasks...");
+
   const now = new Date();
-  // Base endOfDay = today 23:00 local
+
   const endOfDay = new Date();
   endOfDay.setHours(23, 0, 0, 0);
 
-  // Base startOfDay = yesterday 23:00 local
   const startOfDay = new Date(endOfDay);
   startOfDay.setDate(startOfDay.getDate() - 1);
 
-  // ✅ If current time is after 23:00, shift the window forward
   if (now >= endOfDay) {
     startOfDay.setDate(startOfDay.getDate() + 1);
     endOfDay.setDate(endOfDay.getDate() + 1);
   }
 
-  // Convert to UTC for Prisma
   const offsetMs = endOfDay.getTimezoneOffset() * 60 * 1000;
   const endUtc = new Date(endOfDay.getTime() - offsetMs);
   const startUtc = new Date(startOfDay.getTime() - offsetMs);
@@ -194,21 +191,17 @@ export const getHandover = async (req, res) => {
   try {
     const now = new Date();
 
-    // Base endOfDay = today 23:00 local
     const endOfDay = new Date();
     endOfDay.setHours(23, 0, 0, 0);
 
-    // Base startOfDay = yesterday 23:00 local
     const startOfDay = new Date(endOfDay);
     startOfDay.setDate(startOfDay.getDate() - 1);
 
-    // ✅ If current time is after 23:00, shift the window forward
     if (now >= endOfDay) {
       startOfDay.setDate(startOfDay.getDate() + 1);
       endOfDay.setDate(endOfDay.getDate() + 1);
     }
 
-    // Convert to UTC for Prisma
     const offsetMs = endOfDay.getTimezoneOffset() * 60 * 1000;
     const endUtc = new Date(endOfDay.getTime() - offsetMs);
     const startUtc = new Date(startOfDay.getTime() - offsetMs);

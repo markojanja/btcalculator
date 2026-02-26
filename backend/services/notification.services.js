@@ -1,4 +1,5 @@
 import { io } from "../server.js";
+import prisma from "../db/prisma.js";
 
 export const notifyTaskCreated = (task) => {
   if (!io) {
@@ -89,4 +90,45 @@ export const notifyTaskUpdatedSupport = (task, actor) => {
   } catch (err) {
     console.error("Failed to notify admins:", err);
   }
+};
+
+export const commentNotification = async (comment, taskId, user) => {
+  const task = await prisma.tasks.findUnique({
+    where: { id: taskId },
+    select: {
+      title: true,
+    },
+  });
+
+  if (!task) return;
+  const commenters = await prisma.taskComments.findMany({
+    where: {
+      taskId: taskId,
+      NOT: {
+        userId: user.id,
+      },
+    },
+    select: {
+      userId: true,
+    },
+    distinct: ["userId"],
+  });
+
+  if (!commenters.length) return;
+
+  const payload = {
+    type: "COMMENT",
+    taskId,
+    commentId: comment.id,
+    message: `${user.username} commented on a task ${task.title}`,
+  };
+
+  commenters.forEach(({ userId }) => {
+    io.to(`user:${userId}`).emit("notification", payload);
+  });
+
+  console.log(
+    "Comment notification sent to:",
+    commenters.map((c) => c.userId),
+  );
 };

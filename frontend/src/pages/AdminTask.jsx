@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { getComments } from "../utils/fetchData.js";
 import CommentInput from "../components/CommentInput";
 import CommentCard from "../components/CommentCard";
+import useNotification from "../hooks/useNotification";
 
 const AdminTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -25,6 +26,7 @@ const AdminTask = () => {
   const [task, setTask] = useState({});
   const [users, setUsers] = useState([]);
   const [comments, setComments] = useState([]);
+  const { lastEvent } = useNotification();
 
   const [formData, setFormData] = useState({
     id: "",
@@ -70,6 +72,14 @@ const AdminTask = () => {
   useEffect(() => {
     getComments(BACKEND_URL, task.id, setComments);
   }, [task?.id]);
+
+  useEffect(() => {
+    if (!lastEvent) return;
+
+    if (lastEvent.type === "COMMENT" && lastEvent.taskId === task.id) {
+      getComments(BACKEND_URL, task.id, setComments);
+    }
+  }, [lastEvent, task.id]);
 
   const clean = DOMPurify.sanitize(task.description);
 
