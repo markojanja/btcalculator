@@ -4,6 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import DOMPurify from "dompurify";
 import useAuth from "../hooks/useAuth";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const GuideDetails = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -28,6 +29,20 @@ const GuideDetails = () => {
 
   const clean = DOMPurify.sanitize(guide.description);
 
+  const downloadPDF = async () => {
+    try {
+      const res = await axios.get(`${BACKEND_URL}/guides/${guide.id}/pdf`, {
+        responseType: "blob", // important
+        withCredentials: true,
+      });
+      const blob = new Blob([res.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    } catch (err) {
+      console.error("PDF fetch failed:", err);
+    }
+  };
+
   return (
     <div className="flex flex-col w-full lg:w-187.5 mx-auto gap-4 p-2">
       <div
@@ -36,15 +51,21 @@ const GuideDetails = () => {
         }
       >
         <h2 className="text-2xl font-bold">{guide.title}</h2>
-        {user?.id === guide.userId && (
-          <Link
-            to={`/guides/${guide.id}/edit`}
-            className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
-          >
-            Edit Guide
-          </Link>
-        )}
+        <div className="flex gap-2 items-center justify-center">
+          <Button onClick={downloadPDF}>Download PDF</Button>
+          {user?.id === guide.userId && (
+            <>
+              <Link
+                to={`/guides/${guide.id}/edit`}
+                className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
+              >
+                Edit Guide
+              </Link>
+            </>
+          )}
+        </div>
       </div>
+
       <Card>
         <div
           className="flex flex-col overflow-y-scroll max-h-screen text-left p-4 gap-4 rte"
