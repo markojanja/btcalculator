@@ -11,20 +11,15 @@ export const myTasks = async (req, res) => {
 
   const now = new Date();
 
-  const endOfDay = new Date();
+  let endOfDay = new Date();
   endOfDay.setHours(23, 0, 0, 0);
 
   const startOfDay = new Date(endOfDay);
-  startOfDay.setDate(startOfDay.getDate() - 1);
 
   if (now >= endOfDay) {
-    startOfDay.setDate(startOfDay.getDate() + 1);
     endOfDay.setDate(endOfDay.getDate() + 1);
   }
-
-  const offsetMs = endOfDay.getTimezoneOffset() * 60 * 1000;
-  const endUtc = new Date(endOfDay.getTime() - offsetMs);
-  const startUtc = new Date(startOfDay.getTime() - offsetMs);
+  startOfDay.setDate(startOfDay.getDate() - 1);
 
   const COLUMNS = [
     { title: "TODO", colStatus: "TODO" },
@@ -39,8 +34,8 @@ export const myTasks = async (req, res) => {
       where: {
         userId: user.id,
         createdAt: {
-          gte: startUtc,
-          lt: endUtc,
+          gte: startOfDay,
+          lt: endOfDay,
         },
       },
 
@@ -191,27 +186,22 @@ export const getHandover = async (req, res) => {
   try {
     const now = new Date();
 
-    const endOfDay = new Date();
+    let endOfDay = new Date();
     endOfDay.setHours(23, 0, 0, 0);
 
     const startOfDay = new Date(endOfDay);
-    startOfDay.setDate(startOfDay.getDate() - 1);
 
     if (now >= endOfDay) {
-      startOfDay.setDate(startOfDay.getDate() + 1);
       endOfDay.setDate(endOfDay.getDate() + 1);
     }
-
-    const offsetMs = endOfDay.getTimezoneOffset() * 60 * 1000;
-    const endUtc = new Date(endOfDay.getTime() - offsetMs);
-    const startUtc = new Date(startOfDay.getTime() - offsetMs);
+    startOfDay.setDate(startOfDay.getDate() - 1);
 
     const handover = await prisma.tasks.findMany({
       where: {
         status: "CS_TICKET",
         createdAt: {
-          gte: startUtc,
-          lt: endUtc,
+          gte: startOfDay,
+          lt: endOfDay,
         },
       },
       include: {

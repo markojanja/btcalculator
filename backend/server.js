@@ -20,6 +20,8 @@ import UserGuidesRouter from "./routes/guides.route.js";
 import ClientRouter from "./routes/clients.route.js";
 import { createFolders } from "./utils/createFolders.js";
 
+import { createPDF, sanitize, wrapHTML } from "./services/pdf.service.js";
+
 import { isAuth } from "./middleware/isAuth.js";
 
 const __filename = url.fileURLToPath(import.meta.url);
@@ -95,6 +97,27 @@ app.use("/", isAuth, FeaturesRouter);
 app.use("/", isAuth, AdminData);
 app.use("/", isAuth, UserGuidesRouter);
 app.use("/", isAuth, ClientRouter);
+app.get("/guides/:id/pdf", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const guide = await prisma.guides.findUnique({ where: { id } });
+    if (!guide) return res.status(404).send("Not found");
+
+    const html = wrapHTML(guide.title, sanitize(guide.description));
+    const pdf = await createPDF(html);
+
+    res.status(200);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Length", pdf.length);
+    res.setHeader("Content-Disposition", `inline; filename="guide.pdf"`);
+
+    res.end(pdf);
+  } catch (err) {
+    console.error("PDF generation error:", err);
+
+    if (!res.headersSent) res.status(500).send("Error generating PDF");
+  }
+});
 
 const PORT = process.env.PORT || 3500;
 
