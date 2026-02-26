@@ -35,10 +35,7 @@ export async function createPDF(html) {
   const isProduction = process.env.NODE_ENV === "production";
 
   const browser = await puppeteer.launch({
-    executablePath: isProduction
-      ? process.env.PUPPETEER_EXECUTABLE_PATH
-      : "/usr/bin/chromium",
-
+    executablePath: isProduction ? undefined : "/usr/bin/chromium",
     headless: "new",
     args: [
       "--no-sandbox",
