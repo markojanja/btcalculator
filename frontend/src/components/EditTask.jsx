@@ -21,6 +21,7 @@ import {
 import { getComments } from "../utils/fetchData.js";
 import CommentInput from "./CommentInput";
 import CommentCard from "./CommentCard";
+import useNotification from "../hooks/useNotification";
 
 const EditTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -38,6 +39,7 @@ const EditTask = () => {
   const [client, setClient] = useState(activeTask?.clientId ?? "");
   const [activeClients, setActiveClients] = useState([]);
   const [comments, setComments] = useState([]);
+  const { lastEvent } = useNotification();
 
   useEffect(() => {
     const getActiveClients = async () => {
@@ -59,6 +61,14 @@ const EditTask = () => {
     getComments(BACKEND_URL, activeTask.id, setComments);
   }, [activeTask?.id]);
 
+  useEffect(() => {
+    if (!lastEvent) return;
+
+    if (lastEvent.type === "COMMENT" && lastEvent.taskId === activeTask?.id) {
+      getComments(BACKEND_URL, activeTask.id, setComments);
+    }
+  }, [lastEvent, activeTask?.id]);
+
   const handleSave = async (e) => {
     e.preventDefault();
 
@@ -71,7 +81,6 @@ const EditTask = () => {
         status,
         priority,
       };
-
       // optimistic update
       updateTask(updatedTask);
 
