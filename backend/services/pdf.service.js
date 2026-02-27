@@ -38,6 +38,7 @@ export function wrapHTML(title, html) {
         </style>
       </head>
       <body>
+        <h1>CS Board User Guides</h1>
         <h1>${title}</h1>
         ${html}
       </body>
