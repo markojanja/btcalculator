@@ -5,21 +5,12 @@ import {
   notifyTaskUpdatedAdmin,
   notifyTaskUpdatedSupport,
 } from "../services/notification.services.js";
+import { getShiftDayRange } from "../utils/helpers.js";
 
 export const myTasks = async (req, res) => {
   const user = req.user;
 
-  const now = new Date();
-
-  let endOfDay = new Date();
-  endOfDay.setHours(23, 0, 0, 0);
-
-  const startOfDay = new Date(endOfDay);
-
-  if (now >= endOfDay) {
-    endOfDay.setDate(endOfDay.getDate() + 1);
-  }
-  startOfDay.setDate(startOfDay.getDate() - 1);
+  const { startOfDay, endOfDay } = getShiftDayRange();
 
   const COLUMNS = [
     { title: "TODO", colStatus: "TODO" },
@@ -184,17 +175,7 @@ export const deleteTask = async (req, res) => {
 
 export const getHandover = async (req, res) => {
   try {
-    const now = new Date();
-
-    let endOfDay = new Date();
-    endOfDay.setHours(23, 0, 0, 0);
-
-    const startOfDay = new Date(endOfDay);
-
-    if (now >= endOfDay) {
-      endOfDay.setDate(endOfDay.getDate() + 1);
-    }
-    startOfDay.setDate(startOfDay.getDate() - 1);
+    const { startOfDay, endOfDay } = getShiftDayRange();
 
     const handover = await prisma.tasks.findMany({
       where: {
