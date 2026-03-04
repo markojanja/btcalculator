@@ -109,7 +109,7 @@ app.get("/guides/:id/pdf", async (req, res) => {
     res.status(200);
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Length", pdf.length);
-    res.setHeader("Content-Disposition", `inline; filename="guide.pdf"`);
+    res.setHeader("Content-Disposition", `attachment; filename="guide.pdf"`);
 
     res.end(pdf);
   } catch (err) {
