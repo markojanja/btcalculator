@@ -11,6 +11,7 @@ const GuideDetails = () => {
   const [guide, setGuide] = useState({});
   const { id } = useParams();
   const { user } = useAuth();
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     const getGuide = async () => {
@@ -31,15 +32,27 @@ const GuideDetails = () => {
 
   const downloadPDF = async () => {
     try {
+      setDownloading(true);
       const res = await axios.get(`${BACKEND_URL}/guides/${guide.id}/pdf`, {
-        responseType: "blob", // important
+        responseType: "blob",
         withCredentials: true,
       });
+
       const blob = new Blob([res.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
-      window.open(url, "_blank");
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${guide.title.replace(/\s+/g, "-")}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("PDF fetch failed:", err);
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -52,7 +65,9 @@ const GuideDetails = () => {
       >
         <h2 className="text-2xl font-bold">{guide.title}</h2>
         <div className="flex gap-2 items-center justify-center">
-          <Button onClick={downloadPDF}>Download PDF</Button>
+          <Button disabled={downloading} onClick={downloadPDF}>
+            {downloading ? "Downloading" : "Download PDF"}
+          </Button>
           {user?.id === guide.userId && (
             <>
               <Link
