@@ -16,31 +16,68 @@ export function wrapHTML(title, html) {
       <head>
         <meta charset="utf-8" />
         <style>
+          @page {
+            margin: 100px 40px 80px 40px;
+          }
+
           body {
             font-family: Arial, sans-serif;
-            padding: 40px;
+            margin: 0;
           }
+
+          .banner {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            margin-bottom: 30px;
+          }
+
+          .container {
+            padding: 0 40px;
+          }
+
           img {
             max-width: 100%;
           }
+
+          h1 {
+            margin-bottom: 20px;
+          }
+
           pre {
             background: #0f172a;
             color: #e5e7eb;
             padding: 12px;
+            overflow-x: auto;
           }
-          code {
-            font-family: monospace;
-          }
-          ul,
-          ol {
+
+          ul, ol {
             padding-left: 24px;
           }
+
+          p, li {
+            page-break-inside: avoid;
+          }
+
+          h1, h2, h3 {
+            page-break-after: avoid;
+          }
+        .banner {
+          display: block;
+          margin: 20px auto 30px auto; 
+          max-height: 60px;             
+          object-fit: contain;   
+        }
         </style>
       </head>
       <body>
-        <h1>CS Board User Guides</h1>
-        <h1>${title}</h1>
-        ${html}
+    
+        <img class="banner" src="https://res.cloudinary.com/df0l3m8ef/image/upload/v1772669046/header-l-removebg-preview_xriirs.png" />
+
+        <div class="container">
+          <h1>${title}</h1>
+          ${html}
+        </div>
       </body>
     </html>
   `;
