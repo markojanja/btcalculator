@@ -47,7 +47,7 @@ const Sidebar = () => {
       onMouseLeave={closeSidebar}
     >
       <div className="flex justify-end p-3">
-        <Button variant="ghost" size="icon" onClick={closeSidebar}>
+        <Button variant="nostyle" size="icon" onClick={closeSidebar}>
           <X className="h-5 w-5" />
         </Button>
       </div>
