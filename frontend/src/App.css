@@ -220,6 +220,10 @@
 
 .ql-syntax {
   color: var(--foreground);
+
+  white-space: pre-wrap !important; /* wrap lines */
+  word-break: break-word; /* break long words */
+  overflow-wrap: anywhere; /* optional fallback */
 }
 
 .rte ul {
