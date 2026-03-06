@@ -1,10 +1,32 @@
-import "./Sidebar.css";
 import { NavLink, useLocation } from "react-router-dom";
-import { IoChevronDown } from "react-icons/io5";
 import { useState, useContext } from "react";
 import { NavContext } from "../contexts/NavContext";
-import { IoMdClose } from "react-icons/io";
 import useAuth from "../hooks/useAuth";
+
+import {
+  ChevronDown,
+  X,
+  LayoutDashboard,
+  ListChecks,
+  Calculator,
+  TrendingUp,
+  DollarSign,
+  Percent,
+  Repeat,
+  ArrowLeftRight,
+  Megaphone,
+  BookOpen,
+  Users,
+  UserRound,
+} from "lucide-react";
+
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@/components/ui/collapsible";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -18,159 +40,197 @@ const Sidebar = () => {
     "/calculators/swap",
   ].includes(location.pathname);
 
-  const handleSubmenu = () => {
-    setExpanded(!expanded);
-  };
-
   return (
-    <div
-      className={sidebarActive ? "sidebar show" : "sidebar"}
+    <aside
+      className={`fixed left-0 top-0 z-40 h-full w-64 bg-background transition-transform duration-300 shadow-[4px_0_10px_-2px_rgba(0,0,0,0.15)]
+      ${sidebarActive ? "translate-x-0" : "-translate-x-full"}`}
       onMouseLeave={closeSidebar}
     >
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <IoMdClose size={20} onClick={closeSidebar} />
+      <div className="flex justify-end p-3">
+        <Button variant="ghost" size="icon" onClick={closeSidebar}>
+          <X className="h-5 w-5" />
+        </Button>
       </div>
-      <ul className="sidebar-wrapper">
-        {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
-          <>
-            <li id="mobile-hidden">
+
+      <ScrollArea className="h-[calc(100vh-60px)] px-3 text-left">
+        <nav className="flex flex-col space-y-1">
+          {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
+            <>
               <NavLink
-                className={({ isActive }) => (isActive ? "is-active" : "")}
                 to="/dashboard"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+                  }`
+                }
               >
+                <LayoutDashboard className="h-4 w-4" />
                 Dashboard
               </NavLink>
-            </li>
-            <li>
+
               <NavLink
-                className={({ isActive }) => (isActive ? "is-active" : "")}
                 to="/dashboard/tasks/ALL"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+                  }`
+                }
               >
+                <ListChecks className="h-4 w-4" />
                 Tasks
               </NavLink>
-            </li>
-          </>
-        )}
-        {user?.role === "SUPPORT" && (
-          <li id="mobile-hidden">
+            </>
+          )}
+
+          {user?.role === "SUPPORT" && (
             <NavLink
-              className={({ isActive }) => (isActive ? "is-active" : "")}
               to="/tasks"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                  isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+                }`
+              }
             >
+              <ListChecks className="h-4 w-4" />
               My Tasks
             </NavLink>
-          </li>
-        )}
-
-        <li
-          id="mobile-hidden"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-          }}
-        >
-          <NavLink
-            className={`submenu ${isSubmenuActive ? "is-active" : ""}`}
-            to="/calculators/pip"
-            style={{ textAlign: "left" }}
-            onClick={handleSubmenu}
-          >
-            <span style={{ display: "flex", alignItems: "center" }}>
-              <span style={{ marginRight: "6px" }}>Calculators</span>
-              <IoChevronDown
-                style={{
-                  transition: "transform 0.3s ease",
-                  transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
-                }}
-              />
-            </span>
-          </NavLink>
-          {expanded && (
-            <ul className="dropdown">
-              <li>
-                <NavLink
-                  className={({ isActive }) => (isActive ? "is-active" : "")}
-                  to="/calculators/pip"
-                >
-                  Pip Value
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  className={({ isActive }) => (isActive ? "is-active" : "")}
-                  to="/calculators/pnl"
-                >
-                  Profit & Loss
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  className={({ isActive }) => (isActive ? "is-active" : "")}
-                  to="/calculators/margin"
-                >
-                  Margin Calculator
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  className={({ isActive }) => (isActive ? "is-active" : "")}
-                  to="/calculators/swap"
-                >
-                  Swap Calculator
-                </NavLink>
-              </li>
-            </ul>
           )}
-        </li>
 
-        {user?.centroid && (
-          <li id="mobile-hidden">
-            <NavLink
-              className={({ isActive }) => (isActive ? "is-active" : "")}
-              to="converter"
+          <Collapsible open={expanded} onOpenChange={setExpanded}>
+            <CollapsibleTrigger
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm hover:bg-primary/80 ${
+                isSubmenuActive ? "bg-primary font-medium" : ""
+              }`}
             >
+              <div className="flex items-center gap-2">
+                <Calculator className="h-4 w-4" />
+                Calculators
+              </div>
+
+              <ChevronDown
+                className={`h-4 w-4 transition-transform ${
+                  expanded ? "rotate-180" : ""
+                }`}
+              />
+            </CollapsibleTrigger>
+
+            <CollapsibleContent className="ml-6 flex flex-col space-y-1 mt-1">
+              <NavLink
+                to="/calculators/pip"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-3 py-2 rounded-md text-sm ${
+                    isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+                  }`
+                }
+              >
+                <TrendingUp className="h-4 w-4" />
+                Pip Value
+              </NavLink>
+
+              <NavLink
+                to="/calculators/pnl"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-3 py-2 rounded-md text-sm ${
+                    isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+                  }`
+                }
+              >
+                <DollarSign className="h-4 w-4" />
+                Profit & Loss
+              </NavLink>
+
+              <NavLink
+                to="/calculators/margin"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-3 py-2 rounded-md text-sm ${
+                    isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+                  }`
+                }
+              >
+                <Percent className="h-4 w-4" />
+                Margin Calculator
+              </NavLink>
+
+              <NavLink
+                to="/calculators/swap"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-3 py-2 rounded-md text-sm ${
+                    isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+                  }`
+                }
+              >
+                <Repeat className="h-4 w-4" />
+                Swap Calculator
+              </NavLink>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {user?.centroid && (
+            <NavLink
+              to="/converter"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                  isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+                }`
+              }
+            >
+              <ArrowLeftRight className="h-4 w-4" />
               Converter
             </NavLink>
-          </li>
-        )}
+          )}
 
-        <li id="mobile-hidden">
           <NavLink
-            className={({ isActive }) => (isActive ? "is-active" : "")}
             to="/features"
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+              }`
+            }
           >
-            Feature Announcements
+            <Megaphone className="h-4 w-4" />
+            Features
           </NavLink>
-        </li>
-        <li id="mobile-hidden">
+
           <NavLink
-            className={({ isActive }) => (isActive ? "is-active" : "")}
             to="/guides"
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+              }`
+            }
           >
-            User Guides
+            <BookOpen className="h-4 w-4" />
+            Guides
           </NavLink>
-        </li>
-        {user?.role === "ADMIN" && (
-          <li id="mobile-hidden">
+
+          {user?.role === "ADMIN" && (
             <NavLink
-              className={({ isActive }) => (isActive ? "is-active" : "")}
               to="/users"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                  isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+                }`
+              }
             >
+              <Users className="h-4 w-4" />
               User Management
             </NavLink>
-          </li>
-        )}
-        <li id="mobile-hidden">
+          )}
+
           <NavLink
-            className={({ isActive }) => (isActive ? "is-active" : "")}
             to="/clients"
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+              }`
+            }
           >
+            <UserRound className="h-4 w-4" />
             ClientList
           </NavLink>
-        </li>
-      </ul>
-    </div>
+        </nav>
+      </ScrollArea>
+    </aside>
   );
 };
 
