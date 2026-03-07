@@ -61,9 +61,13 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const clearError = () => {
+    setError(null);
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, error, loading, loginLoading, login, logout }}
+      value={{ user, error, loading, loginLoading, login, logout, clearError }}
     >
       {loading ? <Loading /> : children}
     </AuthContext.Provider>

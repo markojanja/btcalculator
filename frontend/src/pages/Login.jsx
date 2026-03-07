@@ -12,7 +12,11 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { user, loading, loginLoading, error, login } = useAuth();
+  const { user, loading, loginLoading, error, login, clearError } = useAuth();
+
+  useEffect(() => {
+    clearError();
+  }, []);
 
   useEffect(() => {
     if (loading) return;
