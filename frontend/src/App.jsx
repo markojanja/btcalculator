@@ -8,7 +8,6 @@ import MarginCalculator from "./pages/MarginCalculator";
 import SwapCalculator from "./pages/SwapCalculator";
 import Converter from "./pages/Converter";
 import Login from "./pages/Login";
-import { AuthProvider } from "./contexts/AuthContext";
 import Protected from "./components/Protected";
 import Tasks from "./pages/Tasks";
 import Profile from "./pages/Profile";
@@ -31,8 +30,6 @@ import EditGuide from "./pages/EditGuide";
 import Clients from "./pages/Clients";
 import AddClients from "./pages/AddClients";
 import EditClient from "./pages/EditClient";
-import { NotificationProvider } from "./contexts/NotificationContext";
-import { ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
   {
@@ -106,22 +103,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <ThemeContextProvider>
-      <AuthProvider>
-        <NotificationProvider>
-          <ToastContainer
-            position="top-right"
-            autoClose={false}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            pauseOnHover
-            draggable
-          />
-          <div className="App">
-            <RouterProvider router={router} />
-          </div>
-        </NotificationProvider>
-      </AuthProvider>
+      <div className="App">
+        <RouterProvider router={router} />
+      </div>
     </ThemeContextProvider>
   );
 }
