@@ -29,7 +29,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center h-screen lg:w-1/3 ml-auto mr-0 bg-secondary">
+    <div className="flex flex-col flex-1 items-center justify-center h-screen w-full md:w-1/3 ml-auto mr-0 bg-secondary">
       <Card className="bg-secondary border-none shadow-none lg:w-90 mx-auto">
         <CardHeader className="font-extrabold text-3xl">
           <h2>
@@ -68,7 +68,7 @@ const LoginForm = () => {
               {loginLoading ? "Logging in..." : "Login"}
             </Button>
             {error && (
-              <p className="text-red-500 text-sm text-center">
+              <p className="bg-red-400 text-red-900 p-2 rounded-md text-sm text-center font-bold">
                 Invalid username or password
               </p>
             )}
