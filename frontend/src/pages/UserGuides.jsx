@@ -4,10 +4,17 @@ import { Link } from "react-router-dom";
 import GuidesCard from "../components/GuidesCard";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 const UserGuides = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const [guides, setGuides] = useState([]);
+  const [filter, setFiltered] = useState([]);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     const getData = async () => {
@@ -17,6 +24,7 @@ const UserGuides = () => {
         });
         console.log(response);
         setGuides(response.data);
+        setFiltered(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -25,14 +33,41 @@ const UserGuides = () => {
   }, []);
 
   const { currentItems, pageCount, handlePageChange } = usePagination(
-    guides,
+    filter,
     5,
   );
+
+  const handleSearch = () => {
+    setFiltered(
+      guides.filter(
+        (guide) =>
+          guide.title.toLowerCase().includes(query.toLowerCase()) ||
+          guide.description.toLowerCase().includes(query.toLowerCase()) ||
+          guide.user.username.toLowerCase().includes(query.toLowerCase()),
+      ),
+    );
+    setQuery("");
+  };
 
   return (
     <div className="flex flex-1 flex-col w-full p-6">
       <div className="flex justify-between items-start border-b border-b-muted py-3">
         <h2 className="text-2xl font-bold">UserGuides</h2>
+        <Field className="max-w-2xs">
+          <ButtonGroup>
+            <Input
+              id="input-button-group"
+              placeholder="Type to search..."
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+              }}
+            />
+            <Button variant="outline" onClick={handleSearch}>
+              <Search />
+            </Button>
+          </ButtonGroup>
+        </Field>
         <Link
           className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
           style={{ borderRadius: "8px" }}

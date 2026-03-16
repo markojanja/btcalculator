@@ -11,7 +11,7 @@ import {
 } from "../services/adminData.service.js";
 import prisma from "../db/prisma.js";
 
-export const getAdminData = async (req, res) => {
+export const getAdminData = async (req, res, next) => {
   try {
     const rawStatus = await getTasksByStatus();
     const rawPriority = await getTasksByPriority();
@@ -36,12 +36,11 @@ export const getAdminData = async (req, res) => {
       recentClients,
     });
   } catch (error) {
-    console.log("error /admindata", error);
-    return res.status(500).json({ error: "Something went wrong!" });
+    next(error);
   }
 };
 
-export const getAdminTasks = async (req, res) => {
+export const getAdminTasks = async (req, res, next) => {
   const { type } = req.params;
 
   let filter = {};
@@ -68,11 +67,11 @@ export const getAdminTasks = async (req, res) => {
 
     return res.status(200).json({ page_title: type, tasks });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-export const getAdminTask = async (req, res) => {
+export const getAdminTask = async (req, res, next) => {
   const { id } = req.params;
   // console.log(req.params);
   try {
@@ -97,6 +96,6 @@ export const getAdminTask = async (req, res) => {
 
     return res.status(200).json({ task, users });
   } catch (error) {
-    res.status(500).json({ error: "Something went wrong!" });
+    next(error);
   }
 };

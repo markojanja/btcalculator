@@ -10,7 +10,7 @@ export const getUsers = async (req, res) => {
   }
 };
 
-export const addUser = async (req, res) => {
+export const addUser = async (req, res, next) => {
   console.log(req.body);
   const {
     firstname,
@@ -58,11 +58,11 @@ export const addUser = async (req, res) => {
 
     return res.status(200).json({ message: "user created!", newUser });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-export const editUserGet = async (req, res) => {
+export const editUserGet = async (req, res, next) => {
   const { id } = req.params;
 
   try {
@@ -80,28 +80,20 @@ export const editUserGet = async (req, res) => {
         createdAt: true,
       },
     });
-    console.log(user);
+
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
     return res.status(200).json(user);
   } catch (error) {
-    res.status(500).status({ message: "Something wemt wrong!" });
+    next(error);
   }
 };
 
-export const editUserPut = async (req, res) => {
+export const editUserPut = async (req, res, next) => {
   const { id } = req.params;
-  const {
-    firstname,
-    lastname,
-    username,
-    email,
-    password,
-    role,
-    active,
-    centroid,
-  } = req.body;
+  const { firstname, lastname, username, email, role, active, centroid } =
+    req.body;
 
   try {
     const updateData = {
@@ -122,7 +114,6 @@ export const editUserPut = async (req, res) => {
 
     res.status(201).json({ message: "userupdated" });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "something went wrong!" });
+    next(error);
   }
 };

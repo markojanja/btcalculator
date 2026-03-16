@@ -7,7 +7,7 @@ import {
 } from "../services/notification.services.js";
 import { getShiftDayRange } from "../utils/helpers.js";
 
-export const myTasks = async (req, res) => {
+export const myTasks = async (req, res, next) => {
   const user = req.user;
 
   const { startOfDay, endOfDay } = getShiftDayRange();
@@ -61,16 +61,13 @@ export const myTasks = async (req, res) => {
 
     return res.status(200).json(data);
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: "Something went wrong" });
+    next(error);
   }
 };
 
-export const addTask = async (req, res) => {
+export const addTask = async (req, res, next) => {
   try {
     const { title, client, description, priority, status } = req.body;
-
-    console.log(req.body);
 
     const newTask = await prisma.tasks.create({
       data: {
@@ -101,11 +98,11 @@ export const addTask = async (req, res) => {
 
     return res.status(200).json({ message: "Task created", task: newTask });
   } catch (error) {
-    return res.status(500).json({ error: "Something went wrong" });
+    next(error);
   }
 };
 
-export const editTask = async (req, res) => {
+export const editTask = async (req, res, next) => {
   const { id, title, description, status, priority, userId, client } = req.body;
 
   console.log("this is client ID ", client);
@@ -154,12 +151,11 @@ export const editTask = async (req, res) => {
 
     res.status(200).json({ message: "Task updated", task: updatedTask });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Something went wrong" });
+    next(error);
   }
 };
 
-export const deleteTask = async (req, res) => {
+export const deleteTask = async (req, res, next) => {
   const { id } = req.params;
   try {
     await prisma.tasks.delete({
@@ -169,11 +165,11 @@ export const deleteTask = async (req, res) => {
     });
     res.status(200).json({ message: "task deleted" });
   } catch (error) {
-    return res.status(500).json({ error: "Something went wrong" });
+    next(error);
   }
 };
 
-export const getHandover = async (req, res) => {
+export const getHandover = async (req, res, next) => {
   try {
     const { startOfDay, endOfDay } = getShiftDayRange();
 
@@ -196,6 +192,6 @@ export const getHandover = async (req, res) => {
 
     res.status(200).json(handover);
   } catch (error) {
-    return res.status(500).json({ error: "Something went wrong" });
+    next(error);
   }
 };

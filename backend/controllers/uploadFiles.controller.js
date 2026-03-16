@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 let jsonData = [];
 let swapTable = [];
 
-export const uploadFiles = async (req, res) => {
+export const uploadFiles = async (req, res, next) => {
   let noMatch = [];
 
   try {
@@ -17,7 +17,12 @@ export const uploadFiles = async (req, res) => {
     const filePath = path.join(__dirname, "..", "uploads", filename);
 
     // Read XLSX file for swapTable data
-    const xlsFile = path.join(__dirname, "..", "uploads", req.files.xlsxFile[0].originalname);
+    const xlsFile = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      req.files.xlsxFile[0].originalname,
+    );
     const wb = xlsx.readFile(xlsFile);
     const sheet = wb.Sheets[wb.SheetNames[0]];
     const sheetData = xlsx.utils.sheet_to_json(sheet);
@@ -48,11 +53,18 @@ export const uploadFiles = async (req, res) => {
     });
 
     const jsonString = JSON.stringify(jsonData, null, 2);
-    const filePathDownloads = path.join(__dirname, "..", "downloads", `updated_${filename}`);
+    const filePathDownloads = path.join(
+      __dirname,
+      "..",
+      "downloads",
+      `updated_${filename}`,
+    );
 
     // Write the file back with UTF-16 LE encoding and add BOM manually
     const utf16WithBOM = "\uFEFF" + jsonString; // Add BOM manually
-    await fs.writeFile(filePathDownloads, utf16WithBOM, { encoding: "utf16le" });
+    await fs.writeFile(filePathDownloads, utf16WithBOM, {
+      encoding: "utf16le",
+    });
     // Remove uploaded files
     await fs.unlink(xlsFile);
     await fs.unlink(path.join(__dirname, "..", "uploads", filename));
@@ -70,7 +82,6 @@ export const uploadFiles = async (req, res) => {
       downloadUrl,
     });
   } catch (err) {
-    console.log("Error:", err);
-    res.status(500).json({ error: err.message || "Error processing file" });
+    next(err);
   }
 };

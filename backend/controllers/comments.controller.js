@@ -1,7 +1,7 @@
 import prisma from "../db/prisma.js";
 import { commentNotification } from "../services/notification.services.js";
 
-export const getComments = async (req, res) => {
+export const getComments = async (req, res, next) => {
   try {
     const comments = await prisma.taskComments.findMany({
       where: {
@@ -20,15 +20,13 @@ export const getComments = async (req, res) => {
     });
     return res.status(200).json(comments);
   } catch (error) {
-    res.status(500).json("Comments fethced!Server Error!");
+    next(error);
   }
 };
 
-export const addComment = async (req, res) => {
+export const addComment = async (req, res, next) => {
   const { id } = req.params;
   const { description } = req.body;
-
-  console.log(id, description, req.user.id);
 
   try {
     const comment = await prisma.taskComments.create({
@@ -41,11 +39,11 @@ export const addComment = async (req, res) => {
     commentNotification(comment, id, req.user);
     return res.status(200).json(comment);
   } catch (error) {
-    res.status(500).json("Comment not created!Server Error!");
+    next(error);
   }
 };
 
-export const updateComment = async (req, res) => {
+export const updateComment = async (req, res, next) => {
   const { id } = req.params;
   const { description } = req.body;
 
@@ -60,11 +58,11 @@ export const updateComment = async (req, res) => {
     });
     return res.status(200).json(comment);
   } catch (error) {
-    res.status(500).json("Comment not updated!Server Error!");
+    next(error);
   }
 };
 
-export const deleteComment = async (req, res) => {
+export const deleteComment = async (req, res, next) => {
   const { id } = req.params;
 
   try {
@@ -76,6 +74,6 @@ export const deleteComment = async (req, res) => {
 
     return res.status(200).json("Comment deleted!");
   } catch (error) {
-    res.status(500).json("Comment not deleted!Server Error!");
+    next(error);
   }
 };

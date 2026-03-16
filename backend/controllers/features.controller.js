@@ -95,7 +95,7 @@ export const editFeatueGet = async (req, res) => {
   }
 };
 
-export const editFeaturePut = async (req, res) => {
+export const editFeaturePut = async (req, res, next) => {
   const { id } = req.params;
   const { title, description, releaseDate, released, published } = req.body;
   try {
@@ -116,6 +116,6 @@ export const editFeaturePut = async (req, res) => {
     });
     return res.status(201).json({ message: "feature updated" });
   } catch (error) {
-    return res.status(500).json({ message: "something went wrong!" });
+    next(error);
   }
 };
