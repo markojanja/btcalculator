@@ -1,4 +1,3 @@
-import "./Users.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import UsersCard from "../components/UsersCard";
@@ -49,9 +48,9 @@ const Users = () => {
 
   return (
     <div className="flex flex-1 flex-col w-full p-6">
-      <div className="flex justify-between items-start border-b border-b-muted py-3">
+      <div className="flex flex-col md:flex-row justify-between items-start gap-1 lg:items-center border-b border-b-muted py-3">
         <h2 className="text-2xl font-bold">Users</h2>
-        <Field className="max-w-2xs">
+        <Field className="sm:w-full md:max-w-2xs">
           <ButtonGroup>
             <Input
               id="input-button-group"
@@ -68,7 +67,6 @@ const Users = () => {
         </Field>
         <Link
           className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
-          style={{ borderRadius: "8px" }}
           to={"/users/add"}
         >
           New user

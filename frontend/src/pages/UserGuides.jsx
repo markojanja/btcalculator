@@ -51,9 +51,9 @@ const UserGuides = () => {
 
   return (
     <div className="flex flex-1 flex-col w-full p-6">
-      <div className="flex justify-between items-start border-b border-b-muted py-3">
+      <div className="flex flex-col md:flex-row justify-between items-start gap-1 lg:items-center border-b border-b-muted py-3">
         <h2 className="text-2xl font-bold">UserGuides</h2>
-        <Field className="max-w-2xs">
+        <Field className="sm:w-full md:max-w-2xs">
           <ButtonGroup>
             <Input
               id="input-button-group"
@@ -69,7 +69,7 @@ const UserGuides = () => {
           </ButtonGroup>
         </Field>
         <Link
-          className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
+          className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
           style={{ borderRadius: "8px" }}
           to="/guides/new"
         >
