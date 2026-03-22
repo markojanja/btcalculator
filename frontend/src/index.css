@@ -129,7 +129,7 @@
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 }
 
-.supabase {
+.gecko {
   --background: oklch(0.987 0.0046 134.8496);
   --foreground: oklch(0.1997 0.033 263.4108);
   --card: oklch(1 0 0);
@@ -199,7 +199,7 @@
   --spacing: 0.25rem;
 }
 
-.supabase.dark {
+.gecko.dark {
   --background: oklch(0.1592 0.0211 263.4005);
   --foreground: oklch(0.9863 0.003 134.8418);
   --card: oklch(0.1997 0.033 263.4108);
