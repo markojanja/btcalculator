@@ -36,7 +36,7 @@ const Users = () => {
 
   return (
     <div className="flex flex-1 flex-col w-full p-6">
-      <div className="flex flex-col md:flex-row justify-between items-start gap-1 lg:items-center border-b border-b-muted py-3">
+      <div className="relative flex flex-col md:flex-row justify-between items-start gap-1 lg:items-center border-b border-b-muted py-3">
         <h2 className="text-2xl font-bold">Users</h2>
         <SearchInput
           value={query}
@@ -44,7 +44,7 @@ const Users = () => {
           onSearch={handleSearch}
         />
         <Link
-          className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
+          className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
           to={"/users/add"}
         >
           New user

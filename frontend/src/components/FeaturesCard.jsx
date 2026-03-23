@@ -3,12 +3,8 @@ import { Link } from "react-router-dom";
 
 const FeaturesCard = ({ feature }) => {
   return (
-    <Link to={`/features/${feature.id}`}>
-      <Card
-        className={
-          "w-full lg:w-1/3 text-left items-start justify-start mx-auto"
-        }
-      >
+    <Link to={`/features/${feature.id}`} className="w-full lg:w-1/3 mx-auto">
+      <Card className={"w-full text-left items-start justify-start mx-auto"}>
         <CardContent>
           <CardTitle className={"mb-2"}>
             <h3>{feature.title}</h3>

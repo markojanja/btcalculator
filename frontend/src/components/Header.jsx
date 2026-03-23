@@ -17,7 +17,6 @@ import { FaUserCircle } from "react-icons/fa";
 
 import { NavContext } from "../contexts/NavContext";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-
 const Header = () => {
   const { toggleSidebar } = useContext(NavContext);
 

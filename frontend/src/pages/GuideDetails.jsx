@@ -57,7 +57,7 @@ const GuideDetails = () => {
   };
 
   return (
-    <div className="flex flex-col w-full lg:w-187.5 mx-auto gap-4 p-2">
+    <div className="flex flex-col w-full lg:w-187.5 mx-auto gap-4">
       <div
         className={
           "flex justify-between items-center w-full bg-card shadow-sm p-4 rounded-md"
@@ -72,7 +72,7 @@ const GuideDetails = () => {
             <>
               <Link
                 to={`/guides/${guide.id}/edit`}
-                className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
+                className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
               >
                 Edit Guide
               </Link>

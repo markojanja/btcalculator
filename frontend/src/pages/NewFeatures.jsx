@@ -5,11 +5,18 @@ import FeaturesCard from "../components/FeaturesCard";
 import useAuth from "../hooks/useAuth";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
+import SearchInput from "../components/SearchInput";
+import useSearch from "../hooks/useSearch";
 
 const NewFeatures = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { user } = useAuth();
   const [features, setFeatures] = useState([]);
+  const { query, setQuery, filtered, handleSearch } = useSearch(features, [
+    "title",
+    "description",
+    "user.username",
+  ]);
   useEffect(() => {
     const getPubFeatures = async () => {
       const pubFeatures = await axios.get(`${BACKEND_URL}/features/all`, {
@@ -21,18 +28,22 @@ const NewFeatures = () => {
   }, []);
 
   const { currentItems, pageCount, handlePageChange } = usePagination(
-    features,
+    filtered,
     5,
   );
 
   return (
     <div className="flex flex-1 flex-col w-full p-6">
-      <div className="flex justify-between items-start border-b border-b-muted py-3">
+      <div className="relative flex justify-between items-start border-b border-b-muted py-3">
         <h2 className="text-2xl font-bold">Feature Announcements</h2>
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          onSearch={handleSearch}
+        />
         {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
           <Link
-            className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
-            style={{ borderRadius: "8px" }}
+            className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
             to="/features/new"
           >
             New feature

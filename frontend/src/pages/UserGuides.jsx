@@ -39,7 +39,7 @@ const UserGuides = () => {
 
   return (
     <div className="flex flex-1 flex-col w-full p-6">
-      <div className="flex flex-col md:flex-row justify-between items-start gap-1 lg:items-center border-b border-b-muted py-3">
+      <div className="relative flex flex-col md:flex-row justify-between items-start gap-1 lg:items-center border-b border-b-muted py-3">
         <h2 className="text-2xl font-bold">UserGuides</h2>
         <SearchInput
           value={query}

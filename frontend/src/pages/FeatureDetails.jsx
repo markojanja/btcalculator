@@ -28,7 +28,7 @@ const FeatureDetails = () => {
   const clean = DOMPurify.sanitize(feature.description);
 
   return (
-    <div className="flex flex-col w-full lg:w-187.5 mx-auto gap-4 p-2">
+    <div className="flex flex-col w-full lg:w-187.5 mx-auto gap-4">
       <div
         className={
           "flex justify-between items-center w-full bg-card shadow-sm p-4 rounded-md"
@@ -38,7 +38,7 @@ const FeatureDetails = () => {
         {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
           <Link
             to={`/features/${feature.id}/edit`}
-            className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
+            className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150  text-sm"
           >
             Edit feature
           </Link>
