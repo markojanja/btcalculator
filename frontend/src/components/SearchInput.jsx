@@ -6,7 +6,7 @@ import { Search } from "lucide-react";
 
 const SearchInput = ({ value, onChange, onSearch }) => {
   return (
-    <Field className="sm:w-full md:max-w-2xs absolute left-1/2 -translate-x-1/2">
+    <Field className="sm:w-full md:max-w-2xs lg:absolute lg:left-1/2 lg:-translate-x-1/2">
       <ButtonGroup>
         <Input
           id="input-button-group"

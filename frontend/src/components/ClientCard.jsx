@@ -14,7 +14,7 @@ const ClientCard = ({ client }) => {
         <Badge variant="secondary">{client.status}</Badge>
 
         <p>Server:</p>
-        <Badge className="bg-purple-300 text-purple-700 dark:bg-purple-950 dark:text-purple-300">
+        <Badge className="bg-blue-300 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
           {client.server[0]}
         </Badge>
         <p>Platform:</p>
