@@ -122,7 +122,7 @@ const PnlCalculator = () => {
               <Field>
                 <Label>Symbol</Label>
                 <Select
-                  value={depositCurrency}
+                  value={currencyPair}
                   onValueChange={handleSelect(setCurrnecyPair)}
                 >
                   <SelectTrigger className="w-full">

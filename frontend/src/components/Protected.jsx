@@ -1,26 +1,28 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import useAuth from "../hooks/useAuth";
 import Loading from "./Loading";
 
-const Protected = ({roles=[]}) => {
+const Protected = ({ roles = [] }) => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const memoRoles = useMemo(() => roles, [roles.join(",")]);
 
   useEffect(() => {
     if (loading) return;
 
     if (!user) {
       navigate("/login", { replace: true });
+    } else if (memoRoles.length && !memoRoles.includes(user.role)) {
+      navigate("/unauthorized", { replace: true });
     }
-    else if(roles.length && !roles.includes(user.role)){
-      navigate('/login',{replace:true})
-    }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, memoRoles]);
 
   if (loading) return <Loading />;
+  if (!user) return null;
+  if (memoRoles.length && !memoRoles.includes(user.role)) return null;
 
-  return user && (!roles.length || roles.includes(user.role))? <Outlet /> : null;
+  return <Outlet />;
 };
 
 export default Protected;

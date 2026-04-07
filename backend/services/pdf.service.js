@@ -24,14 +24,6 @@ export function wrapHTML(title, html) {
             font-family: Arial, sans-serif;
             margin: 0;
           }
-
-          .banner {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            margin-bottom: 30px;
-          }
-
           .container {
             padding: 0 40px;
           }
@@ -65,7 +57,7 @@ export function wrapHTML(title, html) {
         .banner {
           display: block;
           margin: 20px auto 30px auto; 
-          max-height: 60px;             
+          max-height: 140px;             
           object-fit: contain;   
         }
         </style>

@@ -4,10 +4,18 @@ import { Link } from "react-router-dom";
 import GuidesCard from "../components/GuidesCard";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
+import useSearch from "../hooks/useSearch";
+import SearchInput from "../components/SearchInput";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const UserGuides = () => {
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const [guides, setGuides] = useState([]);
+  const { query, setQuery, filtered, handleSearch } = useSearch(guides, [
+    "title",
+    "description",
+    "user.username",
+  ]);
 
   useEffect(() => {
     const getData = async () => {
@@ -15,7 +23,7 @@ const UserGuides = () => {
         const response = await axios.get(`${BACKEND_URL}/guides`, {
           withCredentials: true,
         });
-        console.log(response);
+        // console.log(response.data[0]);
         setGuides(response.data);
       } catch (error) {
         console.log(error);
@@ -25,16 +33,21 @@ const UserGuides = () => {
   }, []);
 
   const { currentItems, pageCount, handlePageChange } = usePagination(
-    guides,
+    filtered,
     5,
   );
 
   return (
     <div className="flex flex-1 flex-col w-full p-6">
-      <div className="flex justify-between items-start border-b border-b-muted py-3">
+      <div className="relative flex flex-col md:flex-row justify-between items-start gap-1 lg:items-center border-b border-b-muted py-3">
         <h2 className="text-2xl font-bold">UserGuides</h2>
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          onSearch={handleSearch}
+        />
         <Link
-          className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
+          className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
           style={{ borderRadius: "8px" }}
           to="/guides/new"
         >

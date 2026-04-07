@@ -1,12 +1,12 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import Loading from "../components/Loading";
-
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loginLoading, setLoginLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -26,29 +26,33 @@ const AuthProvider = ({ children }) => {
       }
     };
     checkIfLoggedIn();
-  }, []);
+  }, [BACKEND_URL]);
 
   const login = async (username, password) => {
     try {
-      setLoading(true);
+      setError(null);
+      setLoginLoading(true);
       const response = await axios.post(
         `${BACKEND_URL}/auth/login`,
         { username, password },
-        { withCredentials: true }
+        { withCredentials: true },
       );
-      // console.log(response.data.user);
       setUser(response.data.user);
     } catch (error) {
       setError(error);
-      console.log(error);
     } finally {
-      setLoading(false);
+      setLoginLoading(false);
     }
   };
 
   const logout = async () => {
     try {
-      await axios.post(`${BACKEND_URL}/auth/logout`, {}, { withCredentials: true });
+      setError(null);
+      await axios.post(
+        `${BACKEND_URL}/auth/logout`,
+        {},
+        { withCredentials: true },
+      );
       setUser(null);
     } catch (err) {
       setError(err);
@@ -56,8 +60,14 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const clearError = () => {
+    setError(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, error, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, error, loading, loginLoading, login, logout, clearError }}
+    >
       {loading ? <Loading /> : children}
     </AuthContext.Provider>
   );

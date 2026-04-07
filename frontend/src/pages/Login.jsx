@@ -5,29 +5,31 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
+import { AuthProvider } from "../contexts/AuthContext"; // ✅ import
 
-const Login = () => {
+// ✅ split into two components
+const LoginForm = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { user, loading, login } = useAuth();
+  const { user, loading, loginLoading, error, login, clearError } = useAuth();
 
   useEffect(() => {
-    if (loading) return; // still checking auth
+    clearError();
+  }, []);
 
-    if (user) {
-      navigate("/");
-    }
+  useEffect(() => {
+    if (loading) return;
+    if (user) navigate("/");
   }, [user, loading, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login(username, password);
-    navigate("/");
   };
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center h-screen lg:w-1/3 ml-auto mr-0 bg-secondary">
+    <div className="flex flex-col flex-1 items-center justify-center h-screen w-full md:w-1/3 ml-auto mr-0 bg-secondary">
       <Card className="bg-secondary border-none shadow-none lg:w-90 mx-auto">
         <CardHeader className="font-extrabold text-3xl">
           <h2>
@@ -51,7 +53,6 @@ const Login = () => {
                 value={username}
               />
             </div>
-
             <div className="flex flex-col gap-1 items-start">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -63,11 +64,27 @@ const Login = () => {
                 value={password}
               />
             </div>
-            <Button type="submit">Login</Button>
+            <Button type="submit" disabled={loginLoading}>
+              {loginLoading ? "Logging in..." : "Login"}
+            </Button>
+            {error && (
+              <p className="bg-red-400 text-red-900 p-2 rounded-md text-sm text-center font-bold">
+                Invalid username or password
+              </p>
+            )}
           </form>
         </CardContent>
       </Card>
     </div>
+  );
+};
+
+// ✅ wrap with its own AuthProvider
+const Login = () => {
+  return (
+    <AuthProvider>
+      <LoginForm />
+    </AuthProvider>
   );
 };
 

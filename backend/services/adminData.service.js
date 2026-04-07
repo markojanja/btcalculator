@@ -12,7 +12,7 @@ export const getTasksByPriority = async () => {
     by: ["priority"],
     where: {
       status: {
-        not: "COMPLETED",
+        in: ["TODO", "IN_PROGRESS"],
       },
     },
     _count: { priority: true },

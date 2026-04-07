@@ -12,12 +12,12 @@ const IndexPageRedirect = () => {
 
     if (!user) {
       navigate("/login", { replace: true });
-    }
-    if (user?.role === "ADMIN" || user?.role === "MANAGER") {
+    } else if (user.role === "ADMIN" || user.role === "MANAGER") {
       navigate("/dashboard", { replace: true });
-    }
-    if (user?.role === "SUPPORT") {
+    } else if (user.role === "SUPPORT") {
       navigate("/tasks", { replace: true });
+    } else {
+      navigate("/login", { replace: true }); // unknown role fallback
     }
   }, [user, loading, navigate]);
 

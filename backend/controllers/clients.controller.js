@@ -1,6 +1,6 @@
 import prisma from "../db/prisma.js";
 
-export const getClients = async (req, res) => {
+export const getClients = async (req, res, next) => {
   try {
     const data = await prisma.clients.findMany({
       include: {
@@ -17,11 +17,11 @@ export const getClients = async (req, res) => {
 
     return res.status(200).json(data);
   } catch (error) {
-    return res.status(500).json("Something went wrong!");
+    next(error);
   }
 };
 
-export const addClient = async (req, res) => {
+export const addClient = async (req, res, next) => {
   const { name, status, server, platform } = req.body;
   console.log(req.body);
 
@@ -39,11 +39,11 @@ export const addClient = async (req, res) => {
     return res.status(200).json(newClient);
   } catch (error) {
     console.log(error);
-    return res.status(500).json("Something went wrong!");
+    next(error);
   }
 };
 
-export const editClientGet = async (req, res) => {
+export const editClientGet = async (req, res, next) => {
   const { id } = req.params;
 
   try {
@@ -55,14 +55,13 @@ export const editClientGet = async (req, res) => {
 
     return res.status(200).json(client);
   } catch (error) {
-    return res.status(500).json("Something went wrong!");
+    next(error);
   }
 };
 
-export const editClientPost = async (req, res) => {
+export const editClientPost = async (req, res, next) => {
   const { id } = req.params;
   const { name, status, server, platform } = req.body;
-  console.log(req.body);
 
   try {
     const data = { name, status, server: [server], platform: platform };
@@ -75,11 +74,11 @@ export const editClientPost = async (req, res) => {
     });
     return res.status(201).json({ message: "client updated" });
   } catch (error) {
-    return res.status(500).json("Something went wrong!");
+    next(error);
   }
 };
 
-export const activeClients = async (req, res) => {
+export const activeClients = async (req, res, next) => {
   try {
     const activeClients = await prisma.clients.findMany({
       where: {
@@ -93,6 +92,6 @@ export const activeClients = async (req, res) => {
 
     return res.status(200).json(activeClients);
   } catch (error) {
-    return res.status(500).json("Something went wrong!");
+    next(error);
   }
 };

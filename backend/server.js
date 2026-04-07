@@ -22,6 +22,8 @@ import { createFolders } from "./utils/createFolders.js";
 
 import { createPDF, sanitize, wrapHTML } from "./services/pdf.service.js";
 
+import errorHandler from "./middleware/errorHandler.js";
+
 import { isAuth } from "./middleware/isAuth.js";
 
 const __filename = url.fileURLToPath(import.meta.url);
@@ -44,7 +46,7 @@ io.on("connection", (socket) => {
     socket.join(`user:${userId}`); // personal room
     socket.join(role); // e.g., "role:ADMIN"
 
-    console.log(`User ${userId} joined rooms: user:${userId}, ${role}`);
+    // console.log(`User ${userId} joined rooms: user:${userId}, ${role}`);
   });
 });
 
@@ -118,6 +120,8 @@ app.get("/guides/:id/pdf", async (req, res) => {
     if (!res.headersSent) res.status(500).send("Error generating PDF");
   }
 });
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3500;
 

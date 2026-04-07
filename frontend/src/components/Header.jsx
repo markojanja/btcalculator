@@ -15,12 +15,9 @@ import { LogOutIcon, UserIcon } from "lucide-react";
 import { RiMenu4Line } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
 
-import ReactSwitch from "react-switch";
-import { ThemeContext } from "../contexts/ThemeContext";
 import { NavContext } from "../contexts/NavContext";
-
+import { ThemeSwitcher } from "./ThemeSwitcher";
 const Header = () => {
-  const { theme, toggleTheme } = useContext(ThemeContext);
   const { toggleSidebar } = useContext(NavContext);
 
   const { logout } = useAuth();
@@ -39,17 +36,9 @@ const Header = () => {
         </div>
         <ul className="flex gap-3">
           <li className="flex items-center justify-center">
-            <ReactSwitch
-              height={16}
-              width={32}
-              boxShadow="none"
-              activeBoxShadow="none"
-              onColor="#c70036"
-              handleDiameter={14}
-              onChange={toggleTheme}
-              checked={theme === "dark" ? false : true}
-            />
+            <ThemeSwitcher />
           </li>
+
           <DropdownMenu className="bg-background border-none">
             <DropdownMenuTrigger asChild>
               <Button variant="nostyle">

@@ -14,6 +14,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import SearchInput from "../components/SearchInput";
+import useSearch from "../hooks/useSearch";
 
 const AdminTasks = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -21,48 +23,42 @@ const AdminTasks = () => {
   const [title, setTitle] = useState("");
   const [tasks, setTasks] = useState([]);
 
+  const { query, setQuery, filtered, handleSearch } = useSearch(tasks, [
+    "title",
+    "status",
+    "priority",
+    "client.name",
+    "user.firstname",
+  ]);
+
   const { lastEvent } = useNotification();
 
   const { currentItems, pageCount, handlePageChange } = usePagination(
-    tasks,
+    filtered,
     20,
   );
 
+  const getData = async () => {
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}/admindata/tasks/${type}`,
+        {
+          withCredentials: true,
+        },
+      );
+      setTitle(response.data.page_title);
+      setTasks(response.data.tasks);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await axios.get(
-          `${BACKEND_URL}/admindata/tasks/${type}`,
-          {
-            withCredentials: true,
-          },
-        );
-        console.log(response);
-        setTitle(response.data.page_title);
-        setTasks(response.data.tasks);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     getData();
   }, []);
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await axios.get(
-          `${BACKEND_URL}/admindata/tasks/${type}`,
-          {
-            withCredentials: true,
-          },
-        );
-        console.log(response);
-        setTitle(response.data.page_title);
-        setTasks(response.data.tasks);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     getData();
   }, [lastEvent]);
 
@@ -70,6 +66,11 @@ const AdminTasks = () => {
     <div className="flex flex-1 flex-col w-full p-6">
       <div className="flex justify-between items-start border-b border-b-muted py-3">
         <h2 className="text-2xl font-bold">Tasks ({title})</h2>
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          onSearch={handleSearch}
+        />
       </div>
       <div className="flex flex-col flex-1 items-center">
         <Table>

@@ -1,9 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 const usePagination = (items = [], itemsPerPage = 10) => {
   const [itemOffset, setItemOffset] = useState(0);
 
   const pageCount = Math.ceil(items.length / itemsPerPage);
+
+  useEffect(() => {
+    setItemOffset(0);
+  }, [items]);
 
   const currentItems = useMemo(() => {
     const endOffset = itemOffset + itemsPerPage;

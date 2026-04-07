@@ -1,16 +1,16 @@
 import { getAllGuides } from "../services/userGuides.services.js";
 import prisma from "../db/prisma.js";
 
-export const getGuides = async (req, res) => {
+export const getGuides = async (req, res, next) => {
   try {
     const data = await getAllGuides();
     return res.status(200).json(data);
   } catch (error) {
-    return res.status(500).json({ error: "Something went wrong!!" });
+    next(error);
   }
 };
 
-export const getGuide = async (req, res) => {
+export const getGuide = async (req, res, next) => {
   const { id } = req.params;
   try {
     const guide = await prisma.guides.findUnique({
@@ -28,13 +28,13 @@ export const getGuide = async (req, res) => {
     });
     return res.status(200).json(guide);
   } catch (error) {
-    return res.status(500).json({ error: "Something went wrong!!" });
+    next(error);
   }
 };
 
-export const addGuide = async (req, res) => {
+export const addGuide = async (req, res, next) => {
   const { title, description, published } = req.body;
-  console.log(req.body, req.user.id);
+
   try {
     const newGuide = await prisma.guides.create({
       data: {
@@ -46,11 +46,11 @@ export const addGuide = async (req, res) => {
     });
     return res.status(201).json(newGuide);
   } catch (error) {
-    return res.status(500).json({ message: "something went wrong!" });
+    next(error);
   }
 };
 
-export const editGuideGet = async (req, res) => {
+export const editGuideGet = async (req, res, next) => {
   const { id } = req.params;
 
   try {
@@ -61,11 +61,11 @@ export const editGuideGet = async (req, res) => {
     });
     return res.status(200).json(guide);
   } catch (error) {
-    return res.status(500).json({ error: "Server error" });
+    next(error);
   }
 };
 
-export const editGuidePut = async (req, res) => {
+export const editGuidePut = async (req, res, next) => {
   const { id } = req.params;
   const { title, description, published } = req.body;
   try {
@@ -83,10 +83,11 @@ export const editGuidePut = async (req, res) => {
     });
     return res.status(201).json({ message: "feature updated" });
   } catch (error) {
-    return res.status(500).json({ message: "something went wrong!" });
+    next(error);
   }
 };
 
+//todo
 export const deleteGuide = async (req, res) => {
   try {
   } catch (error) {}

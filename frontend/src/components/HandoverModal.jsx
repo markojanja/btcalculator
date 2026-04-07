@@ -48,7 +48,7 @@ const HandoverModal = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-start justify-center bg-background pt-12 pb-12 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex flex-col items-start bg-background pt-12 pb-12 overflow-y-auto">
       <button
         className="absolute right-8 top-4 text-muted-foreground hover:text-foreground"
         onClick={toggleHandoverModal}

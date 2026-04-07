@@ -1,14 +1,21 @@
-import "./Users.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import UsersCard from "../components/UsersCard";
 import { Link } from "react-router-dom";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
+import SearchInput from "../components/SearchInput";
+import useSearch from "../hooks/useSearch";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  const { query, setQuery, filtered, handleSearch } = useSearch(users, [
+    "firstname",
+    "lastname",
+    "username",
+  ]);
 
   useEffect(() => {
     const getUsers = async () => {
@@ -22,15 +29,22 @@ const Users = () => {
     getUsers();
   }, []);
 
-  const { currentItems, pageCount, handlePageChange } = usePagination(users, 4);
+  const { currentItems, pageCount, handlePageChange } = usePagination(
+    filtered,
+    4,
+  );
 
   return (
     <div className="flex flex-1 flex-col w-full p-6">
-      <div className="flex justify-between items-start border-b border-b-muted py-3">
+      <div className="relative flex flex-col md:flex-row justify-between items-start gap-1 lg:items-center border-b border-b-muted py-3">
         <h2 className="text-2xl font-bold">Users</h2>
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          onSearch={handleSearch}
+        />
         <Link
-          className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150"
-          style={{ borderRadius: "8px" }}
+          className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
           to={"/users/add"}
         >
           New user

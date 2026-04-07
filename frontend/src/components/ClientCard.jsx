@@ -4,9 +4,7 @@ import { Separator } from "@/components/ui/separator";
 
 const ClientCard = ({ client }) => {
   return (
-    <Card
-      className={"w-full lg:w-1/3 text-left items-start justify-start mx-auto"}
-    >
+    <Card className={"w-full text-left items-start justify-start mx-auto"}>
       <CardContent className={"w-full"}>
         <CardTitle className={"mb-2"}>
           <h3 className="text-lg">{client.name}</h3>
@@ -16,7 +14,7 @@ const ClientCard = ({ client }) => {
         <Badge variant="secondary">{client.status}</Badge>
 
         <p>Server:</p>
-        <Badge className="bg-purple-300 text-purple-700 dark:bg-purple-950 dark:text-purple-300">
+        <Badge className="bg-blue-300 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
           {client.server[0]}
         </Badge>
         <p>Platform:</p>
