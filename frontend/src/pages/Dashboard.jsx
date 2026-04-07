@@ -89,6 +89,7 @@ const Dashboard = () => {
     ],
   };
 
+  console.log("this is data", data);
   const labels2 = pieChartdataCli.map((obj) => obj.name);
   const clientsTasksData = {
     labels: labels2,
@@ -213,25 +214,37 @@ const Dashboard = () => {
           <Card className={"col-span-2 min-w-0"}>
             <CardTitle className={"text-left px-6"}>
               <Link to={"tasks/pending"}>
-                <h3>Pending Tasks</h3>
+                <h3>Pending Tasks by User</h3>
               </Link>
             </CardTitle>
             <CardContent>
-              <div className="relative flex p-2 h-75 w-full">
-                <Pie data={data} options={options} />
-              </div>
+              {data.datasets.length > 0 ? (
+                <div className="relative flex p-2 h-75 w-full">
+                  <Pie data={data} options={options} />
+                </div>
+              ) : (
+                <div className="relative flex p-2 h-75 w-full items-center justify-center">
+                  <h2>No Pending Tasks at the moment</h2>
+                </div>
+              )}
             </CardContent>
           </Card>
           <Card className={"col-span-2 min-w-0"}>
             <CardTitle className={"text-left px-6"}>
               <Link to={"tasks/priority"}>
-                <h3>Tasks by Priority</h3>
+                <h3>Pending Tasks by Priority</h3>
               </Link>
             </CardTitle>
             <CardContent>
-              <div className="relative flex p-2 h-75 w-full">
-                <Bar data={barData} options={options} />
-              </div>
+              {barData.datasets.length > 0 ? (
+                <div className="relative flex p-2 h-75 w-full">
+                  <Bar data={barData} options={options} />
+                </div>
+              ) : (
+                <div className="relative flex p-2 h-75 w-full items-center justify-center">
+                  <h2>No Pending Tasks at the moment</h2>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -321,12 +334,18 @@ const Dashboard = () => {
         <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
           <Card className={"col-span-2 min-w-0"}>
             <CardTitle className={"text-left px-6"}>
-              <h3>Tasks by Clients</h3>
+              <h3>Pending Tasks by Clients</h3>
             </CardTitle>
             <CardContent>
-              <div className="flex p-2 h-75 w-full">
-                <Pie data={clientsTasksData} options={options} />
-              </div>
+              {clientsTasksData.datasets.length > 0 ? (
+                <div className="flex p-2 h-75 w-full">
+                  <Pie data={clientsTasksData} options={options} />
+                </div>
+              ) : (
+                <div className="relative flex p-2 h-75 w-full items-center justify-center">
+                  <h2>No Pending Tasks at the moment</h2>
+                </div>
+              )}
             </CardContent>
           </Card>
 
