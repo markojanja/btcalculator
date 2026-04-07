@@ -51,6 +51,7 @@ export const getAdminTasks = async (req, res, next) => {
   } else if (type === "JIRA_TICKET") {
     filter.status = { in: ["CS_TICKET", "IT_TICKET"] };
   } else if (type === "priority") {
+    filter.status = { in: ["TODO", "IN_PROGRESS"] };
     filter.priority = { in: ["HIGH", "MEDIUM", "LOW"] };
   } else if (type === "COMPLETED") {
     filter.status = type;
