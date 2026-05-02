@@ -6,11 +6,13 @@ import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
 import useSearch from "../hooks/useSearch";
 import SearchInput from "../components/SearchInput";
+import Loading from "../components/Loading";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const UserGuides = () => {
   const [guides, setGuides] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { query, setQuery, filtered, handleSearch } = useSearch(guides, [
     "title",
     "description",
@@ -27,6 +29,8 @@ const UserGuides = () => {
         setGuides(response.data);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
     getData();
@@ -36,6 +40,8 @@ const UserGuides = () => {
     filtered,
     5,
   );
+
+  if (loading) return <Loading />;
 
   return (
     <div className="flex flex-1 flex-col w-full p-6">
@@ -55,7 +61,7 @@ const UserGuides = () => {
         </Link>
       </div>
       <div className="flex flex-col justify-start gap-2 py-6">
-        {currentItems && currentItems?.length > 0 ? (
+        {currentItems?.length > 0 ? (
           currentItems.map((guide) => (
             <GuidesCard key={guide.id} guide={guide} />
           ))

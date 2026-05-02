@@ -2,6 +2,7 @@ import { createContext, useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import useAuth from "../hooks/useAuth";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const NotificationContext = createContext(null);
 
@@ -26,10 +27,22 @@ const NotificationProvider = ({ children }) => {
     console.log("Socket emitted join for user:", user.id, "role:", roleRoom);
 
     newSocket.on("notification", (data) => {
-      console.log("Notification received on frontend:", data); // ✅ frontend logs here
+      // console.log("Notification received on frontend:", data);
       setNotifications((prev) => [data, ...prev]);
 
-      toast.info(data.message);
+      toast.info(
+        <div className="flex flex-col text-left">
+          {data.message}
+          {user.role === "ADMIN" && (
+            <Link
+              className="font-bold self-end"
+              to={`/dashboard/task/${data.taskId}`}
+            >
+              View task
+            </Link>
+          )}
+        </div>,
+      );
       setLastEvent(data);
     });
 

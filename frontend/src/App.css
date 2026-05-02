@@ -271,3 +271,15 @@
 .comment-editor .ql-editor.ql-blank::before {
   color: var(--color-muted-foreground);
 }
+
+.Toastify__toast {
+  display: flex;
+  align-items: start;
+}
+
+.Toastify__toast-icon {
+  display: flex;
+  align-items: start;
+  margin-right: 8px;
+  margin-top: 4px;
+}

@@ -21,7 +21,7 @@ const TaskCard = ({ task, onDragStart }) => {
   const toggleModal = (task) => {
     setActiveTask(task);
     toggleEditTaskModal();
-    console.log(task);
+    // console.log(task);
   };
 
   return (

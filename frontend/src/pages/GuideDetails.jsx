@@ -5,6 +5,8 @@ import DOMPurify from "dompurify";
 import useAuth from "../hooks/useAuth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Edit } from "lucide-react";
+import Loading from "../components/Loading";
 
 const GuideDetails = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -12,6 +14,7 @@ const GuideDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const [downloading, setDownloading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getGuide = async () => {
@@ -23,6 +26,8 @@ const GuideDetails = () => {
         console.log(res.data.userId, user.id);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
     getGuide();
@@ -55,6 +60,7 @@ const GuideDetails = () => {
       setDownloading(false);
     }
   };
+  if (loading) return <Loading />;
 
   return (
     <div className="flex flex-col w-full lg:w-187.5 mx-auto gap-4">
@@ -63,7 +69,7 @@ const GuideDetails = () => {
           "flex justify-between items-center w-full bg-card shadow-sm p-4 rounded-md"
         }
       >
-        <h2 className="text-2xl font-bold">{guide.title}</h2>
+        <h2 className="text-xl font-bold">{guide.title}</h2>
         <div className="flex gap-2 items-center justify-center">
           <Button disabled={downloading} onClick={downloadPDF}>
             {downloading ? "Downloading" : "Download PDF"}
@@ -72,9 +78,9 @@ const GuideDetails = () => {
             <>
               <Link
                 to={`/guides/${guide.id}/edit`}
-                className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
+                className="border border-primary rounded-sm text-primary px-3.5 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
               >
-                Edit Guide
+                <Edit />
               </Link>
             </>
           )}
