@@ -33,10 +33,11 @@ const NotificationProvider = ({ children }) => {
       toast.info(
         <div className="flex flex-col text-left">
           {data.message}
-          {user.role === "ADMIN" && (
+          {user.role === "ADMIN" && data.type !== "TASK_DELETED" && (
             <Link
               className="font-bold self-end"
               to={`/dashboard/task/${data.taskId}`}
+              state={{ timestamp: Date.now() }}
             >
               View task
             </Link>
