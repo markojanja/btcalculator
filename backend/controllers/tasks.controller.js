@@ -1,4 +1,5 @@
 import prisma from "../db/prisma.js";
+import { io } from "../server.js";
 import {
   notifyTaskCreated,
   notifyTaskUpdate,
@@ -158,11 +159,21 @@ export const editTask = async (req, res, next) => {
 export const deleteTask = async (req, res, next) => {
   const { id } = req.params;
   try {
-    await prisma.tasks.delete({
-      where: {
-        id: id,
-      },
+    await prisma.$transaction([
+      prisma.taskComments.deleteMany({
+        where: { taskId: id },
+      }),
+      prisma.tasks.delete({
+        where: { id },
+      }),
+    ]);
+
+    io.to("role:ADMIN").to("role:MANAGER").emit("notification", {
+      type: "TASK_DELETED",
+      message: `A task has been deleted`,
+      taskId: id,
     });
+
     res.status(200).json({ message: "task deleted" });
   } catch (error) {
     next(error);

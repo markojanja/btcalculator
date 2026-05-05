@@ -97,38 +97,23 @@ export const commentNotification = async (comment, taskId, user) => {
     where: { id: taskId },
     select: {
       title: true,
-    },
-  });
-
-  if (!task) return;
-  const commenters = await prisma.taskComments.findMany({
-    where: {
-      taskId: taskId,
-      NOT: {
-        userId: user.id,
-      },
-    },
-    select: {
       userId: true,
     },
-    distinct: ["userId"],
   });
-
-  if (!commenters.length) return;
+  if (!task) return;
 
   const payload = {
     type: "COMMENT",
     taskId,
     commentId: comment.id,
-    message: `${user.username} commented on a task ${task.title}`,
+    message: `${user.username} commented on task "${task.title}"`,
   };
 
-  commenters.forEach(({ userId }) => {
-    io.to(`user:${userId}`).emit("notification", payload);
-  });
+  if (task.userId !== user.id) {
+    io.to(`user:${task.userId}`).emit("notification", payload);
+  }
 
-  console.log(
-    "Comment notification sent to:",
-    commenters.map((c) => c.userId),
-  );
+  if (user.role === "SUPPORT") {
+    io.to("role:ADMIN").to("role:MANAGER").emit("notification", payload);
+  }
 };

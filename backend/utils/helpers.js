@@ -13,11 +13,5 @@ export const getShiftDayRange = () => {
   end.setDate(end.getDate() + 1);
   end.setHours(23, 0, 0, 0);
 
-  // Convert to UTC for Prisma/Postgres
-  const startUTC = new Date(
-    start.getTime() - start.getTimezoneOffset() * 60 * 1000,
-  );
-  const endUTC = new Date(end.getTime() - end.getTimezoneOffset() * 60 * 1000);
-
-  return { startOfDay: startUTC, endOfDay: endUTC };
+  return { startOfDay: start, endOfDay: end };
 };

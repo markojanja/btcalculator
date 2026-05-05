@@ -68,12 +68,7 @@ const Profile = () => {
             </Field>
           </FieldGroup>
         </CardContent>
-      </Card>
-      <Card className={"w-full lg:w-[60%] mx-auto"}>
-        <CardContent
-          className={"flex flex-row items-center justify-between gap-2"}
-        >
-          <h3>Change password</h3>
+        <CardContent className={"flex flex-row items-center justify-end gap-2"}>
           <Button onClick={handleToggleModal}>Change Password</Button>
         </CardContent>
       </Card>

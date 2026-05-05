@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,7 @@ const AdminTask = () => {
   const [users, setUsers] = useState([]);
   const [comments, setComments] = useState([]);
   const { lastEvent } = useNotification();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     id: "",
@@ -56,7 +57,7 @@ const AdminTask = () => {
     };
 
     getTask();
-  }, []);
+  }, [id, location.state?.timestamp]);
 
   useEffect(() => {
     if (task?.id) {

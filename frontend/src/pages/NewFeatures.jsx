@@ -7,11 +7,13 @@ import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
 import SearchInput from "../components/SearchInput";
 import useSearch from "../hooks/useSearch";
+import Loading from "../components/Loading";
 
 const NewFeatures = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { user } = useAuth();
   const [features, setFeatures] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { query, setQuery, filtered, handleSearch } = useSearch(features, [
     "title",
     "description",
@@ -19,10 +21,16 @@ const NewFeatures = () => {
   ]);
   useEffect(() => {
     const getPubFeatures = async () => {
-      const pubFeatures = await axios.get(`${BACKEND_URL}/features/all`, {
-        withCredentials: true,
-      });
-      setFeatures(pubFeatures.data);
+      try {
+        const pubFeatures = await axios.get(`${BACKEND_URL}/features/all`, {
+          withCredentials: true,
+        });
+        setFeatures(pubFeatures.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     };
     getPubFeatures();
   }, []);
@@ -31,6 +39,8 @@ const NewFeatures = () => {
     filtered,
     5,
   );
+
+  if (loading) return <Loading />;
 
   return (
     <div className="flex flex-1 flex-col w-full p-6">

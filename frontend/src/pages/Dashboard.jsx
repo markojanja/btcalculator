@@ -89,7 +89,7 @@ const Dashboard = () => {
     ],
   };
 
-  console.log("this is data", data);
+  console.log("this is data", data.datasets[0]["data"]);
   const labels2 = pieChartdataCli.map((obj) => obj.name);
   const clientsTasksData = {
     labels: labels2,
@@ -218,7 +218,7 @@ const Dashboard = () => {
               </Link>
             </CardTitle>
             <CardContent>
-              {data.datasets.length > 0 ? (
+              {data.datasets[0].data.length > 0 ? (
                 <div className="relative flex p-2 h-75 w-full">
                   <Pie data={data} options={options} />
                 </div>
@@ -337,7 +337,7 @@ const Dashboard = () => {
               <h3>Pending Tasks by Clients</h3>
             </CardTitle>
             <CardContent>
-              {clientsTasksData.datasets.length > 0 ? (
+              {clientsTasksData.datasets[0].data.length > 0 ? (
                 <div className="flex p-2 h-75 w-full">
                   <Pie data={clientsTasksData} options={options} />
                 </div>
