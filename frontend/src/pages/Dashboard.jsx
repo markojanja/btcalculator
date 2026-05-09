@@ -2,10 +2,10 @@ import { FaBusinessTime } from "react-icons/fa";
 import { RiProgress2Line } from "react-icons/ri";
 import { SiJirasoftware } from "react-icons/si";
 import { IoCheckmarkDoneCircle } from "react-icons/io5";
-import { FaRegEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import DashCard from "../components/DashCard";
 import useNotification from "../hooks/useNotification";
+import { useNavigate } from "react-router-dom";
 
 import {
   Chart as ChartJS,
@@ -154,6 +154,8 @@ const Dashboard = () => {
     },
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-1 flex-col w-full p-6">
       <div className="flex justify-between items-start border-b border-b-muted py-3">
@@ -262,12 +264,15 @@ const Dashboard = () => {
                     <TableHead>Priority</TableHead>
                     <TableHead>Created At</TableHead>
                     <TableHead>Assigne</TableHead>
-                    <TableHead>Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {latestTasks.map((task) => (
-                    <TableRow key={task.id}>
+                    <TableRow
+                      onClick={() => navigate(`/dashboard/task/${task.id}`)}
+                      key={task.id}
+                      className={"cursor-pointer"}
+                    >
                       <TableCell>{task.title}</TableCell>
                       <TableCell>{task.status}</TableCell>
                       <TableCell>{task.priority}</TableCell>
@@ -280,9 +285,6 @@ const Dashboard = () => {
                       </TableCell>
                       <TableCell>
                         {task.user.firstname} {task.user.lastname}
-                      </TableCell>
-                      <TableCell>
-                        <Link to={`/dashboard/task/${task.id}`}>view task</Link>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -305,21 +307,19 @@ const Dashboard = () => {
                     <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
-                    <TableHead>Edit</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {recentUsers.map((user) => (
-                    <TableRow key={user.id}>
+                    <TableRow
+                      onClick={() => navigate(`/users/edit/${user.id}`)}
+                      key={user.id}
+                      className={"cursor-pointer"}
+                    >
                       <TableCell>{user.firstname}</TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell className="capitalize">
                         {user.role.toLowerCase()}
-                      </TableCell>
-                      <TableCell>
-                        <Link to={`/users/edit/${user.id}`}>
-                          <FaRegEdit />
-                        </Link>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -361,12 +361,15 @@ const Dashboard = () => {
                     <TableHead>Status</TableHead>
                     <TableHead>Server</TableHead>
                     <TableHead>Platform</TableHead>
-                    <TableHead>Edit</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {recentClients.map((client) => (
-                    <TableRow key={client.id}>
+                    <TableRow
+                      onClick={() => navigate(`/clients/${client.id}/edit`)}
+                      key={client.id}
+                      className={"cursor-pointer"}
+                    >
                       <TableCell>{client.name}</TableCell>
                       <TableCell>{client.status}</TableCell>
                       <TableCell>{client.server[0]}</TableCell>
@@ -381,11 +384,6 @@ const Dashboard = () => {
                             {p}
                           </Badge>
                         ))}
-                      </TableCell>
-                      <TableCell>
-                        <Link to={`/clients/${client.id}/edit`}>
-                          <FaRegEdit />
-                        </Link>
                       </TableCell>
                     </TableRow>
                   ))}

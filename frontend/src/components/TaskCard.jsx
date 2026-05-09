@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { FaRegEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { FaAnglesUp, FaAnglesDown } from "react-icons/fa6";
@@ -21,7 +20,6 @@ const TaskCard = ({ task, onDragStart }) => {
   const toggleModal = (task) => {
     setActiveTask(task);
     toggleEditTaskModal();
-    // console.log(task);
   };
 
   return (
@@ -29,6 +27,7 @@ const TaskCard = ({ task, onDragStart }) => {
       className={"p-2 gap-2 border border-muted flex-0 min-w-65"}
       draggable
       onDragStart={() => onDragStart(task)}
+      onClick={() => toggleModal(task)}
     >
       <CardHeader className={"items-start text-left px-4"}>
         <CardTitle>
@@ -40,15 +39,7 @@ const TaskCard = ({ task, onDragStart }) => {
         <span className="flex items-center gap-0.5 text-sm">
           <Calendar size={12} /> {format(task.createdAt, "dd/MM/yyyy")}
         </span>
-        <p
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.3rem",
-            textTransform: "lowercase",
-            color: "gray",
-          }}
-        >
+        <p className="flex items-center gap-0.5 lowercase">
           {task.priority === "LOW" && (
             <>
               <FaAnglesDown style={{ fill: "lime" }} />{" "}
@@ -76,7 +67,6 @@ const TaskCard = ({ task, onDragStart }) => {
           <CgProfile /> <span>{task.user.username}</span>
         </p>
         <div className="flex items-center justify-center gap-1">
-          <FaRegEdit onClick={() => toggleModal(task)} />
           <MdDeleteOutline
             onClick={() => {
               deleteTask(task);

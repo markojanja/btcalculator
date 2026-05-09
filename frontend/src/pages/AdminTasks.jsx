@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
@@ -62,6 +62,8 @@ const AdminTasks = () => {
     getData();
   }, [lastEvent]);
 
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-1 flex-col w-full p-6">
       <div className="flex justify-between items-start border-b border-b-muted py-3">
@@ -82,12 +84,15 @@ const AdminTasks = () => {
               <TableHead>Priority</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead>Assigne</TableHead>
-              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentItems.map((task) => (
-              <TableRow key={task.id}>
+              <TableRow
+                onClick={() => navigate(`/dashboard/task/${task.id}`)}
+                key={task.id}
+                className={"cursor-pointer"}
+              >
                 <TableCell>{task.title}</TableCell>
                 <TableCell>
                   <Badge>{task.client?.name}</Badge>
@@ -103,11 +108,6 @@ const AdminTasks = () => {
                 </TableCell>
                 <TableCell>
                   {task.user.firstname} {task.user.lastname}
-                </TableCell>
-                <TableCell>
-                  <Link to={`/dashboard/task/${task.id}`}>
-                    <Badge variant="secondary">view task</Badge>
-                  </Link>
                 </TableCell>
               </TableRow>
             ))}

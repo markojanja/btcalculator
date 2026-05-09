@@ -65,7 +65,7 @@ const Clients = () => {
               <Link
                 key={client.id}
                 to={`${client.id}/edit`}
-                className="w-full lg:w-1/3 mx-auto"
+                className="w-full md:1/3 lg:w-1/3 mx-auto"
               >
                 <ClientCard client={client} />
               </Link>
