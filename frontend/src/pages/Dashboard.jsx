@@ -212,12 +212,10 @@ const Dashboard = () => {
             clr={"text-green-500/80"}
           />
         </div>
-        <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
+        <div className="grid lg:grid-cols-6 w-full gap-2 py-4">
           <Card className={"col-span-2 min-w-0"}>
             <CardTitle className={"text-left px-6"}>
-              <Link to={"tasks/pending"}>
-                <h3>Pending Tasks by User</h3>
-              </Link>
+              <h3>Pending Tasks by User</h3>
             </CardTitle>
             <CardContent>
               {data.datasets[0].data.length > 0 ? (
@@ -233,9 +231,7 @@ const Dashboard = () => {
           </Card>
           <Card className={"col-span-2 min-w-0"}>
             <CardTitle className={"text-left px-6"}>
-              <Link to={"tasks/priority"}>
-                <h3>Pending Tasks by Priority</h3>
-              </Link>
+              <h3>Pending Tasks by Priority</h3>
             </CardTitle>
             <CardContent>
               {barData.datasets.length > 0 ? (
@@ -249,9 +245,25 @@ const Dashboard = () => {
               )}
             </CardContent>
           </Card>
+          <Card className={"col-span-2 min-w-0"}>
+            <CardTitle className={"text-left px-6"}>
+              <h3>Pending Tasks by Clients</h3>
+            </CardTitle>
+            <CardContent>
+              {clientsTasksData.datasets[0].data.length > 0 ? (
+                <div className="flex p-2 h-75 w-full">
+                  <Pie data={clientsTasksData} options={options} />
+                </div>
+              ) : (
+                <div className="relative flex p-2 h-75 w-full items-center justify-center">
+                  <h2>No Pending Tasks at the moment</h2>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
         <div className="grid lg:grid-cols-4 w-full gap-2 py-4 mx-auto">
-          <Card className={"lg:col-span-3 w-full overflow-auto"}>
+          <Card className={"lg:col-span-4 w-full overflow-auto"}>
             <CardTitle className={"text-left px-6"}>
               <h4>Recent tasks</h4>
             </CardTitle>
@@ -295,60 +307,8 @@ const Dashboard = () => {
               <Link to="tasks/ALL">view all tasks</Link>
             </CardFooter>
           </Card>
-
-          <Card className={"col-span-1 overflow-auto"}>
-            <CardTitle className={"text-left px-6"}>
-              <h4>Recent Users</h4>
-            </CardTitle>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentUsers.map((user) => (
-                    <TableRow
-                      onClick={() => navigate(`/users/edit/${user.id}`)}
-                      key={user.id}
-                      className={"cursor-pointer"}
-                    >
-                      <TableCell>{user.firstname}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell className="capitalize">
-                        {user.role.toLowerCase()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter className={"mb-0 mt-auto"}>
-              <Link to="/users">view all users</Link>
-            </CardFooter>
-          </Card>
         </div>
         <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
-          <Card className={"col-span-2 min-w-0"}>
-            <CardTitle className={"text-left px-6"}>
-              <h3>Pending Tasks by Clients</h3>
-            </CardTitle>
-            <CardContent>
-              {clientsTasksData.datasets[0].data.length > 0 ? (
-                <div className="flex p-2 h-75 w-full">
-                  <Pie data={clientsTasksData} options={options} />
-                </div>
-              ) : (
-                <div className="relative flex p-2 h-75 w-full items-center justify-center">
-                  <h2>No Pending Tasks at the moment</h2>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
           <Card className={"col-span-2 overflow-auto"}>
             <CardTitle className={"text-left px-6"}>
               <h4>Recent Clients</h4>
@@ -392,6 +352,40 @@ const Dashboard = () => {
             </CardContent>
             <CardFooter className={"mb-0 mt-auto"}>
               <Link to="/clients">view all clients</Link>
+            </CardFooter>
+          </Card>
+          <Card className={"col-span-2 overflow-auto"}>
+            <CardTitle className={"text-left px-6"}>
+              <h4>Recent Users</h4>
+            </CardTitle>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentUsers.map((user) => (
+                    <TableRow
+                      onClick={() => navigate(`/users/edit/${user.id}`)}
+                      key={user.id}
+                      className={"cursor-pointer"}
+                    >
+                      <TableCell>{user.firstname}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell className="capitalize">
+                        {user.role.toLowerCase()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+            <CardFooter className={"mb-0 mt-auto"}>
+              <Link to="/users">view all users</Link>
             </CardFooter>
           </Card>
         </div>
