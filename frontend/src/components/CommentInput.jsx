@@ -40,7 +40,7 @@ const CommentInput = ({ taskID, setComments }) => {
           onChange={setComment}
           uploadImage={uploadImage}
         />
-        <Button variant="secondary" className="w-full" onClick={handleComment}>
+        <Button variant="outline" className="w-full" onClick={handleComment}>
           Comment
         </Button>
       </CardContent>
