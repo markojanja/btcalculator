@@ -22,10 +22,12 @@ import { getComments } from "../utils/fetchData.js";
 import CommentInput from "./CommentInput";
 import CommentCard from "./CommentCard";
 import useNotification from "../hooks/useNotification";
+import { MdDeleteOutline } from "react-icons/md";
 
 const EditTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const { toggleEditTaskModal, updateTask, activeTask, getTasks } = useKanban();
+  const { toggleEditTaskModal, updateTask, deleteTask, activeTask, getTasks } =
+    useKanban();
 
   const { uploadImage } = useCloudinary();
 
@@ -106,7 +108,7 @@ const EditTask = () => {
             <IoMdClose size={22} />
           </button>
 
-          <CardTitle className="px-6 pt-6">
+          <CardTitle className="px-6 pt-6 flex justify-between items-center">
             <h3 className="text-left font-bold">Edit task</h3>
           </CardTitle>
 
@@ -186,6 +188,15 @@ const EditTask = () => {
 
               <Button className="w-full mt-2" type="submit">
                 Save changes
+              </Button>
+              <Button
+                variant="destructive"
+                className="flex items-center justify-center gap-1"
+                onClick={() => {
+                  (deleteTask(activeTask), toggleEditTaskModal());
+                }}
+              >
+                <MdDeleteOutline size={24} />
               </Button>
             </form>
           </CardContent>

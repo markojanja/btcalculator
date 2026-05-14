@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { MdDeleteOutline } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { FaAnglesUp, FaAnglesDown } from "react-icons/fa6";
 import { TiEquals } from "react-icons/ti";
@@ -15,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const TaskCard = ({ task, onDragStart }) => {
-  const { toggleEditTaskModal, deleteTask, setActiveTask } = useKanban();
+  const { toggleEditTaskModal, setActiveTask } = useKanban();
 
   const toggleModal = (task) => {
     setActiveTask(task);
@@ -66,13 +65,6 @@ const TaskCard = ({ task, onDragStart }) => {
         <p className="flex items-center justify-center gap-0.5">
           <CgProfile /> <span>{task.user.username}</span>
         </p>
-        <div className="flex items-center justify-center gap-1">
-          <MdDeleteOutline
-            onClick={() => {
-              deleteTask(task);
-            }}
-          />
-        </div>
       </CardFooter>
     </Card>
   );
