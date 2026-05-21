@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
+  --background: oklch(0.9842 0.0034 247.8575);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -390,7 +390,7 @@
   --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.25);
 }
 .modern {
-  --background: oklch(1 0 0);
+  --background: oklch(0.9842 0.0034 247.8575);
   --foreground: oklch(0.3211 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.3211 0 0);

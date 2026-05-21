@@ -58,7 +58,7 @@ const CommentCard = ({ comment, setComments }) => {
         </div>
         {user?.id === comment.userId && (
           <div className="flex gap-0">
-            <Button variant="ghost" size="sm" onClick={handleEdit}>
+            <Button variant="ghoost" size="sm" onClick={handleEdit}>
               <EditIcon />
             </Button>
             <Button variant="ghost" size="sm" onClick={handleDelete}>
@@ -77,7 +77,7 @@ const CommentCard = ({ comment, setComments }) => {
               </Button>
               <Button
                 size="sm"
-                variant="secondary"
+                variant="ghost"
                 onClick={() => setEditing(false)}
               >
                 Cancel

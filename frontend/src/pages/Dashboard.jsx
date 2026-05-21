@@ -2,10 +2,10 @@ import { FaBusinessTime } from "react-icons/fa";
 import { RiProgress2Line } from "react-icons/ri";
 import { SiJirasoftware } from "react-icons/si";
 import { IoCheckmarkDoneCircle } from "react-icons/io5";
-import { FaRegEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import DashCard from "../components/DashCard";
 import useNotification from "../hooks/useNotification";
+import { useNavigate } from "react-router-dom";
 
 import {
   Chart as ChartJS,
@@ -154,6 +154,8 @@ const Dashboard = () => {
     },
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-1 flex-col w-full p-6">
       <div className="flex justify-between items-start border-b border-b-muted py-3">
@@ -210,12 +212,10 @@ const Dashboard = () => {
             clr={"text-green-500/80"}
           />
         </div>
-        <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
+        <div className="grid lg:grid-cols-6 w-full gap-2 py-4">
           <Card className={"col-span-2 min-w-0"}>
             <CardTitle className={"text-left px-6"}>
-              <Link to={"tasks/pending"}>
-                <h3>Pending Tasks by User</h3>
-              </Link>
+              <h3>Pending Tasks by User</h3>
             </CardTitle>
             <CardContent>
               {data.datasets[0].data.length > 0 ? (
@@ -231,9 +231,7 @@ const Dashboard = () => {
           </Card>
           <Card className={"col-span-2 min-w-0"}>
             <CardTitle className={"text-left px-6"}>
-              <Link to={"tasks/priority"}>
-                <h3>Pending Tasks by Priority</h3>
-              </Link>
+              <h3>Pending Tasks by Priority</h3>
             </CardTitle>
             <CardContent>
               {barData.datasets.length > 0 ? (
@@ -247,91 +245,6 @@ const Dashboard = () => {
               )}
             </CardContent>
           </Card>
-        </div>
-        <div className="grid lg:grid-cols-4 w-full gap-2 py-4 mx-auto">
-          <Card className={"lg:col-span-3 w-full overflow-auto"}>
-            <CardTitle className={"text-left px-6"}>
-              <h4>Recent tasks</h4>
-            </CardTitle>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead>Created At</TableHead>
-                    <TableHead>Assigne</TableHead>
-                    <TableHead>Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {latestTasks.map((task) => (
-                    <TableRow key={task.id}>
-                      <TableCell>{task.title}</TableCell>
-                      <TableCell>{task.status}</TableCell>
-                      <TableCell>{task.priority}</TableCell>
-                      <TableCell>
-                        {new Date(task.createdAt).toLocaleDateString("en-GB", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })}
-                      </TableCell>
-                      <TableCell>
-                        {task.user.firstname} {task.user.lastname}
-                      </TableCell>
-                      <TableCell>
-                        <Link to={`/dashboard/task/${task.id}`}>view task</Link>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter className={"mb-0 mt-auto"}>
-              <Link to="tasks/ALL">view all tasks</Link>
-            </CardFooter>
-          </Card>
-
-          <Card className={"col-span-1 overflow-auto"}>
-            <CardTitle className={"text-left px-6"}>
-              <h4>Recent Users</h4>
-            </CardTitle>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Edit</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentUsers.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>{user.firstname}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell className="capitalize">
-                        {user.role.toLowerCase()}
-                      </TableCell>
-                      <TableCell>
-                        <Link to={`/users/edit/${user.id}`}>
-                          <FaRegEdit />
-                        </Link>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter className={"mb-0 mt-auto"}>
-              <Link to="/users">view all users</Link>
-            </CardFooter>
-          </Card>
-        </div>
-        <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
           <Card className={"col-span-2 min-w-0"}>
             <CardTitle className={"text-left px-6"}>
               <h3>Pending Tasks by Clients</h3>
@@ -348,7 +261,54 @@ const Dashboard = () => {
               )}
             </CardContent>
           </Card>
-
+        </div>
+        <div className="grid lg:grid-cols-4 w-full gap-2 py-4 mx-auto">
+          <Card className={"lg:col-span-4 w-full overflow-auto"}>
+            <CardTitle className={"text-left px-6"}>
+              <h4>Recent tasks</h4>
+            </CardTitle>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Priority</TableHead>
+                    <TableHead>Created At</TableHead>
+                    <TableHead>Assigne</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {latestTasks.map((task) => (
+                    <TableRow
+                      onClick={() => navigate(`/dashboard/task/${task.id}`)}
+                      key={task.id}
+                      className={"cursor-pointer"}
+                    >
+                      <TableCell>{task.title}</TableCell>
+                      <TableCell>{task.status}</TableCell>
+                      <TableCell>{task.priority}</TableCell>
+                      <TableCell>
+                        {new Date(task.createdAt).toLocaleDateString("en-GB", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })}
+                      </TableCell>
+                      <TableCell>
+                        {task.user.firstname} {task.user.lastname}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+            <CardFooter className={"mb-0 mt-auto"}>
+              <Link to="tasks/ALL">view all tasks</Link>
+            </CardFooter>
+          </Card>
+        </div>
+        <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
           <Card className={"col-span-2 overflow-auto"}>
             <CardTitle className={"text-left px-6"}>
               <h4>Recent Clients</h4>
@@ -361,12 +321,15 @@ const Dashboard = () => {
                     <TableHead>Status</TableHead>
                     <TableHead>Server</TableHead>
                     <TableHead>Platform</TableHead>
-                    <TableHead>Edit</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {recentClients.map((client) => (
-                    <TableRow key={client.id}>
+                    <TableRow
+                      onClick={() => navigate(`/clients/${client.id}/edit`)}
+                      key={client.id}
+                      className={"cursor-pointer"}
+                    >
                       <TableCell>{client.name}</TableCell>
                       <TableCell>{client.status}</TableCell>
                       <TableCell>{client.server[0]}</TableCell>
@@ -382,11 +345,6 @@ const Dashboard = () => {
                           </Badge>
                         ))}
                       </TableCell>
-                      <TableCell>
-                        <Link to={`/clients/${client.id}/edit`}>
-                          <FaRegEdit />
-                        </Link>
-                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -394,6 +352,40 @@ const Dashboard = () => {
             </CardContent>
             <CardFooter className={"mb-0 mt-auto"}>
               <Link to="/clients">view all clients</Link>
+            </CardFooter>
+          </Card>
+          <Card className={"col-span-2 overflow-auto"}>
+            <CardTitle className={"text-left px-6"}>
+              <h4>Recent Users</h4>
+            </CardTitle>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentUsers.map((user) => (
+                    <TableRow
+                      onClick={() => navigate(`/users/edit/${user.id}`)}
+                      key={user.id}
+                      className={"cursor-pointer"}
+                    >
+                      <TableCell>{user.firstname}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell className="capitalize">
+                        {user.role.toLowerCase()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+            <CardFooter className={"mb-0 mt-auto"}>
+              <Link to="/users">view all users</Link>
             </CardFooter>
           </Card>
         </div>

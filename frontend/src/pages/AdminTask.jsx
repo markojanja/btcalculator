@@ -18,6 +18,7 @@ import { getComments } from "../utils/fetchData.js";
 import CommentInput from "../components/CommentInput";
 import CommentCard from "../components/CommentCard";
 import useNotification from "../hooks/useNotification";
+import Loading from "../components/Loading.jsx";
 
 const AdminTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -28,6 +29,7 @@ const AdminTask = () => {
   const [comments, setComments] = useState([]);
   const { lastEvent } = useNotification();
   const location = useLocation();
+  const [loading, setLoadong] = useState(true);
 
   const [formData, setFormData] = useState({
     id: "",
@@ -42,17 +44,19 @@ const AdminTask = () => {
   useEffect(() => {
     const getTask = async () => {
       try {
+        setLoadong(true);
         const response = await axios.get(
           `${BACKEND_URL}/admindata/task/${id}`,
           {
             withCredentials: true,
           },
         );
-        console.log(response);
         setUsers(response.data.users);
         setTask(response.data.task);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoadong(false);
       }
     };
 
@@ -96,6 +100,8 @@ const AdminTask = () => {
       console.log(error);
     }
   };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="flex flex-col w-full md:w-187.5 mx-auto gap-4 p-2">
