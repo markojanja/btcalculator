@@ -17,6 +17,7 @@ import UsersRouter from "./routes/users.route.js";
 import FeaturesRouter from "./routes/features.route.js";
 import AdminData from "./routes/adminData.route.js";
 import UserGuidesRouter from "./routes/guides.route.js";
+import UserStatsRouter from "./routes/userStats.route.js";
 import ClientRouter from "./routes/clients.route.js";
 import { createFolders } from "./utils/createFolders.js";
 
@@ -99,6 +100,7 @@ app.use("/", isAuth, FeaturesRouter);
 app.use("/", isAuth, AdminData);
 app.use("/", isAuth, UserGuidesRouter);
 app.use("/", isAuth, ClientRouter);
+app.use("/", isAuth, UserStatsRouter);
 app.get("/guides/:id/pdf", async (req, res) => {
   try {
     const { id } = req.params;
