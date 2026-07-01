@@ -4,6 +4,7 @@ import bcryptjs from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log(process.env.DB_KEYS);
   const usersToCreate = [
     {
       firstname: "Tijana",
@@ -11,7 +12,7 @@ async function main() {
       email: "tijana.andric@fairtradingtech.com",
       active: true,
       username: "tijana.andric",
-      password: process.env.DB_KEYES,
+      password: process.env.DB_KEYS,
       role: "ADMIN",
       centroid: true,
     },
@@ -21,7 +22,7 @@ async function main() {
       email: "marko.m.janjic@gmail.com",
       active: true,
       username: "marko.janjic",
-      password: process.env.DB_KEYES,
+      password: process.env.DB_KEYS,
       role: "ADMIN",
       centroid: true,
     },
