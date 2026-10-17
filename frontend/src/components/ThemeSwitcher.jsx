@@ -1,7 +1,7 @@
 // components/ThemeSwitcher.jsx
 import { Moon, Sun, Palette, Check } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
-import COLOR_SCHEMES from "../utils/constants.js";
+import { COLOR_SCHEMES } from "../constants/themes";
 import {
   DropdownMenu,
   DropdownMenuContent,

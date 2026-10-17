@@ -32,6 +32,21 @@ export default [
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "react/prop-types": "off",
       "react-hooks/exhaustive-deps": "off",
+      "no-unused-vars": ["error", { ignoreRestSiblings: true }],
+      // console.error/warn are for real failures; stray debug logging fails lint.
+      "no-console": ["error", { allow: ["error", "warn"] }],
     },
+  },
+  {
+    // Generated shadcn/ui components: keep them as the generator writes them.
+    files: ["components/ui/**/*.jsx"],
+    rules: {
+      "no-unused-vars": ["error", { varsIgnorePattern: "^React$" }],
+      "react-refresh/only-export-components": "off",
+    },
+  },
+  {
+    files: ["*.config.js", "**/*.test.{js,jsx}"],
+    languageOptions: { globals: { ...globals.node } },
   },
 ];

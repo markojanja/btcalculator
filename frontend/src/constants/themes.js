@@ -5,5 +5,3 @@ export const COLOR_SCHEMES = [
   { label: "Modern", value: "modern" },
   { label: "Midnight", value: "midnight" },
 ];
-
-export default COLOR_SCHEMES;

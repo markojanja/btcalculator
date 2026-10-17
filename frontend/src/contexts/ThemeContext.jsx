@@ -1,7 +1,7 @@
 // context/ThemeContext.jsx
 import { createContext, useState, useEffect } from "react";
 
-import COLOR_SCHEMES from "../utils/constants.js";
+import { COLOR_SCHEMES } from "../constants/themes";
 
 const ThemeContext = createContext(null);
 
