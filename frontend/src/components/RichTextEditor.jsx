@@ -4,12 +4,16 @@ import Quill from "quill";
 import ImageResize from "quill-image-resize-module-react";
 import ImageDropAndPaste from "quill-image-drop-and-paste";
 import "react-quill/dist/quill.snow.css";
+import useCloudinary from "../hooks/useCloudinary";
 
 Quill.register("modules/imageResize", ImageResize);
 Quill.register("modules/imageDropAndPaste", ImageDropAndPaste);
 
-const RichTextEditor = ({ value, onChange, uploadImage }) => {
+// Used for task, guide and feature bodies and for comments (variant="comment").
+// Images inserted, pasted or dropped are uploaded to Cloudinary.
+const RichTextEditor = ({ value, onChange, variant, placeholder }) => {
   const quillRef = useRef(null);
+  const { uploadImage } = useCloudinary();
 
   const insertImage = (url) => {
     const editor = quillRef.current.getEditor();
@@ -98,6 +102,8 @@ const RichTextEditor = ({ value, onChange, uploadImage }) => {
       onChange={onChange}
       modules={modules}
       formats={formats}
+      className={variant === "comment" ? "comment-editor" : undefined}
+      placeholder={placeholder}
     />
   );
 };
