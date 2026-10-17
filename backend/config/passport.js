@@ -7,6 +7,9 @@ passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
       const user = await prisma.user.findUnique({
+        omit: {
+          password: false,
+        },
         where: {
           username: username,
         },
@@ -19,9 +22,11 @@ passport.use(
       if (!match) {
         return done(null, false, { message: "Invalid credentials." });
       }
-      return done(null, user);
+
+      const { password: _, ...safeUser } = user;
+      return done(null, safeUser);
     } catch (error) {
-      console.log(error);
+      return done(error);
     }
   })
 );
@@ -33,16 +38,17 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await prisma.user.findUnique({
-      omit: {
-        password: true,
-      },
       where: {
         id: id,
       },
     });
+    // Deactivated or deleted users lose their session immediately.
+    if (!user || !user.active) {
+      return done(null, false);
+    }
     done(null, user);
   } catch (error) {
-    console.log(error);
+    done(error);
   }
 });
 

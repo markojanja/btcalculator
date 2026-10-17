@@ -19,6 +19,7 @@ import AdminData from "./routes/adminData.route.js";
 import UserGuidesRouter from "./routes/guides.route.js";
 import UserStatsRouter from "./routes/userStats.route.js";
 import ClientRouter from "./routes/clients.route.js";
+import RatesRouter from "./routes/rates.route.js";
 import { createFolders } from "./utils/createFolders.js";
 
 import { createPDF, sanitize, wrapHTML } from "./services/pdf.service.js";
@@ -37,37 +38,58 @@ export const io = new Server(server, {
   cors: {
     origin: [`${process.env.CORS}`],
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-
-  socket.on("join", ({ userId, role }) => {
-    socket.join(`user:${userId}`); // personal room
-    socket.join(role); // e.g., "role:ADMIN"
-
-    // console.log(`User ${userId} joined rooms: user:${userId}, ${role}`);
-  });
+const sessionMiddleware = session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: new PrismaSessionStore(prisma, {
+    checkPeriod: 2 * 60 * 1000, // Check for expired sessions every 2 minutes
+    dbRecordIdIsSessionId: true, // Make sure the session ID is used as the record ID
+  }),
+  cookie: {
+    maxAge: 7 * 60 * 60 * 1000, // 7hours
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  },
 });
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: new PrismaSessionStore(prisma, {
-      checkPeriod: 2 * 60 * 1000, // Check for expired sessions every 2 minutes
-      dbRecordIdIsSessionId: true, // Make sure the session ID is used as the record ID
-    }),
-    cookie: {
-      maxAge: 7 * 60 * 60 * 1000, // 7hours
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    },
+// Socket connections reuse the HTTP session, so rooms are derived from the
+// logged-in user on the server instead of whatever the client claims.
+const onlyForHandshake = (middleware) => (req, res, next) => {
+  const isHandshake = req._query.sid === undefined;
+  if (isHandshake) {
+    middleware(req, res, next);
+  } else {
+    next();
+  }
+};
+
+io.engine.use(onlyForHandshake(sessionMiddleware));
+io.engine.use(onlyForHandshake(passport.session()));
+io.engine.use(
+  onlyForHandshake((req, res, next) => {
+    if (req.user) {
+      next();
+    } else {
+      res.writeHead(401);
+      res.end();
+    }
   }),
 );
+
+io.on("connection", (socket) => {
+  const user = socket.request.user;
+
+  socket.join(`user:${user.id}`); // personal room
+  socket.join(`role:${user.role}`); // e.g. "role:ADMIN"
+});
+
+app.use(sessionMiddleware);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -86,7 +108,11 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(express.json());
 app.use(cookieParser());
-app.use("/downloads", express.static(path.join(__dirname, "downloads")));
+app.use(
+  "/downloads",
+  isAuth,
+  express.static(path.join(__dirname, "downloads")),
+);
 
 createFolders();
 
@@ -101,6 +127,7 @@ app.use("/", isAuth, AdminData);
 app.use("/", isAuth, UserGuidesRouter);
 app.use("/", isAuth, ClientRouter);
 app.use("/", isAuth, UserStatsRouter);
+app.use("/", isAuth, RatesRouter);
 app.get("/guides/:id/pdf", async (req, res) => {
   try {
     const { id } = req.params;

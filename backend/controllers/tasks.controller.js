@@ -7,6 +7,7 @@ import {
   notifyTaskUpdatedSupport,
 } from "../services/notification.services.js";
 import { getShiftDayRange } from "../utils/helpers.js";
+import { isStaff } from "../middleware/authorize.js";
 
 export const myTasks = async (req, res, next) => {
   const user = req.user;
@@ -106,8 +107,6 @@ export const addTask = async (req, res, next) => {
 export const editTask = async (req, res, next) => {
   const { id, title, description, status, priority, userId, client } = req.body;
 
-  console.log("this is client ID ", client);
-
   try {
     const oldTask = await prisma.tasks.findUnique({
       where: { id },
@@ -117,7 +116,21 @@ export const editTask = async (req, res, next) => {
         },
       },
     });
-    console.log(oldTask.user.username, "this is oldtask username");
+    if (!oldTask) {
+      return res.status(404).json({ message: "Task not found." });
+    }
+
+    // Support agents may only edit their own tasks and cannot reassign them.
+    if (!isStaff(req.user)) {
+      if (oldTask.userId !== req.user.id) {
+        return res.status(403).json({ message: "Forbidden." });
+      }
+      if (userId && userId !== req.user.id) {
+        return res
+          .status(403)
+          .json({ message: "Only admins and managers can reassign tasks." });
+      }
+    }
 
     const updatedFields = {
       ...(title && { title }),
@@ -159,6 +172,17 @@ export const editTask = async (req, res, next) => {
 export const deleteTask = async (req, res, next) => {
   const { id } = req.params;
   try {
+    const task = await prisma.tasks.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+    if (!task) {
+      return res.status(404).json({ message: "Task not found." });
+    }
+    if (task.userId !== req.user.id && !isStaff(req.user)) {
+      return res.status(403).json({ message: "Forbidden." });
+    }
+
     await prisma.$transaction([
       prisma.taskComments.deleteMany({
         where: { taskId: id },

@@ -1,8 +1,11 @@
 import prisma from "../db/prisma.js";
+import { isStaff } from "../middleware/authorize.js";
 
-export const getFeatures = async (req, res) => {
-  if (req.user.role === "ADMIN" || req.user.role === "MANAGER") {
-    const getAllFeatures = await prisma.features.findMany({
+export const getFeatures = async (req, res, next) => {
+  try {
+    const features = await prisma.features.findMany({
+      // Unpublished features are visible to staff only.
+      where: isStaff(req.user) ? {} : { published: true },
       orderBy: {
         createdAt: "desc",
       },
@@ -13,37 +16,20 @@ export const getFeatures = async (req, res) => {
       },
     });
 
-    return res.status(200).json(getAllFeatures);
+    return res.status(200).json(features);
+  } catch (error) {
+    next(error);
   }
-  const publishedFeatures = await prisma.features.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-    where: {
-      published: true,
-    },
-    include: {
-      user: {
-        select: {
-          username: true,
-        },
-      },
-    },
-  });
-  if (!publishedFeatures) {
-    return res
-      .status(200)
-      .json({ message: "No new features are published yet!" });
-  }
-  return res.status(200).json(publishedFeatures);
 };
 
-export const featureDeatils = async (req, res) => {
+export const featureDeatils = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const feature = await prisma.features.findUnique({
+    const feature = await prisma.features.findFirst({
       where: {
         id: id,
+        // Unpublished features are visible to staff only.
+        ...(!isStaff(req.user) && { published: true }),
       },
       include: {
         user: {
@@ -53,23 +39,23 @@ export const featureDeatils = async (req, res) => {
         },
       },
     });
+    if (!feature) {
+      return res.status(404).json({ message: "Feature not found." });
+    }
     return res.status(200).json(feature);
   } catch (error) {
-    return res.status(500).json({ message: "something went wrong!" });
+    next(error);
   }
 };
 
-export const addFeature = async (req, res) => {
+export const addFeature = async (req, res, next) => {
   const { title, description, releaseDate, released, published } = req.body;
-  console.log(req.body, req.user.id);
   try {
-    const formattedDate = new Date(releaseDate);
-
     const newFeature = await prisma.features.create({
       data: {
         title,
         description,
-        releaseDate: formattedDate,
+        releaseDate,
         released,
         published,
         userId: req.user.id,
@@ -77,11 +63,11 @@ export const addFeature = async (req, res) => {
     });
     return res.status(201).json(newFeature);
   } catch (error) {
-    return res.status(500).json({ message: "something went wrong!" });
+    next(error);
   }
 };
 
-export const editFeatueGet = async (req, res) => {
+export const editFeatueGet = async (req, res, next) => {
   const { id } = req.params;
   try {
     const feature = await prisma.features.findUnique({
@@ -91,7 +77,7 @@ export const editFeatueGet = async (req, res) => {
     });
     return res.status(200).json(feature);
   } catch (error) {
-    return res.status(500).json({ message: "something went wrong!" });
+    next(error);
   }
 };
 
@@ -99,16 +85,15 @@ export const editFeaturePut = async (req, res, next) => {
   const { id } = req.params;
   const { title, description, releaseDate, released, published } = req.body;
   try {
+    // The original author is kept; an empty release date leaves it unchanged.
     const data = {
       title,
       description,
       released,
-      releaseDate: releaseDate ? new Date(releaseDate) : null,
+      releaseDate,
       published,
-      userId: req.user.id,
     };
-    console.log(data);
-    const featureToEdit = await prisma.features.update({
+    await prisma.features.update({
       where: {
         id: id,
       },

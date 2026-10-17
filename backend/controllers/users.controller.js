@@ -1,17 +1,20 @@
 import prisma from "../db/prisma.js";
 import bcrypt from "bcryptjs";
 
-export const getUsers = async (req, res) => {
+// Only an ADMIN may create, promote to, or modify an ADMIN account.
+const canAssignRole = (actor, role) =>
+  actor.role === "ADMIN" || role !== "ADMIN";
+
+export const getUsers = async (req, res, next) => {
   try {
     const users = await prisma.user.findMany({});
     return res.status(200).json(users);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
 export const addUser = async (req, res, next) => {
-  console.log(req.body);
   const {
     firstname,
     lastname,
@@ -22,6 +25,12 @@ export const addUser = async (req, res, next) => {
     role,
     centroid,
   } = req.body;
+
+  if (!canAssignRole(req.user, role)) {
+    return res
+      .status(403)
+      .json({ message: "Only an admin can create admin accounts." });
+  }
 
   try {
     const existingUser = await prisma.user.findFirst({
@@ -96,6 +105,22 @@ export const editUserPut = async (req, res, next) => {
     req.body;
 
   try {
+    const target = await prisma.user.findUnique({
+      where: { id: id },
+      select: { role: true },
+    });
+    if (!target) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    if (
+      !canAssignRole(req.user, target.role) ||
+      !canAssignRole(req.user, role)
+    ) {
+      return res
+        .status(403)
+        .json({ message: "Only an admin can modify admin accounts." });
+    }
+
     const updateData = {
       firstname,
       lastname,

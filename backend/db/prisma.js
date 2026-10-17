@@ -7,6 +7,12 @@ const databaseUrl =
 
 process.env.DATABASE_URL = databaseUrl;
 
-const prisma = new PrismaClient();
+// Password hashes are never returned unless a query opts in with
+// `omit: { password: false }` (login and password change only).
+const prisma = new PrismaClient({
+  omit: {
+    user: { password: true },
+  },
+});
 
 export default prisma;

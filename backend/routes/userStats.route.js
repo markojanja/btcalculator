@@ -1,10 +1,15 @@
 import express from "express";
 import prisma from "../db/prisma.js";
+import { isStaff } from "../middleware/authorize.js";
 
 const router = express.Router();
 
 router.get("/stats/users/:id", async (req, res, next) => {
   const { id } = req.params;
+
+  if (id !== req.user.id && !isStaff(req.user)) {
+    return res.status(403).json({ message: "Forbidden." });
+  }
 
   try {
     const result = await prisma.$queryRaw`

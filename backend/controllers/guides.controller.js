@@ -1,5 +1,8 @@
 import { getAllGuides } from "../services/userGuides.services.js";
 import prisma from "../db/prisma.js";
+import { isStaff } from "../middleware/authorize.js";
+
+const canEditGuide = (guide, user) => guide.userId === user.id || isStaff(user);
 
 export const getGuides = async (req, res, next) => {
   try {
@@ -59,6 +62,12 @@ export const editGuideGet = async (req, res, next) => {
         id: id,
       },
     });
+    if (!guide) {
+      return res.status(404).json({ message: "Guide not found." });
+    }
+    if (!canEditGuide(guide, req.user)) {
+      return res.status(403).json({ message: "Forbidden." });
+    }
     return res.status(200).json(guide);
   } catch (error) {
     next(error);
@@ -69,12 +78,22 @@ export const editGuidePut = async (req, res, next) => {
   const { id } = req.params;
   const { title, description, published } = req.body;
   try {
+    const guide = await prisma.guides.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+    if (!guide) {
+      return res.status(404).json({ message: "Guide not found." });
+    }
+    if (!canEditGuide(guide, req.user)) {
+      return res.status(403).json({ message: "Forbidden." });
+    }
+
     const data = {
       title,
       description,
       published,
     };
-    console.log(data);
     const guidesToEdit = await prisma.guides.update({
       where: {
         id: id,
@@ -85,10 +104,4 @@ export const editGuidePut = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-
-//todo
-export const deleteGuide = async (req, res) => {
-  try {
-  } catch (error) {}
 };

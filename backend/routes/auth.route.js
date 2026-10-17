@@ -15,7 +15,7 @@ router.post("/auth/logout", logout);
 router.post(
   "/auth/passwordchange",
   passport.authenticate("session"),
-  passwordChange
+  passwordChange,
 );
 
 export default router;

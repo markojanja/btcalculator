@@ -6,14 +6,15 @@ import {
   editClientPost,
   getClients,
 } from "../controllers/clients.controller.js";
+import { requireStaff } from "../middleware/authorize.js";
 
 const router = express.Router();
 
 router.get("/clients/", getClients);
-router.post("/clients/new", addClient);
+router.post("/clients/new", requireStaff, addClient);
 router
-  .get("/clients/:id/edit", editClientGet)
-  .put("/clients/:id/edit", editClientPost);
+  .get("/clients/:id/edit", requireStaff, editClientGet)
+  .put("/clients/:id/edit", requireStaff, editClientPost);
 
 router.get("/clients/active", activeClients);
 
