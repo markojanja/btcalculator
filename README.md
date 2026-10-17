@@ -127,6 +127,7 @@ npm run dev          # Vite dev server
 | `PORT` | API port (default `3500`) |
 | `NODE_ENV` | `production` enables secure, cross-site cookies and proxy trust |
 | `DB_KEYS` | Initial password used by the seed script |
+| `TWELVEDATA_API_KEY` | TwelveData key for exchange rates, used by `GET /rates` (kept server-side) |
 
 **`frontend/.env`**
 
@@ -135,7 +136,6 @@ npm run dev          # Vite dev server
 | `VITE_BACKEND_URL` | Base URL of the API |
 | `VITE_CLOUD_NAME` | Cloudinary cloud name |
 | `VITE_UPLOAD_PRESET` | Cloudinary unsigned upload preset |
-| `VITE_API_KEY` | Cloudinary API key |
 
 ## Scripts
 
@@ -146,14 +146,16 @@ npm run dev          # Vite dev server
 | backend | `npm run migrate` | Generate Prisma client and apply migrations |
 | backend | `npm run seed` | Seed initial users |
 | backend | `npm run build` | Install dependencies and Chrome for Puppeteer (deploy build step) |
+| backend | `npm test` | Run backend unit tests (shift boundaries) |
 | frontend | `npm run dev` | Start Vite dev server |
 | frontend | `npm run build` | Production build |
 | frontend | `npm run preview` | Preview the production build |
 | frontend | `npm run lint` | Run ESLint |
+| frontend | `npm test` | Run calculator and form tests (Vitest) |
 
 ## API Overview
 
-All routes except `/auth/*` require an authenticated session.
+All routes except `/auth/*` require an authenticated session. Users, clients (create/edit), features (create/edit) and `/admindata` also require the `ADMIN` or `MANAGER` role; support agents can only change their own tasks and comments. Request bodies are validated with zod and invalid input returns `400`.
 
 | Area | Endpoints |
 | --- | --- |
@@ -166,6 +168,7 @@ All routes except `/auth/*` require an authenticated session.
 | Features | `GET /features/all`, `GET /features/:id`, `POST /features/new` |
 | Admin | `GET /admindata`, `GET /admindata/tasks/:type`, `GET /admindata/task/:id` |
 | Converter | `POST /` (multipart: `jsonFile`, `xlsxFile`), `GET /downloads/:filename` |
+| Rates | `GET /rates?symbol=EUR/USD` (exchange-rate proxy) |
 
 ## Data Model
 
