@@ -23,7 +23,6 @@ export const getClients = async (req, res, next) => {
 
 export const addClient = async (req, res, next) => {
   const { name, status, server, platform } = req.body;
-  console.log(req.body);
 
   try {
     const newClient = await prisma.clients.create({
@@ -38,7 +37,6 @@ export const addClient = async (req, res, next) => {
 
     return res.status(200).json(newClient);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -65,7 +63,6 @@ export const editClientPost = async (req, res, next) => {
 
   try {
     const data = { name, status, server: [server], platform: platform };
-    console.log(data);
     await prisma.clients.update({
       where: {
         id: id,

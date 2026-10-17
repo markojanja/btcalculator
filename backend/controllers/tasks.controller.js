@@ -132,13 +132,14 @@ export const editTask = async (req, res, next) => {
       }
     }
 
+    // Fields left out of the request are unchanged; a null client clears it.
     const updatedFields = {
-      ...(title && { title }),
-      ...(description && { description }),
-      ...(status && { status }),
-      ...(priority && { priority }),
-      ...(userId && { userId }),
-      ...(client && { clientId: client }), // only set if exists
+      title,
+      description,
+      status,
+      priority,
+      userId,
+      clientId: client,
     };
 
     const updatedTask = await prisma.tasks.update({
