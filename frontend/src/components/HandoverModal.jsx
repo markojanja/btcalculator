@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import DOMPurify from "dompurify";
+import { useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -8,93 +6,61 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { useHandover } from "../api/tasks";
 import useKanban from "../hooks/useKanban";
-import { IoMdClose } from "react-icons/io";
+import FullScreenPanel from "./FullScreenPanel";
+import HtmlContent from "./HtmlContent";
 
 const HandoverModal = () => {
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const [csTasks, setCsTasks] = useState([]);
+  const { closePanel } = useKanban();
+  const { data: tickets = [], isLoading } = useHandover();
   const [copiedId, setCopiedId] = useState(null);
-  const { toggleHandoverModal } = useKanban();
-  useEffect(() => {
-    const getHandover = async () => {
-      try {
-        const res = await axios.get(`${BACKEND_URL}/tasks/handover`, {
-          withCredentials: true,
-        });
-        console.log(res.data);
-        setCsTasks(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getHandover();
-  }, []);
 
+  // Copies as HTML so formatting survives when pasted into a ticket.
   const handleCopy = async (task) => {
     try {
       const blob = new Blob([task.description], { type: "text/html" });
-
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          "text/html": blob,
-        }),
-      ]);
-
+      await navigator.clipboard.write([new ClipboardItem({ "text/html": blob })]);
       setCopiedId(task.id);
-    } catch (err) {
-      console.error("Copy failed:", err);
+    } catch (error) {
+      console.error("Copy failed:", error);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-start bg-background pt-12 pb-12 overflow-y-auto">
-      <button
-        className="absolute right-8 top-4 text-muted-foreground hover:text-foreground"
-        onClick={toggleHandoverModal}
-      >
-        <IoMdClose size={22} />
-      </button>
+    <FullScreenPanel onClose={closePanel} className="items-start">
       <h2 className="w-full font-bold text-2xl p-6">Handover</h2>
       <div className="flex flex-1 flex-col gap-4 items-center w-full p-2">
-        {csTasks.length === 0 && (
+        {!isLoading && tickets.length === 0 && (
           <div className="flex items-center justify-center text-2xl">
             There are no CS Tickets for handover
           </div>
         )}
-        {csTasks.map((task) => {
-          const clean = DOMPurify.sanitize(task.description);
-          return (
-            <Accordion
-              key={task.id}
-              type="single"
-              collapsible
-              className="w-full md:w-3/4 lg:w-1/2 bg-secondary py-2 px-4 rounded-md"
-            >
-              <AccordionItem value={task.id}>
-                <AccordionTrigger className={"text-2xl font-bold"}>
-                  [{task.client?.name}] - {task.title}
-                </AccordionTrigger>
-
-                <AccordionContent className="text-left">
-                  <Button
-                    variant="outline"
-                    onClick={() => handleCopy(task)}
-                    className="self-end"
-                  >
-                    {copiedId === task.id ? "Copied!" : "Copy to clipboard"}
-                  </Button>
-                  <div
-                    className="flex flex-col overflow-y-scroll max-h-screen text-left p-4 gap-4 rte"
-                    dangerouslySetInnerHTML={{ __html: clean }}
-                  />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          );
-        })}
+        {tickets.map((task) => (
+          <Accordion
+            key={task.id}
+            type="single"
+            collapsible
+            className="w-full md:w-3/4 lg:w-1/2 bg-secondary py-2 px-4 rounded-md"
+          >
+            <AccordionItem value={task.id}>
+              <AccordionTrigger className="text-2xl font-bold">
+                [{task.client?.name ?? "No client"}] - {task.title}
+              </AccordionTrigger>
+              <AccordionContent className="text-left">
+                <Button variant="outline" onClick={() => handleCopy(task)}>
+                  {copiedId === task.id ? "Copied!" : "Copy to clipboard"}
+                </Button>
+                <HtmlContent
+                  html={task.description}
+                  className="flex flex-col overflow-y-auto max-h-screen text-left p-4 gap-4"
+                />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        ))}
       </div>
-    </div>
+    </FullScreenPanel>
   );
 };
 

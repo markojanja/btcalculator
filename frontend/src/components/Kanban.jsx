@@ -1,81 +1,58 @@
-import axios from "axios";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { taskKeys, tasksApi, useBoard } from "../api/tasks";
+import useKanban from "../hooks/useKanban";
 import KanbanColumn from "./KanbanColumn";
-import AddTaskModal from "./AddTaskModal.jsx";
-import EditTask from "./EditTask.jsx";
-import useKanban from "../hooks/useKanban.jsx";
+import AddTaskModal from "./AddTaskModal";
+import EditTaskModal from "./EditTaskModal";
 import HandoverModal from "./HandoverModal";
 
-const Kanban = () => {
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const {
-    columns,
-    activeTask,
-    taskModal,
-    editModal,
-    setColumns,
-    handoverModal,
-  } = useKanban();
+const moveTask = (columns, task, status) =>
+  columns.map((col) => {
+    if (col.colStatus === task.status) {
+      return { ...col, tasks: col.tasks.filter((t) => t.id !== task.id) };
+    }
+    if (col.colStatus === status) {
+      return { ...col, tasks: [...col.tasks, { ...task, status }] };
+    }
+    return col;
+  });
 
+const Kanban = () => {
+  const queryClient = useQueryClient();
+  const { panel, activeTask } = useKanban();
+  const { data: columns = [] } = useBoard();
   const [draggedTask, setDraggedTask] = useState(null);
 
-  const handleDragStart = (task) => {
-    setDraggedTask(task);
-  };
+  // Moves the card straight away and puts it back if the server refuses.
+  const changeStatus = useMutation({
+    mutationFn: ({ task, status }) => tasksApi.update({ id: task.id, status }),
+    onMutate: async ({ task, status }) => {
+      await queryClient.cancelQueries({ queryKey: taskKeys.board });
+      const previous = queryClient.getQueryData(taskKeys.board);
+      queryClient.setQueryData(taskKeys.board, (cols) =>
+        moveTask(cols, task, status),
+      );
+      return { previous };
+    },
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(taskKeys.board, context.previous);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: taskKeys.board });
+    },
+  });
 
-  const handleDrop = async (targetStatus) => {
-    if (!draggedTask) return;
-
-    if (draggedTask.status === targetStatus) {
-      setDraggedTask(null);
-      return;
+  const handleDrop = (status) => {
+    if (draggedTask && draggedTask.status !== status) {
+      changeStatus.mutate({ task: draggedTask, status });
     }
-
-    const updatedTask = {
-      ...draggedTask,
-      status: targetStatus,
-      client: draggedTask.clientId,
-    };
-
-    setColumns((prevCols) =>
-      prevCols.map((col) => {
-        if (col.colStatus === draggedTask.status) {
-          return {
-            ...col,
-            tasks: col.tasks.filter((t) => t.id !== draggedTask.id),
-          };
-        }
-        if (col.colStatus === targetStatus) {
-          return {
-            ...col,
-            tasks: [...col.tasks, { ...draggedTask, status: targetStatus }],
-          };
-        }
-        return col;
-      }),
-    );
-
     setDraggedTask(null);
-
-    try {
-      await axios.put(`${BACKEND_URL}/tasks/edit_task`, updatedTask, {
-        withCredentials: true,
-      });
-    } catch (err) {
-      console.error("Failed to update task status:", err);
-    }
   };
 
-  if (taskModal) {
-    return <AddTaskModal />;
-  }
-
-  if (editModal && activeTask) {
-    return <EditTask />;
-  }
-  if (handoverModal) {
-    return <HandoverModal />;
-  }
+  if (panel === "add") return <AddTaskModal />;
+  if (panel === "edit" && activeTask) return <EditTaskModal />;
+  if (panel === "handover") return <HandoverModal />;
 
   return (
     <div className="flex flex-row flex-1 justify-evenly w-full h-screen p-6 gap-6 overflow-x-auto bg-background">
@@ -83,9 +60,7 @@ const Kanban = () => {
         <KanbanColumn
           key={col.colStatus}
           column={col}
-          name={col.title}
-          tasks={col.tasks}
-          onDragStart={handleDragStart}
+          onDragStart={setDraggedTask}
           onDrop={handleDrop}
         />
       ))}
