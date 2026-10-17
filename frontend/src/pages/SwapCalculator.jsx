@@ -1,44 +1,61 @@
 import { useState } from "react";
-import { format } from "date-fns";
-import Modal from "../components/Modal";
-
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Label } from "@/components/ui/label";
+import help from "../content/help/swap.md?raw";
 import {
-  allCurrencyPairs,
-  uniqueCurrencies,
-  swapHowTo,
-} from "../utils/helpers";
+  CURRENCIES,
+  CURRENCY_PAIRS,
+  TRADE_TYPES,
+} from "../constants/currencies";
+import { fetchConversionRate } from "../api/rates";
+import { formatDate } from "../lib/format";
 import {
   calculateDailySwap,
   getDatesInRange,
+  getPointSize,
   getTotalSwap,
+  isSwapInQuoteCurrency,
+  parseNumber,
+  splitPair,
 } from "../utils/calculations";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { FaRegQuestionCircle } from "react-icons/fa";
+import { NumberField, SelectField } from "../components/form/fields";
 import DatePicker from "../components/DatePicker";
+import ToolPage from "../components/ToolPage";
+
+const SWAP_TYPES = ["money", "points", "percentage"];
+const WORKING_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+const SectionTitle = ({ children }) => (
+  <CardDescription className="flex items-start text-md">{children}</CardDescription>
+);
+
+const SwapResult = ({ result }) => (
+  <Card className="w-full lg:w-1/3">
+    <CardContent className="flex flex-col items-start">
+      <h4>Symbol: {result.symbol}</h4>
+      <h4>Calculation Type: {result.activeCalculation}</h4>
+      <h4>3-day Swap: {result.swapDay}</h4>
+      <h4>Asset Price: {result.assetPrice}</h4>
+      <h4>Lots: {result.lotsTraded}</h4>
+      <h4>
+        Daily swap {result.dailySwap.toFixed(3)} {result.deposit}{" "}
+        {result.dailySwap < 0 ? "is charged" : "is paid"}
+      </h4>
+      <h4 className="text-left font-semibold">
+        Total swaps: {result.total.toFixed(3)} {result.deposit}{" "}
+        {`from ${formatDate(result.openDate)} to ${formatDate(result.closeDate)} `}
+        {result.total < 0 ? "is being charged" : "is paid"}
+      </h4>
+    </CardContent>
+  </Card>
+);
 
 const SwapCalculator = () => {
-  const calculationType = ["money", "points", "percentage"];
-  const workingDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-  const tradeTypes = ["BUY", "SELL"];
   const [symbol, setSymbol] = useState("EUR/USD");
   const [contractSize, setContractSize] = useState(100000);
-  const [pipSize, setPipSize] = useState(0.00001);
+  const [pointSize, setPointSize] = useState(0.00001);
   const [activeCalculation, setActiveCalculation] = useState("money");
   const [activeDay, setActiveDay] = useState("Wednesday");
   const [long, setLong] = useState("");
@@ -47,38 +64,70 @@ const SwapCalculator = () => {
   const [assetPrice, setAssetPrice] = useState("");
   const [lotsTraded, setLotsTraded] = useState("");
   const [tradeType, setTradeType] = useState("BUY");
-  const [openDate, setOpenDate] = useState("");
-  const [closeDate, setCloseDate] = useState("");
-  const [result, setResult] = useState();
-  const [test, setTest] = useState(0);
-  const [showModal, setShowModal] = useState(false);
+  const [openDate, setOpenDate] = useState(null);
+  const [closeDate, setCloseDate] = useState(null);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
 
-  const handleToggleModal = () => {
-    setShowModal(!showModal);
+  const handleSymbolSelect = (value) => {
+    setSymbol(value);
+    setPointSize(getPointSize(value));
   };
 
-  const handleSelect = (setter) => (value) => {
-    setter(value);
-  };
+  const handleCalculateSwap = async () => {
+    setResult(null);
+    setError("");
 
-  const handleChange = (setter) => (e) => {
-    setter(e.target.value);
-  };
+    if (!openDate || !closeDate) {
+      setError("Select both an open and a close date.");
+      return;
+    }
+    if (closeDate <= openDate) {
+      setError("Close date must be after the open date.");
+      return;
+    }
 
-  const handleCalculateSwap = () => {
+    const numbers = {
+      contractSize: parseNumber(contractSize),
+      pointSize: parseNumber(pointSize),
+      long: parseNumber(long),
+      short: parseNumber(short),
+      lots: parseNumber(lotsTraded),
+      price: activeCalculation === "percentage" ? parseNumber(assetPrice) : 0,
+    };
+    if (!Object.values(numbers).every(Number.isFinite)) {
+      setError("Fill in all swap and trade fields with numbers.");
+      return;
+    }
+
     const swapCalculation = calculateDailySwap(
       activeCalculation,
-      contractSize,
-      pipSize,
-      long,
-      short,
-      lotsTraded,
-      assetPrice,
+      numbers.contractSize,
+      numbers.pointSize,
+      numbers.long,
+      numbers.short,
+      numbers.lots,
+      numbers.price,
     );
-    const dates = getDatesInRange(openDate, closeDate, activeDay);
-    const dailySwap =
+    const dailySwapInSwapCurrency =
       tradeType === "BUY" ? swapCalculation.long : swapCalculation.short;
-    const res = {
+
+    // Points and percentage swaps come out in the quote currency.
+    let rate = 1;
+    const { quote } = splitPair(symbol);
+    if (isSwapInQuoteCurrency(activeCalculation) && quote !== deposit) {
+      try {
+        rate = await fetchConversionRate(quote, deposit);
+      } catch {
+        setError(`Could not fetch the ${quote}/${deposit} conversion rate.`);
+        return;
+      }
+    }
+
+    const dailySwap = dailySwapInSwapCurrency * rate;
+    const rollovers = getDatesInRange(openDate, closeDate, activeDay);
+
+    setResult({
       symbol,
       activeCalculation,
       swapDay: activeDay,
@@ -86,231 +135,122 @@ const SwapCalculator = () => {
       assetPrice,
       tradeType,
       deposit,
-      dailySwap: dailySwap,
-    };
-
-    setResult(res);
-    let total = getTotalSwap(dates, dailySwap);
-    setTest(total);
+      openDate,
+      closeDate,
+      dailySwap,
+      total: getTotalSwap(rollovers, dailySwap),
+    });
   };
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4 p-2">
-      {showModal && <Modal setShowModal={setShowModal} content={swapHowTo} />}
-      <Card className={`w-full lg:w-1/3 p-4`}>
-        <CardHeader className="flex justify-between items-center">
-          <div className="flex gap-1">
-            <h3 className="text-lg font-bold">Swap Calculator</h3>
-            <div
-              className="flex items-center justify-center mt-1"
-              onClick={handleToggleModal}
-            >
-              <FaRegQuestionCircle style={{ cursor: "pointer" }} />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          <CardDescription className="flex items-start text-md">
-            Symbol settings
-          </CardDescription>
+    <ToolPage
+      title="Swap Calculator"
+      help={help}
+      result={result && <SwapResult result={result} />}
+    >
+      <SectionTitle>Symbol settings</SectionTitle>
+      <FieldGroup className="flex flex-row gap-1 lg:gap-2">
+        <SelectField
+          label="Symbol"
+          value={symbol}
+          onChange={handleSymbolSelect}
+          options={CURRENCY_PAIRS}
+          placeholder="Select symbol"
+        />
+        <NumberField
+          label="Contract Size"
+          placeholder="set contract size..."
+          value={contractSize}
+          onChange={setContractSize}
+        />
+        <NumberField
+          label="Point size"
+          placeholder="set point size..."
+          value={pointSize}
+          onChange={setPointSize}
+        />
+      </FieldGroup>
 
-          <FieldGroup className="flex flex-row gap-1 lg:gap-2">
-            <Field>
-              <Label>Symbol</Label>
-              <Select value={symbol} onValueChange={handleSelect(setSymbol)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select symbol" />
-                </SelectTrigger>
+      <SectionTitle>Swap settings</SectionTitle>
+      <FieldGroup className="flex flex-row">
+        <SelectField
+          label="Calculation Type"
+          value={activeCalculation}
+          onChange={setActiveCalculation}
+          options={SWAP_TYPES}
+        />
+        <SelectField
+          label="3-day swap"
+          value={activeDay}
+          onChange={setActiveDay}
+          options={WORKING_DAYS}
+        />
+      </FieldGroup>
+      <FieldGroup className="flex flex-row">
+        <NumberField
+          label="Long swap"
+          placeholder="set long swap..."
+          value={long}
+          onChange={setLong}
+        />
+        <NumberField
+          label="Short swap"
+          placeholder="set short swap..."
+          value={short}
+          onChange={setShort}
+        />
+      </FieldGroup>
 
-                <SelectContent>
-                  {allCurrencyPairs.map((pair) => (
-                    <SelectItem key={pair} value={pair}>
-                      {pair}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <Label>Contract Size</Label>
-              <Input
-                placeholder={"set contract size..."}
-                value={contractSize}
-                onChange={handleChange(setContractSize)}
-              />
-            </Field>
-            <Field>
-              <Label>Pip size</Label>
-              <Input
-                placeholder={"set pip size..."}
-                value={pipSize}
-                onChange={handleChange(setPipSize)}
-              />
-            </Field>
-          </FieldGroup>
-          <CardDescription className="flex items-start text-md">
-            Swap settings
-          </CardDescription>
-
-          <FieldGroup className="flex flex-row">
-            <Field>
-              <Label>Calculation Type</Label>
-              <Select
-                value={activeCalculation}
-                onValueChange={handleSelect(setActiveCalculation)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select calc type" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {calculationType.map((pair) => (
-                    <SelectItem key={pair} value={pair}>
-                      {pair}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <Label>3-day swap</Label>
-              <Select
-                value={activeDay}
-                onValueChange={handleSelect(setActiveDay)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select swap day" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {workingDays.map((pair) => (
-                    <SelectItem key={pair} value={pair}>
-                      {pair}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
-          <FieldGroup className="flex flex-row">
-            <Field>
-              <Label>Long swap</Label>
-              <Input
-                placeholder={"set long swap..."}
-                value={long}
-                onChange={handleChange(setLong)}
-              />
-            </Field>
-            <Field>
-              <Label>Short swap</Label>
-              <Input
-                placeholder={"set short swap..."}
-                value={short}
-                onChange={handleChange(setShort)}
-              />
-            </Field>
-          </FieldGroup>
-          <CardDescription className="flex items-start text-md">
-            Trade settings
-          </CardDescription>
-          <FieldGroup className="flex flex-row">
-            <Field>
-              <Label>Account Currency</Label>
-              <Select value={deposit} onValueChange={handleSelect(setDeposit)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select deposit type" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {uniqueCurrencies.map((item) => (
-                    <SelectItem key={item} value={item}>
-                      {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <Label>Trade Type</Label>
-              <Select
-                value={tradeType}
-                onValueChange={handleSelect(setTradeType)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select trade type" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {tradeTypes.map((item) => (
-                    <SelectItem key={item} value={item}>
-                      {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
-          <FieldGroup className="flex flex-row">
-            <Field>
-              <Label>Asset Price</Label>
-              <Input
-                placeholder={"set asset price..."}
-                value={assetPrice}
-                onChange={handleChange(setAssetPrice)}
-              />
-            </Field>
-
-            <Field>
-              <Label>Lot Size</Label>
-              <Input
-                placeholder={"set lot size..."}
-                value={lotsTraded}
-                onChange={handleChange(setLotsTraded)}
-              />
-            </Field>
-          </FieldGroup>
-          <FieldGroup className="flex flex-row">
-            <Field>
-              <Label>open date</Label>
-              <DatePicker
-                value={openDate}
-                onChange={setOpenDate}
-                placeholder="open date"
-              />
-            </Field>
-            <Field>
-              <Label>close date</Label>
-              <DatePicker
-                value={closeDate}
-                onChange={setCloseDate}
-                placeholder="close date"
-              />
-            </Field>
-          </FieldGroup>
-          <Button onClick={handleCalculateSwap}>Calculate</Button>
-        </CardContent>
-      </Card>
-      {result && (
-        <Card className="w-full lg:w-1/3">
-          <CardContent className="flex flex-col items-start">
-            <h4>Symbol: {result.symbol}</h4>
-            <h4>Calculation Type: {result.activeCalculation}</h4>
-            <h4>3-day Swap: {result.swapDay}</h4>
-            <h4>Asset Price: {result.assetPrice}</h4>
-            <h4>Lots: {result.lotsTraded}</h4>
-            <h4>
-              Daily swap {parseFloat(result.dailySwap).toFixed(3)}{" "}
-              {result.dailySwap < 0 ? "is charged" : "is paid"}
-            </h4>
-            <h4 className="text-left font-semibold">
-              TotalSwaps:{parseFloat(test).toFixed(3)}{" "}
-              {`from ${format(openDate, "dd/MM/yyyy")} to ${format(closeDate, "dd/MM/yyyy")} `}{" "}
-              {test < 0 ? " is being charged" : "is paid"}
-            </h4>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+      <SectionTitle>Trade settings</SectionTitle>
+      <FieldGroup className="flex flex-row">
+        <SelectField
+          label="Account Currency"
+          value={deposit}
+          onChange={setDeposit}
+          options={CURRENCIES}
+        />
+        <SelectField
+          label="Trade Type"
+          value={tradeType}
+          onChange={setTradeType}
+          options={TRADE_TYPES}
+        />
+      </FieldGroup>
+      <FieldGroup className="flex flex-row">
+        <NumberField
+          label="Asset Price"
+          placeholder="set asset price..."
+          value={assetPrice}
+          onChange={setAssetPrice}
+        />
+        <NumberField
+          label="Lot Size"
+          placeholder="set lot size..."
+          value={lotsTraded}
+          onChange={setLotsTraded}
+        />
+      </FieldGroup>
+      <FieldGroup className="flex flex-row">
+        <Field>
+          <Label>open date</Label>
+          <DatePicker
+            value={openDate}
+            onChange={setOpenDate}
+            placeholder="open date"
+          />
+        </Field>
+        <Field>
+          <Label>close date</Label>
+          <DatePicker
+            value={closeDate}
+            onChange={setCloseDate}
+            placeholder="close date"
+          />
+        </Field>
+      </FieldGroup>
+      {error && <p className="text-sm text-destructive">{error}</p>}
+      <Button onClick={handleCalculateSwap}>Calculate</Button>
+    </ToolPage>
   );
 };
 

@@ -1,31 +1,8 @@
-import { useState } from "react";
-import Modal from "../components/Modal";
-import {
-  marginCalculationCFD,
-  marginCalculationForex,
-} from "../utils/calculations";
-import {
-  allCurrencyPairs,
-  uniqueCurrencies,
-  calcType,
-  tradeTypeList,
-  marginHowTo,
-} from "../utils/helpers";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState, useEffect } from "react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldGroup } from "@/components/ui/field";
-import { FaRegQuestionCircle } from "react-icons/fa";
-import { MdDeleteForever } from "react-icons/md";
+import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   Table,
@@ -36,11 +13,95 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import help from "../content/help/margin.md?raw";
+import {
+  CALCULATION_TYPES,
+  CURRENCIES,
+  CURRENCY_PAIRS,
+  TRADE_TYPES,
+} from "../constants/currencies";
+import { fetchConversionRate } from "../api/rates";
+import {
+  marginCalculationCFD,
+  marginCalculationForex,
+  parseNumber,
+  splitPair,
+} from "../utils/calculations";
+import {
+  CheckboxField,
+  NumberField,
+  SelectField,
+} from "../components/form/fields";
+import ToolPage from "../components/ToolPage";
 
-import { fetchExchangeRate } from "../utils/fetchData";
+// Saved calculations with a total per account currency.
+const MarginTable = ({ calculations, onDelete }) => {
+  const totals = calculations.reduce((acc, item) => {
+    acc[item.deposit] = (acc[item.deposit] ?? 0) + item.marginRequired;
+    return acc;
+  }, {});
+
+  return (
+    <Table className="lg:max-w-[50%] mx-auto">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Symbol</TableHead>
+          <TableHead>Type</TableHead>
+          <TableHead>Lot Size</TableHead>
+          <TableHead>Price</TableHead>
+          <TableHead>Margin (%)</TableHead>
+          <TableHead>Leverage</TableHead>
+          <TableHead className="text-right">Margin Required</TableHead>
+          <TableHead className="text-center">Action</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {calculations.map((calc) => (
+          <TableRow key={calc.id}>
+            <TableCell>{calc.pair}</TableCell>
+            <TableCell>{calc.tradeType}</TableCell>
+            <TableCell>{calc.lotSize}</TableCell>
+            <TableCell>{calc.price}</TableCell>
+            <TableCell>{calc.margin}</TableCell>
+            <TableCell>{calc.leverage}</TableCell>
+            <TableCell className="text-right font-medium">
+              {`${calc.marginRequired.toFixed(2)} ${calc.deposit}`}
+            </TableCell>
+            <TableCell className="text-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Remove calculation"
+                onClick={() => onDelete(calc.id)}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="h-5 w-5" />
+              </Button>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+      <TableFooter className="w-full">
+        <TableRow>
+          <TableCell colSpan={8} className="text-right text-base font-medium">
+            Total margin:{" "}
+            {Object.entries(totals).map(([currency, total]) => (
+              <span key={currency} className="ml-2">
+                <span className="text-xl font-bold text-primary">
+                  {total.toFixed(2)}
+                </span>{" "}
+                {currency}
+              </span>
+            ))}
+          </TableCell>
+        </TableRow>
+      </TableFooter>
+    </Table>
+  );
+};
 
 const MarginCalculator = () => {
-  const [activeType, setActveType] = useState("forex");
+  const [activeType, setActiveType] = useState("forex");
   const [calculations, setCalculations] = useState([]);
   const [contractSize, setContractSize] = useState(100000);
   const [lotSize, setLotSize] = useState(1);
@@ -49,356 +110,202 @@ const MarginCalculator = () => {
   const [margin, setMargin] = useState("");
   const [pair, setPair] = useState("EUR/USD");
   const [tradeType, setTradeType] = useState("BUY");
-  const [showConversion, setShowConversion] = useState(false);
+  const [manualConversion, setManualConversion] = useState(false);
   const [conversion, setConversion] = useState("");
   const [deposit, setDeposit] = useState("EUR");
-  const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState("");
 
-  const API_KEY = import.meta.env.VITE_API_KEY;
+  const { base, quote } = splitPair(pair);
+  // Cross currency: the account currency is neither side of the pair, so the
+  // margin (held in the base currency) needs a base -> deposit rate.
+  const needsConversion = deposit !== base && deposit !== quote;
 
-  const handleChange = (setter) => (e) => {
-    setter(e.target.value);
-  };
-  const handleTypeSelect = (value) => {
-    if (!value) return;
-    setActveType(value);
-  };
-  const handleSelect = (setter) => (value) => {
-    setter(value);
-  };
+  useEffect(() => {
+    if (!needsConversion) return;
+
+    let cancelled = false;
+    setConversion("");
+    fetchConversionRate(base, deposit)
+      .then((rate) => {
+        if (!cancelled) setConversion(parseFloat(rate.toFixed(5)));
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setManualConversion(true);
+          setError(`Could not fetch ${base}/${deposit}. Enter it manually.`);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [base, deposit, needsConversion]);
+
   const handleCalculate = () => {
-    let res;
-    let newPair;
-    //test
-    if (activeType === "forex") {
-      setMargin("-");
-      console.log("conversion", conversion);
-      res = marginCalculationForex(
-        contractSize,
-        lotSize,
-        price,
-        leverage,
-        pair,
-        deposit,
-        conversion,
-      );
-      newPair = {
-        id: Date.now(),
-        pair,
-        tradeType,
-        contractSize,
-        lotSize,
-        price,
-        margin: "-",
-        leverage,
-        marginRequired: parseFloat(res),
-      };
-    } else if (activeType === "cfd") {
-      setLeverage("-");
-      console.log("conversion cfd", conversion);
+    setError("");
 
-      res = marginCalculationCFD(
-        contractSize,
-        lotSize,
-        price,
-        margin,
-        pair,
-        deposit,
-        conversion,
-      );
-      newPair = {
-        id: Date.now(),
-        pair,
-        tradeType,
-        contractSize,
-        lotSize,
-        price,
-        margin,
-        leverage: "-",
-        marginRequired: parseFloat(res) * conversion,
-      };
-    } else {
-      console.log("error");
+    const contract = parseNumber(contractSize);
+    const lots = parseNumber(lotSize);
+    const currency = {
+      pair,
+      deposit,
+      price: parseNumber(price),
+      conversion: parseNumber(conversion),
+    };
+
+    const res =
+      activeType === "forex"
+        ? marginCalculationForex({
+            contractSize: contract,
+            lotSize: lots,
+            leverage: parseNumber(leverage),
+            ...currency,
+          })
+        : marginCalculationCFD({
+            contractSize: contract,
+            lotSize: lots,
+            marginPercent: parseNumber(margin),
+            ...currency,
+          });
+
+    if (!Number.isFinite(res) || res <= 0) {
+      const missing = [
+        "contract size",
+        "lot size",
+        activeType === "forex" ? "leverage" : "margin %",
+      ];
+      if (deposit === quote) missing.push("price");
+      if (needsConversion) missing.push(`${base} → ${deposit} conversion rate`);
+      setError(`Check these fields: ${missing.join(", ")}.`);
       return;
     }
 
-    setCalculations([...calculations, newPair]);
-  };
-
-  const handleCheckbox = () => {
-    setShowConversion(!showConversion);
+    setCalculations((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        pair,
+        tradeType,
+        contractSize,
+        lotSize,
+        price,
+        margin: activeType === "cfd" ? margin : "-",
+        leverage: activeType === "forex" ? leverage : "-",
+        deposit,
+        marginRequired: res,
+      },
+    ]);
   };
 
   const handleDelete = (id) => {
-    const newCalc = calculations.filter((item) => item.id !== id);
-    setCalculations(newCalc);
-  };
-
-  const handleDepositSelect = async (value) => {
-    const [base] = pair.split("/");
-    const conversionPair = `${base}/${value}`;
-
-    try {
-      const conversionPrice = await fetchExchangeRate(conversionPair, API_KEY);
-      setConversion(conversionPrice);
-    } catch (err) {
-      console.error("Conversion fetch failed", err);
-    }
-
-    setDeposit(value);
-  };
-
-  const totalPrice = calculations
-    .map((item) => item.marginRequired)
-    .reduce((sum, margin) => sum + margin, 0);
-
-  const handleToggleModal = () => {
-    setShowModal(true);
+    setCalculations((prev) => prev.filter((item) => item.id !== id));
   };
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4 p-2">
-      {showModal && <Modal setShowModal={setShowModal} content={marginHowTo} />}
-      <Card className="w-full lg:w-1/3 p-4">
-        <CardHeader className="flex justify-between items-center">
-          <div className="flex gap-1">
-            <h3 className="text-lg font-bold">Margin Calculator</h3>
-            <div
-              className="flex items-center justify-center mt-1"
-              onClick={handleToggleModal}
+    <ToolPage
+      title="Margin Calculator"
+      help={help}
+      result={
+        calculations.length > 0 && (
+          <MarginTable calculations={calculations} onDelete={handleDelete} />
+        )
+      }
+    >
+      <Field>
+        <Label>Type Of Calculation</Label>
+        <ToggleGroup
+          type="single"
+          value={activeType}
+          onValueChange={(value) => value && setActiveType(value)}
+          className="justify-start border-secondary"
+        >
+          {CALCULATION_TYPES.map((item) => (
+            <ToggleGroupItem
+              className="data-[state=on]:bg-primary data-[state=on]:text-white transition-all duration-150"
+              key={item}
+              value={item}
             >
-              <FaRegQuestionCircle style={{ cursor: "pointer" }} />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          <FieldGroup>
-            <Field>
-              <Label>Type Of Calculation</Label>
-              <ToggleGroup
-                type="single"
-                value={activeType}
-                onValueChange={handleTypeSelect}
-                className="justify-start border-secondary"
-              >
-                {calcType.map((item) => (
-                  <ToggleGroupItem
-                    className="data-[state=on]:bg-primary data-[state=on]:text-white transition-all duration-150"
-                    key={item}
-                    value={item}
-                  >
-                    {item}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            </Field>
-          </FieldGroup>
-          <FieldGroup className="flex flex-row">
-            <Field>
-              <Label>Symbol</Label>
-              <Select value={pair} onValueChange={handleSelect(setPair)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select symbol" />
-                </SelectTrigger>
-                <SelectContent>
-                  {allCurrencyPairs.map((pair) => (
-                    <SelectItem key={pair} value={pair}>
-                      {pair}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <Label>Order Type</Label>
-              <Select
-                value={tradeType}
-                onValueChange={handleSelect(setTradeType)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {tradeTypeList.map((item) => (
-                    <SelectItem key={item} value={item}>
-                      {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
-          <FieldGroup className="flex flex-row">
-            <Field>
-              <Label>Contract Size</Label>
-              <Input
-                className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                type="number"
-                inputMode="decimal"
-                placeholder={"set contact size..."}
-                value={contractSize}
-                onChange={handleChange(setContractSize)}
-              />
-            </Field>
-            <Field>
-              <Label>Lot Size</Label>
-              <Input
-                className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                type="number"
-                inputMode="decimal"
-                placeholder={"set lot size..."}
-                value={lotSize}
-                onChange={handleChange(setLotSize)}
-              />
-            </Field>
-          </FieldGroup>
-          <FieldGroup className="flex flex-row">
-            <Field>
-              <Label>Price</Label>
-              <Input
-                className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                type="number"
-                inputMode="decimal"
-                placeholder={"set instrument price..."}
-                value={price}
-                onChange={handleChange(setPrice)}
-              />
-            </Field>
-            <Field>
-              {activeType === "forex" && (
-                <>
-                  <Label>Leverage</Label>
-                  <Input
-                    className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    type="number"
-                    inputMode="decimal"
-                    placeholder={"set leverage..."}
-                    value={leverage}
-                    onChange={handleChange(setLeverage)}
-                  />
-                </>
-              )}
-              {activeType === "cfd" && (
-                <>
-                  <Label>Margin (%)</Label>
-                  <Input
-                    className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    type="number"
-                    inputMode="decimal"
-                    placeholder={"set margin percentage..."}
-                    value={margin}
-                    onChange={handleChange(setMargin)}
-                  />
-                </>
-              )}
-            </Field>
-          </FieldGroup>
-          <FieldGroup>
-            <Field>
-              <Label>Select Account Currency</Label>
-              <Select value={deposit} onValueChange={handleDepositSelect}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {uniqueCurrencies.map((item) => (
-                    <SelectItem key={item} value={item}>
-                      {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
-          <FieldGroup className="max-w-sm">
-            <Field orientation="horizontal">
-              <Checkbox
-                id="conversion-change"
-                name="conversion-change"
-                checked={showConversion}
-                onCheckedChange={handleCheckbox}
-              />
-              <Label htmlFor="converision-change">show conversion rate</Label>
-            </Field>
-          </FieldGroup>
-          {showConversion && (
-            <Input
-              placeholder={"base/deposit e.q EUR/AUD"}
-              value={conversion}
-              onChange={handleChange(setConversion)}
-            />
-          )}
-          <Button onClick={handleCalculate}>Calculate</Button>
-        </CardContent>
-      </Card>
-      {calculations.length > 0 && (
-        <Table className="lg:max-w-[50%] mx-auto">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Symbol</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Lot Size</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Margin (%)</TableHead>
-              <TableHead>Leverage</TableHead>
-              <TableHead className="text-right">Margin Required</TableHead>
-              <TableHead className="text-center">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {calculations.map((calc) => (
-              <TableRow key={calc.id}>
-                <TableCell>{calc.pair}</TableCell>
-                <TableCell>{calc.tradeType}</TableCell>
-                <TableCell>{calc.lotSize}</TableCell>
-                <TableCell>{calc.price}</TableCell>
-                <TableCell>{calc.margin}</TableCell>
-                <TableCell>{calc.leverage}</TableCell>
-                <TableCell className="text-right font-medium">
-                  {Number(calc.marginRequired).toFixed(2)}
-                </TableCell>
-                <TableCell className="text-center">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(calc.id)}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <MdDeleteForever size={20} />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-
-            {calculations.length === 0 && (
-              <TableRow>
-                <TableCell
-                  colSpan={8}
-                  className="text-center text-muted-foreground"
-                >
-                  No calculations yet
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-          <TableFooter className="w-full">
-            <TableRow>
-              <TableCell
-                colSpan={8}
-                className="text-right text-base font-medium"
-              >
-                Total margin:{" "}
-                <span className="ml-2 text-xl font-bold text-primary">
-                  {Number(totalPrice).toFixed(2)}
-                </span>{" "}
-                {deposit}
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
+              {item}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </Field>
+      <FieldGroup className="flex flex-row">
+        <SelectField
+          label="Symbol"
+          value={pair}
+          onChange={setPair}
+          options={CURRENCY_PAIRS}
+          placeholder="Select symbol"
+        />
+        <SelectField
+          label="Order Type"
+          value={tradeType}
+          onChange={setTradeType}
+          options={TRADE_TYPES}
+        />
+      </FieldGroup>
+      <FieldGroup className="flex flex-row">
+        <NumberField
+          label="Contract Size"
+          placeholder="set contract size..."
+          value={contractSize}
+          onChange={setContractSize}
+        />
+        <NumberField
+          label="Lot Size"
+          placeholder="set lot size..."
+          value={lotSize}
+          onChange={setLotSize}
+        />
+      </FieldGroup>
+      <FieldGroup className="flex flex-row">
+        <NumberField
+          label="Price"
+          placeholder="set instrument price..."
+          value={price}
+          onChange={setPrice}
+        />
+        {activeType === "forex" ? (
+          <NumberField
+            label="Leverage"
+            placeholder="set leverage..."
+            value={leverage}
+            onChange={setLeverage}
+          />
+        ) : (
+          <NumberField
+            label="Margin (%)"
+            placeholder="set margin percentage..."
+            value={margin}
+            onChange={setMargin}
+          />
+        )}
+      </FieldGroup>
+      <SelectField
+        label="Select Account Currency"
+        value={deposit}
+        onChange={setDeposit}
+        options={CURRENCIES}
+      />
+      <CheckboxField
+        label="enter conversion rate manually"
+        checked={manualConversion}
+        disabled={!needsConversion}
+        onChange={setManualConversion}
+      />
+      {needsConversion && (
+        <NumberField
+          label={`Conversion rate (${base} → ${deposit})`}
+          placeholder={`price of ${base}/${deposit}`}
+          value={conversion}
+          onChange={setConversion}
+          disabled={!manualConversion}
+        />
       )}
-    </div>
+      {error && <p className="text-sm text-destructive">{error}</p>}
+      <Button onClick={handleCalculate}>Calculate</Button>
+    </ToolPage>
   );
 };
 

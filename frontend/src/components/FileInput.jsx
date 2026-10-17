@@ -1,11 +1,9 @@
-"use client";
-
-import * as React from "react";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 
 function FileInput({ accept, onChange, fileName }) {
-  const inputRef = React.useRef(null);
+  const inputRef = useRef(null);
 
   const handleClick = () => {
     inputRef.current?.click();
@@ -13,7 +11,11 @@ function FileInput({ accept, onChange, fileName }) {
 
   return (
     <div className="flex flex-col gap-1 w-auto">
-      <Button onClick={handleClick} className="w-full justify-center">
+      <Button
+        type="button"
+        onClick={handleClick}
+        className="w-full justify-center"
+      >
         <Upload className="h-4 w-4" />
         {fileName || "Select a file"}
       </Button>
