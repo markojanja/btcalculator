@@ -23,13 +23,18 @@ export const myTasks = async (req, res, next) => {
   ];
 
   try {
+    // Open work stays on the board until it is completed, whenever it was
+    // created; completed tasks drop off at the end of the shift.
     const tasks = await prisma.tasks.findMany({
       where: {
         userId: user.id,
-        createdAt: {
-          gte: startOfDay,
-          lt: endOfDay,
-        },
+        OR: [
+          { status: { not: "COMPLETED" } },
+          { completedAt: { gte: startOfDay, lt: endOfDay } },
+        ],
+      },
+      orderBy: {
+        createdAt: "asc",
       },
 
       include: {
@@ -77,6 +82,7 @@ export const addTask = async (req, res, next) => {
         description,
         priority,
         status,
+        completedAt: status === "COMPLETED" ? new Date() : null,
         userId: req.user.id,
         clientId: client,
       },
@@ -141,6 +147,10 @@ export const editTask = async (req, res, next) => {
       userId,
       clientId: client,
     };
+
+    if (status && status !== oldTask.status) {
+      updatedFields.completedAt = status === "COMPLETED" ? new Date() : null;
+    }
 
     const updatedTask = await prisma.tasks.update({
       where: { id },
@@ -207,15 +217,13 @@ export const deleteTask = async (req, res, next) => {
 
 export const getHandover = async (req, res, next) => {
   try {
-    const { startOfDay, endOfDay } = getShiftDayRange();
-
+    // Every CS ticket that is still open, across the whole team.
     const handover = await prisma.tasks.findMany({
       where: {
         status: "CS_TICKET",
-        createdAt: {
-          gte: startOfDay,
-          lt: endOfDay,
-        },
+      },
+      orderBy: {
+        createdAt: "desc",
       },
       include: {
         client: {

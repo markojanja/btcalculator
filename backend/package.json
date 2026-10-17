@@ -9,7 +9,8 @@
     "production": "node server.js",
     "migrate": "prisma generate && prisma migrate deploy",
     "seed": "node populate_db.js",
-    "build": "npm install && npx puppeteer browsers install chrome"
+    "build": "npm install && npx puppeteer browsers install chrome",
+    "test": "node --test"
   },
   "keywords": [],
   "author": "",
