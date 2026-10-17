@@ -3,12 +3,11 @@ import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Label } from "@radix-ui/react-label";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { AuthProvider } from "../contexts/AuthContext"; // ✅ import
+import { errorMessage } from "../lib/api";
 
-// ✅ split into two components
-const LoginForm = () => {
+const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -69,22 +68,13 @@ const LoginForm = () => {
             </Button>
             {error && (
               <p className="bg-red-400 text-red-900 p-2 rounded-md text-sm text-center font-bold">
-                Invalid username or password
+                {errorMessage(error)}
               </p>
             )}
           </form>
         </CardContent>
       </Card>
     </div>
-  );
-};
-
-// ✅ wrap with its own AuthProvider
-const Login = () => {
-  return (
-    <AuthProvider>
-      <LoginForm />
-    </AuthProvider>
   );
 };
 

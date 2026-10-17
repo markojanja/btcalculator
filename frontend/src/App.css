@@ -61,91 +61,6 @@
 
 /*Calendar styles*/
 
-#date-container {
-  display: flex;
-  flex: 1;
-  width: 100%;
-  gap: 1rem;
-
-  @media (max-width: 426px) {
-    flex-direction: column;
-  }
-}
-
-.flatpickr-calendar,
-.flatpickr-months {
-  background-color: var(--secondary) !important;
-  color: var(--foreground) !important;
-  border-radius: 0px !important;
-}
-.flatpickr-weekday {
-  color: var(--foreground) !important;
-}
-.numInputWrapper {
-  color: var(--foreground) !important;
-}
-.flatpickr-monthDropdown-months {
-  color: var(--foreground) !important;
-  background-color: var(--secondary) !important;
-}
-
-.flatpickr-day {
-  color: var(--foreground) !important;
-}
-
-.flatpickr-day.selected,
-.flatpickr-day:hover {
-  background-color: var(--primary) !important;
-  background: var(--primary) !important;
-  border-color: var(--primary) !important;
-}
-
-.flatpickr-next-month svg,
-.flatpickr-prev-month svg {
-  fill: var(--foreground) !important;
-}
-
-.flatpickr-next-month svg:hover,
-.flatpickr-prev-month svg:hover {
-  fill: var(--primary) !important;
-}
-
-.flatpickr-current-month .numInputWrapper span.arrowDown:after {
-  border-top-color: var(--foreground) !important;
-}
-.flatpickr-current-month .numInputWrapper span.arrowUp:after {
-  border-bottom-color: var(--foreground) !important;
-}
-
-.date-picker-container {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-.date-picker-container input {
-  width: 100%;
-  padding: 10px;
-  padding-right: 35px;
-  border: 1px solid var(--primary);
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.calendar-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--primary) !important; /* Default color */
-  cursor: pointer;
-  font-size: 16px;
-  fill: var(--primary) !important;
-}
-.calendar-icon:hover {
-  color: var(--primary) !important;
-}
-/*End Calendar styles*/
-
 .modal-container {
   display: flex;
   flex-direction: column;
@@ -166,17 +81,6 @@
 .modal-container p {
   text-align: left;
 }
-.modal-header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-.modal-btn {
-  padding: 0.5rem;
-  cursor: pointer;
-}
-
 .modal-container ul {
   display: flex;
   flex-direction: column;

@@ -130,6 +130,7 @@ export const getTasksStatusAndPriority = async (filter, excludeCompleted) => {
       user: {
         select: {
           firstname: true,
+          lastname: true,
         },
       },
       client: {

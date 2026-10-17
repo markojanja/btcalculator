@@ -1,26 +1,7 @@
-import { FaBusinessTime } from "react-icons/fa";
-import { RiProgress2Line } from "react-icons/ri";
-import { SiJirasoftware } from "react-icons/si";
-import { IoCheckmarkDoneCircle } from "react-icons/io5";
-import { Link } from "react-router-dom";
-import DashCard from "../components/DashCard";
-import useNotification from "../hooks/useNotification";
 import { useNavigate } from "react-router-dom";
-
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  LinearScale,
-  BarElement,
-} from "chart.js/auto";
 import { Pie, Bar } from "react-chartjs-2";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { BriefcaseBusiness, CircleCheckBig, CircleDashed, Ticket } from "lucide-react";
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -28,133 +9,54 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { useDashboard } from "../api/admin";
+import { formatDate, humanize } from "../lib/format";
+import DashCard from "../components/dashboard/DashCard";
+import ChartCard from "../components/dashboard/ChartCard";
+import TableCard from "../components/dashboard/TableCard";
+import {
+  chartOptions,
+  pieData,
+  priorityBarData,
+} from "../components/dashboard/chartConfig";
+import Loading from "../components/Loading";
 
-ChartJS.register(ArcElement, Tooltip, Legend, LinearScale, BarElement);
+const STATUS_CARDS = [
+  { status: "TODO", title: "Todo", Icon: BriefcaseBusiness, color: "red" },
+  { status: "IN_PROGRESS", title: "In Progress", Icon: CircleDashed, color: "yellow" },
+  { status: "JIRA_TICKET", title: "Jira Ticket", Icon: Ticket, color: "teal" },
+  { status: "COMPLETED", title: "Completed", Icon: CircleCheckBig, color: "green" },
+];
+
+// Spelled out so Tailwind keeps these classes in the build.
+const CARD_COLORS = {
+  red: { bg: "bg-red-500/20", clr: "text-red-500/80" },
+  yellow: { bg: "bg-yellow-500/20", clr: "text-yellow-500/80" },
+  teal: { bg: "bg-teal-500/20", clr: "text-teal-500/80" },
+  green: { bg: "bg-green-500/20", clr: "text-green-500/80" },
+};
+
+const ClickableRow = ({ to, children }) => {
+  const navigate = useNavigate();
+  return (
+    <TableRow onClick={() => navigate(to)} className="cursor-pointer">
+      {children}
+    </TableRow>
+  );
+};
 
 const Dashboard = () => {
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const [dataCard, setDataCard] = useState([]);
-  const [barChartData, setBarChartData] = useState([]);
-  const [pieChartdata, setPieChartData] = useState([]);
-  const [pieChartdataCli, setPieChartDataCli] = useState([]);
-  const [latestTasks, setLatestTask] = useState([]);
-  const [recentUsers, setRecentUsers] = useState([]);
-  const [recentClients, setRecentClients] = useState([]);
-  const { lastEvent } = useNotification();
+  const { data, isLoading } = useDashboard();
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await axios.get(`${BACKEND_URL}/admindata/`, {
-          withCredentials: true,
-        });
-        console.log(response);
-        setDataCard(response.data.tasksByStatus);
-        setBarChartData(response.data.tasksByPriority);
-        setPieChartData(response.data.rawByUser);
-        setPieChartDataCli(response.data.clientsTasks);
-        setLatestTask(response.data.latestTasks);
-        setRecentUsers(response.data.recentUsers);
-        setRecentClients(response.data.recentClients);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getData();
-  }, [lastEvent]);
+  if (isLoading || !data) return <Loading />;
 
-  const labels1 = pieChartdata.map((obj) => obj.firstname);
-  const data = {
-    labels: labels1,
-    datasets: [
-      {
-        label: "Pending Tasks",
-        data: pieChartdata.map((obj) => obj.count),
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.5)",
-          "rgba(54, 162, 235, 0.5)",
-          "rgba(255, 206, 86, 0.5)",
-          "rgba(75, 192, 192, 0.5)",
-          "rgba(153, 102, 255, 0.5)",
-        ],
-        borderColor: [
-          "rgba(255, 99, 132, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  console.log("this is data", data.datasets[0]["data"]);
-  const labels2 = pieChartdataCli.map((obj) => obj.name);
-  const clientsTasksData = {
-    labels: labels2,
-    datasets: [
-      {
-        label: "Pending Tasks by Client",
-        data: pieChartdataCli?.map((obj) => obj.count),
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.5)",
-          "rgba(54, 162, 235, 0.5)",
-          "rgba(255, 206, 86, 0.5)",
-          "rgba(75, 192, 192, 0.5)",
-          "rgba(153, 102, 255, 0.5)",
-        ],
-        borderColor: [
-          "rgba(255, 99, 132, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const priorityOrder = ["HIGH", "MEDIUM", "LOW"];
-  const colors = [
-    { bg: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" },
-    { bg: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" },
-    { bg: "rgba(75, 192, 192, 0.5)", border: "rgba(75, 192, 192, 1)" },
-  ];
-
-  const datasets = priorityOrder
-    .map((priority, i) => {
-      const match = barChartData.find((d) => d.priority === priority);
-      const count = match ? match._count.priority : 0;
-
-      if (count === 0) return null;
-      return {
-        label: priority,
-        data: [count],
-        backgroundColor: colors[i].bg,
-        borderColor: colors[i].border,
-        borderWidth: 1,
-      };
-    })
-    .filter(Boolean);
-
-  const barData = {
-    labels: [""],
-    datasets,
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: window.innerWidth < 767 ? "bottom" : "left",
-      },
-    },
-  };
-
-  const navigate = useNavigate();
+  const countFor = (status) =>
+    data.tasksByStatus.find((item) => item.status === status)?._count?.status ??
+    0;
+  const byUser = pieData(data.rawByUser, "firstname", "Pending Tasks");
+  const byClient = pieData(data.clientsTasks, "name", "Pending Tasks by Client");
+  const byPriority = priorityBarData(data.tasksByPriority);
+  const options = chartOptions();
 
   return (
     <div className="flex flex-1 flex-col w-full p-6">
@@ -163,231 +65,121 @@ const Dashboard = () => {
       </div>
       <div className="flex flex-col items-center">
         <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
-          <DashCard
-            title={"Todo"}
-            value={
-              dataCard.find((item) => item.status === "TODO")?._count?.status ||
-              0
-            }
-            linkText={"view more"}
-            linkHref={"tasks/TODO"}
-            Icon={FaBusinessTime}
-            bg="bg-red-500/20"
-            clr={"text-red-500/80"}
-          />
-          <DashCard
-            title={"In Progress"}
-            value={
-              dataCard.find((item) => item.status === "IN_PROGRESS")?._count
-                ?.status || 0
-            }
-            linkText={"view more"}
-            linkHref={"tasks/IN_PROGRESS"}
-            Icon={RiProgress2Line}
-            bg="bg-yellow-500/20"
-            clr={"text-yellow-500/80"}
-          />
-          <DashCard
-            title={"Jira Ticket"}
-            value={
-              dataCard.find((item) => item.status === "JIRA_TICKET")?._count
-                ?.status || 0
-            }
-            linkText={"view more"}
-            linkHref={"tasks/JIRA_TICKET"}
-            Icon={SiJirasoftware}
-            bg="bg-teal-500/20"
-            clr={"text-teal-500/80"}
-          />
-          <DashCard
-            title={"Completed"}
-            value={
-              dataCard.find((item) => item.status === "COMPLETED")?._count
-                ?.status || 0
-            }
-            linkText={"view more"}
-            linkHref={"tasks/COMPLETED"}
-            Icon={IoCheckmarkDoneCircle}
-            bg="bg-green-500/20"
-            clr={"text-green-500/80"}
-          />
+          {STATUS_CARDS.map(({ status, title, Icon, color }) => (
+            <DashCard
+              key={status}
+              title={title}
+              value={countFor(status)}
+              linkText="view more"
+              linkHref={`tasks/${status}`}
+              Icon={Icon}
+              {...CARD_COLORS[color]}
+            />
+          ))}
         </div>
+
         <div className="grid lg:grid-cols-6 w-full gap-2 py-4">
-          <Card className={"col-span-2 min-w-0"}>
-            <CardTitle className={"text-left px-6"}>
-              <h3>Pending Tasks by User</h3>
-            </CardTitle>
-            <CardContent>
-              {data.datasets[0].data.length > 0 ? (
-                <div className="relative flex p-2 h-75 w-full">
-                  <Pie data={data} options={options} />
-                </div>
-              ) : (
-                <div className="relative flex p-2 h-75 w-full items-center justify-center">
-                  <h2>No Pending Tasks at the moment</h2>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-          <Card className={"col-span-2 min-w-0"}>
-            <CardTitle className={"text-left px-6"}>
-              <h3>Pending Tasks by Priority</h3>
-            </CardTitle>
-            <CardContent>
-              {barData.datasets.length > 0 ? (
-                <div className="relative flex p-2 h-75 w-full">
-                  <Bar data={barData} options={options} />
-                </div>
-              ) : (
-                <div className="relative flex p-2 h-75 w-full items-center justify-center">
-                  <h2>No Pending Tasks at the moment</h2>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-          <Card className={"col-span-2 min-w-0"}>
-            <CardTitle className={"text-left px-6"}>
-              <h3>Pending Tasks by Clients</h3>
-            </CardTitle>
-            <CardContent>
-              {clientsTasksData.datasets[0].data.length > 0 ? (
-                <div className="flex p-2 h-75 w-full">
-                  <Pie data={clientsTasksData} options={options} />
-                </div>
-              ) : (
-                <div className="relative flex p-2 h-75 w-full items-center justify-center">
-                  <h2>No Pending Tasks at the moment</h2>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <ChartCard
+            title="Pending Tasks by User"
+            isEmpty={data.rawByUser.length === 0}
+          >
+            <Pie data={byUser} options={options} />
+          </ChartCard>
+          <ChartCard
+            title="Pending Tasks by Priority"
+            isEmpty={byPriority.datasets.length === 0}
+          >
+            <Bar data={byPriority} options={options} />
+          </ChartCard>
+          <ChartCard
+            title="Pending Tasks by Clients"
+            isEmpty={data.clientsTasks.length === 0}
+          >
+            <Pie data={byClient} options={options} />
+          </ChartCard>
         </div>
-        <div className="grid lg:grid-cols-4 w-full gap-2 py-4 mx-auto">
-          <Card className={"lg:col-span-4 w-full overflow-auto"}>
-            <CardTitle className={"text-left px-6"}>
-              <h4>Recent tasks</h4>
-            </CardTitle>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead>Created At</TableHead>
-                    <TableHead>Assigne</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {latestTasks.map((task) => (
-                    <TableRow
-                      onClick={() => navigate(`/dashboard/task/${task.id}`)}
-                      key={task.id}
-                      className={"cursor-pointer"}
-                    >
-                      <TableCell>{task.title}</TableCell>
-                      <TableCell>{task.status}</TableCell>
-                      <TableCell>{task.priority}</TableCell>
-                      <TableCell>
-                        {new Date(task.createdAt).toLocaleDateString("en-GB", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })}
-                      </TableCell>
-                      <TableCell>
-                        {task.user.firstname} {task.user.lastname}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter className={"mb-0 mt-auto"}>
-              <Link to="tasks/ALL">view all tasks</Link>
-            </CardFooter>
-          </Card>
+
+        <div className="grid w-full gap-2 py-4">
+          <TableCard
+            title="Recent tasks"
+            footerLink={{ to: "tasks/ALL", label: "view all tasks" }}
+          >
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Priority</TableHead>
+                <TableHead>Created At</TableHead>
+                <TableHead>Assignee</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.latestTasks.map((task) => (
+                <ClickableRow key={task.id} to={`/dashboard/task/${task.id}`}>
+                  <TableCell>{task.title}</TableCell>
+                  <TableCell>{task.status}</TableCell>
+                  <TableCell>{task.priority}</TableCell>
+                  <TableCell>{formatDate(task.createdAt)}</TableCell>
+                  <TableCell>
+                    {task.user.firstname} {task.user.lastname}
+                  </TableCell>
+                </ClickableRow>
+              ))}
+            </TableBody>
+          </TableCard>
         </div>
-        <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
-          <Card className={"col-span-2 overflow-auto"}>
-            <CardTitle className={"text-left px-6"}>
-              <h4>Recent Clients</h4>
-            </CardTitle>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Server</TableHead>
-                    <TableHead>Platform</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentClients.map((client) => (
-                    <TableRow
-                      onClick={() => navigate(`/clients/${client.id}/edit`)}
-                      key={client.id}
-                      className={"cursor-pointer"}
-                    >
-                      <TableCell>{client.name}</TableCell>
-                      <TableCell>{client.status}</TableCell>
-                      <TableCell>{client.server[0]}</TableCell>
-                      <TableCell>
-                        {client.platform.map((p, idx) => (
-                          <Badge
-                            variant="secondary"
-                            size="s"
-                            className={"mr-1"}
-                            key={idx}
-                          >
-                            {p}
-                          </Badge>
-                        ))}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter className={"mb-0 mt-auto"}>
-              <Link to="/clients">view all clients</Link>
-            </CardFooter>
-          </Card>
-          <Card className={"col-span-2 overflow-auto"}>
-            <CardTitle className={"text-left px-6"}>
-              <h4>Recent Users</h4>
-            </CardTitle>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentUsers.map((user) => (
-                    <TableRow
-                      onClick={() => navigate(`/users/edit/${user.id}`)}
-                      key={user.id}
-                      className={"cursor-pointer"}
-                    >
-                      <TableCell>{user.firstname}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell className="capitalize">
-                        {user.role.toLowerCase()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter className={"mb-0 mt-auto"}>
-              <Link to="/users">view all users</Link>
-            </CardFooter>
-          </Card>
+
+        <div className="grid lg:grid-cols-2 w-full gap-2 py-4">
+          <TableCard
+            title="Recent Clients"
+            footerLink={{ to: "/clients", label: "view all clients" }}
+          >
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Server</TableHead>
+                <TableHead>Platform</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.recentClients.map((client) => (
+                <ClickableRow key={client.id} to={`/clients/${client.id}/edit`}>
+                  <TableCell>{client.name}</TableCell>
+                  <TableCell>{client.status}</TableCell>
+                  <TableCell>{client.server[0]}</TableCell>
+                  <TableCell>
+                    {client.platform.map((platform) => (
+                      <Badge variant="secondary" className="mr-1" key={platform}>
+                        {platform}
+                      </Badge>
+                    ))}
+                  </TableCell>
+                </ClickableRow>
+              ))}
+            </TableBody>
+          </TableCard>
+          <TableCard
+            title="Recent Users"
+            footerLink={{ to: "/users", label: "view all users" }}
+          >
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.recentUsers.map((user) => (
+                <ClickableRow key={user.id} to={`/users/edit/${user.id}`}>
+                  <TableCell>{user.firstname}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{humanize(user.role)}</TableCell>
+                </ClickableRow>
+              ))}
+            </TableBody>
+          </TableCard>
         </div>
       </div>
     </div>

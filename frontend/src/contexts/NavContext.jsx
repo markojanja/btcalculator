@@ -6,8 +6,7 @@ const NavContextProvider = ({ children }) => {
   const [sidebarActive, setSidebarActive] = useState(false);
 
   const toggleSidebar = () => {
-    setSidebarActive(!sidebarActive);
-    console.log(sidebarActive);
+    setSidebarActive((active) => !active);
   };
 
   const closeSidebar = () => {

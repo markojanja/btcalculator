@@ -1,71 +1,43 @@
-import axios from "axios";
-import DOMPurify from "dompurify";
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { useFeature } from "../api/features";
 import useAuth from "../hooks/useAuth";
-import { Card, CardContent } from "@/components/ui/card";
+import { isStaff } from "../constants/domain";
+import { formatDate } from "../lib/format";
+import DetailLayout from "../components/DetailLayout";
+import Loading from "../components/Loading";
 
 const FeatureDetails = () => {
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { id } = useParams();
   const { user } = useAuth();
-  const [feature, setFeature] = useState({});
-  useEffect(() => {
-    const getFeature = async () => {
-      try {
-        const response = await axios.get(`${BACKEND_URL}/features/${id}`, {
-          withCredentials: true,
-        });
-        console.log(response);
-        setFeature(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getFeature();
-  }, []);
+  const { data: feature, isLoading } = useFeature(id);
 
-  const clean = DOMPurify.sanitize(feature.description);
+  if (isLoading || !feature) return <Loading />;
 
   return (
-    <div className="flex flex-col w-full lg:w-187.5 mx-auto gap-4">
-      <div
-        className={
-          "flex justify-between items-center w-full bg-card shadow-sm p-4 rounded-md"
-        }
-      >
-        <h2 className="text-2xl font-bold">{feature.title}</h2>
-        {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
+    <DetailLayout
+      title={feature.title}
+      html={feature.description}
+      actions={
+        isStaff(user) && (
           <Link
             to={`/features/${feature.id}/edit`}
-            className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150  text-sm"
+            className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
           >
             Edit feature
           </Link>
-        )}
-      </div>
-      <Card>
-        <div
-          className="flex flex-col overflow-y-scroll max-h-screen text-left p-4 gap-4 rte"
-          id="feature-desc"
-          dangerouslySetInnerHTML={{ __html: clean }}
-        />
-      </Card>
-
-      <Card className={"text-left px-2 w-full lg:w-187.5 mx-auto"}>
-        <CardContent className={"flex flex-col"}>
-          <p>author:{feature.user?.username}</p>
+        )
+      }
+      details={
+        <>
+          <p>author: {feature.user?.username}</p>
           <p>published: {feature.published ? "✅" : "❌"}</p>
           <p>released: {feature.released ? "✅" : "❌"}</p>
-          <p>
-            release date: {new Date(feature.releaseDate).toLocaleDateString()}
-          </p>
-          <Link style={{ alignSelf: "flex-end" }} to={"/features"}>
-            Back to features
-          </Link>
-        </CardContent>
-      </Card>
-    </div>
+          <p>release date: {formatDate(feature.releaseDate)}</p>
+        </>
+      }
+      backTo="/features"
+      backLabel="Back to features"
+    />
   );
 };
 

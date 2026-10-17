@@ -10,10 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOutIcon, UserIcon } from "lucide-react";
-
-import { RiMenu4Line } from "react-icons/ri";
-import { FaUserCircle } from "react-icons/fa";
+import { CircleUserRound, LogOutIcon, Menu, UserIcon } from "lucide-react";
 
 import { NavContext } from "../contexts/NavContext";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -42,7 +39,7 @@ const Header = () => {
           <DropdownMenu className="bg-background border-none">
             <DropdownMenuTrigger asChild>
               <Button variant="nostyle">
-                <FaUserCircle />
+                <CircleUserRound />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="border-none shadow-md">
@@ -70,7 +67,7 @@ const Header = () => {
             className="flex items-center justify-center"
             onClick={toggleSidebar}
           >
-            <RiMenu4Line size={20} />
+            <Menu size={20} />
           </li>
         </ul>
       </nav>

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
+import { isStaff } from "../constants/domain";
 
 const IndexPageRedirect = () => {
   const { user, loading } = useAuth();
@@ -12,7 +13,7 @@ const IndexPageRedirect = () => {
 
     if (!user) {
       navigate("/login", { replace: true });
-    } else if (user.role === "ADMIN" || user.role === "MANAGER") {
+    } else if (isStaff(user)) {
       navigate("/dashboard", { replace: true });
     } else if (user.role === "SUPPORT") {
       navigate("/tasks", { replace: true });
