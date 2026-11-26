@@ -1,4 +1,5 @@
 import express from "express";
+import { staffOnly } from "../middleware/requireRole.js";
 import {
   activeClients,
   addClient,
@@ -10,10 +11,10 @@ import {
 const router = express.Router();
 
 router.get("/clients/", getClients);
-router.post("/clients/new", addClient);
+router.post("/clients/new", staffOnly, addClient);
 router
-  .get("/clients/:id/edit", editClientGet)
-  .put("/clients/:id/edit", editClientPost);
+  .get("/clients/:id/edit", staffOnly, editClientGet)
+  .put("/clients/:id/edit", staffOnly, editClientPost);
 
 router.get("/clients/active", activeClients);
 

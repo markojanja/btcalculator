@@ -203,19 +203,20 @@ const Sidebar = () => {
             Guides
           </NavLink>
 
-          {user?.role === "ADMIN" && (
-            <NavLink
-              to="/users"
-              className={({ isActive }) =>
-                `flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
-                  isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
-                }`
-              }
-            >
-              <Users className="h-4 w-4" />
-              User Management
-            </NavLink>
-          )}
+          {user?.role === "ADMIN" ||
+            (user?.role === "MANAGER" && (
+              <NavLink
+                to="/users"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                    isActive ? "bg-primary font-medium" : "hover:bg-primary/80"
+                  }`
+                }
+              >
+                <Users className="h-4 w-4" />
+                User Management
+              </NavLink>
+            ))}
 
           <NavLink
             to="/clients"

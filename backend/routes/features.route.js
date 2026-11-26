@@ -1,4 +1,5 @@
 import express from "express";
+import { staffOnly } from "../middleware/requireRole.js";
 import {
   addFeature,
   editFeatueGet,
@@ -10,10 +11,10 @@ import {
 const router = express.Router();
 
 router.get("/features/all", getFeatures);
-router.post("/features/new", addFeature);
+router.post("/features/new", staffOnly, addFeature);
 router.get("/features/:id", featureDeatils);
 router
-  .get("/features/:id/edit", editFeatueGet)
-  .put("/features/:id/edit", editFeaturePut);
+  .get("/features/:id/edit", staffOnly, editFeatueGet)
+  .put("/features/:id/edit", staffOnly, editFeaturePut);
 
 export default router;

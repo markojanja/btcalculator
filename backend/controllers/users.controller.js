@@ -22,6 +22,13 @@ export const addUser = async (req, res, next) => {
     centroid,
   } = req.body;
 
+  // A MANAGER can only create SUPPORT users (role defaults to SUPPORT).
+  if (req.user.role !== "ADMIN" && role && role !== "SUPPORT") {
+    return res
+      .status(403)
+      .json({ message: "Only an admin can create admin or manager accounts." });
+  }
+
   try {
     const existingUser = await prisma.user.findFirst({
       where: {
@@ -104,6 +111,26 @@ export const editUserPut = async (req, res, next) => {
       active,
       centroid,
     };
+    const target = await prisma.user.findUnique({
+      where: { id },
+      select: { role: true },
+    });
+    if (!target) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Only an ADMIN can manage ADMIN and MANAGER accounts;
+    // a MANAGER can only edit SUPPORT users and keep them SUPPORT.
+    const callerIsAdmin = req.user.role === "ADMIN";
+    if (
+      !callerIsAdmin &&
+      (target.role !== "SUPPORT" || (role && role !== "SUPPORT"))
+    ) {
+      return res.status(403).json({
+        message: "Only an admin can modify admin or manager accounts.",
+      });
+    }
+
     await prisma.user.update({
       where: {
         id: id,
