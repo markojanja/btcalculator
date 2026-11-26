@@ -203,7 +203,7 @@ const Sidebar = () => {
             Guides
           </NavLink>
 
-          {user?.role !== "SUPPORT" && (
+          {["ADMIN", "MANAGER"].includes(user?.role) && (
             <NavLink
               to="/users"
               className={({ isActive }) =>
