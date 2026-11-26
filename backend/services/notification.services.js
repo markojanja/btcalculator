@@ -14,7 +14,6 @@ export const notifyTaskCreated = (task) => {
         message: `New task created: ${task.title}`,
         taskId: task.id,
       });
-    console.log("Notification emitted for task:", task.id);
   } catch (err) {
     console.error("Failed to emit notification:", err);
   }
@@ -32,7 +31,6 @@ export const notifyTaskUpdatedAdmin = (task) => {
       message: `Your task has been updated by Admin: ${task.title}`,
       taskId: task.id,
     });
-    console.log("Notification emitted for task:", task.id);
   } catch (err) {
     console.error("Failed to emit notification:", err);
   }
@@ -67,7 +65,6 @@ export const notifyTaskUpdate = (oldTask, newTask, actor) => {
         actor: actor.username,
       });
 
-    console.log("Reassignment notifications emitted for task:", newTask.id);
   } catch (err) {
     console.error("Failed to emit reassignment notifications:", err);
   }
@@ -86,7 +83,6 @@ export const notifyTaskUpdatedSupport = (task, actor) => {
         actor: actor.username,
       });
 
-    console.log("Admins notified about task update:", task.id);
   } catch (err) {
     console.error("Failed to notify admins:", err);
   }

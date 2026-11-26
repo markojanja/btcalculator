@@ -13,5 +13,4 @@ export const createFolders = async () => {
     fs.mkdir(uploadsDir, { recursive: true }),
     fs.mkdir(downloadsDir, { recursive: true }),
   ]);
-  console.log("Uploads and downloads folders are ready.");
 };

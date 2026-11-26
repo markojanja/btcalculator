@@ -11,7 +11,6 @@ export const getUsers = async (req, res) => {
 };
 
 export const addUser = async (req, res, next) => {
-  console.log(req.body);
   const {
     firstname,
     lastname,

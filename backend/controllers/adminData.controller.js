@@ -74,7 +74,6 @@ export const getAdminTasks = async (req, res, next) => {
 
 export const getAdminTask = async (req, res, next) => {
   const { id } = req.params;
-  // console.log(req.params);
   try {
     const task = await prisma.tasks.findUnique({
       where: {

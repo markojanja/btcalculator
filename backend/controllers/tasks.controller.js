@@ -106,7 +106,6 @@ export const addTask = async (req, res, next) => {
 export const editTask = async (req, res, next) => {
   const { id, title, description, status, priority, userId, client } = req.body;
 
-  console.log("this is client ID ", client);
 
   try {
     const oldTask = await prisma.tasks.findUnique({
@@ -117,7 +116,6 @@ export const editTask = async (req, res, next) => {
         },
       },
     });
-    console.log(oldTask.user.username, "this is oldtask username");
 
     const updatedFields = {
       ...(title && { title }),

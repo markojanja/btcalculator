@@ -61,7 +61,6 @@ export const featureDeatils = async (req, res) => {
 
 export const addFeature = async (req, res) => {
   const { title, description, releaseDate, released, published } = req.body;
-  console.log(req.body, req.user.id);
   try {
     const formattedDate = new Date(releaseDate);
 
@@ -107,7 +106,6 @@ export const editFeaturePut = async (req, res, next) => {
       published,
       userId: req.user.id,
     };
-    console.log(data);
     const featureToEdit = await prisma.features.update({
       where: {
         id: id,

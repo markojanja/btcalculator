@@ -74,7 +74,6 @@ export const editGuidePut = async (req, res, next) => {
       description,
       published,
     };
-    console.log(data);
     const guidesToEdit = await prisma.guides.update({
       where: {
         id: id,
