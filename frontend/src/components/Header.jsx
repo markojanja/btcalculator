@@ -11,12 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOutIcon, UserIcon } from "lucide-react";
-
 import { RiMenu4Line } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
-
 import { NavContext } from "../contexts/NavContext";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+
 const Header = () => {
   const { toggleSidebar } = useContext(NavContext);
 

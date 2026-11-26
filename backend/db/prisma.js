@@ -7,6 +7,6 @@ const databaseUrl =
 
 process.env.DATABASE_URL = databaseUrl;
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ omit: { user: { password: true } } });
 
 export default prisma;

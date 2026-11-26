@@ -10,6 +10,7 @@ passport.use(
         where: {
           username: username,
         },
+        omit: { password: false },
       });
       if (!user) {
         return done(null, false, { message: "Invalid credentials." });
@@ -19,11 +20,12 @@ passport.use(
       if (!match) {
         return done(null, false, { message: "Invalid credentials." });
       }
-      return done(null, user);
+      const { password: passwordHash, ...safeUser } = user;
+      return done(null, safeUser);
     } catch (error) {
       console.log(error);
     }
-  })
+  }),
 );
 
 passport.serializeUser((user, done) => {

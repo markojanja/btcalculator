@@ -56,6 +56,7 @@ export const passwordChange = async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: { id: userID },
+    omit: { password: false },
   });
   // compare pwd
 
