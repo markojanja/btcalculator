@@ -22,6 +22,7 @@ const Converter = () => {
   const [symbols, setSymbols] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [downloadId, setDownloadId] = useState(null);
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -45,6 +46,8 @@ const Converter = () => {
     formData.append("xlsxFile", excelFile);
     try {
       setLoading(true);
+      setSuccess("");
+      setDownloadId(null);
       const response = await axios.post(`${BACKEND_URL}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -55,9 +58,11 @@ const Converter = () => {
       setSuccess(response.data.message);
       setMessage(response.data.noMatch.message);
       setSymbols(response.data.noMatch.symbols);
+      setDownloadId(response.data.downloadId);
+    } catch {
+      // the error toast (axios interceptor) shows what went wrong
+    } finally {
       setLoading(false);
-    } catch (error) {
-      console.error("Upload error:", error);
     }
   };
 
@@ -109,10 +114,10 @@ const Converter = () => {
           <Button onClick={handleUpload}>
             {loading ? "Loading..." : "Upload and Update"}
           </Button>
-          {success && (
+          {success && downloadId && (
             <>
               <p>{success}</p>
-              <DownloadButton jsonFile={jsonFile} />
+              <DownloadButton downloadId={downloadId} jsonFile={jsonFile} />
             </>
           )}
         </CardContent>

@@ -109,7 +109,6 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(express.json());
 app.use(cookieParser());
-app.use("/downloads", express.static(path.join(__dirname, "downloads")));
 
 createFolders();
 

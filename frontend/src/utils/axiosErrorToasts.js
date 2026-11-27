@@ -14,7 +14,7 @@ const getMessage = (data) => {
 
 axios.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (axios.isCancel(error)) return Promise.reject(error);
 
     if (!error.response) {
@@ -24,13 +24,24 @@ axios.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    const { status, data } = error.response;
+    const { status } = error.response;
+    let { data } = error.response;
     const url = error.config?.url ?? "";
 
     // /auth/status returns 401 on every page load when logged out, and the
     // login page shows its own error message
     if (url.endsWith("/auth/status") || url.endsWith("/auth/login")) {
       return Promise.reject(error);
+    }
+
+    // Requests made with responseType "blob" (file downloads) get their JSON
+    // error body as a Blob too
+    if (data instanceof Blob) {
+      try {
+        data = JSON.parse(await data.text());
+      } catch {
+        data = null;
+      }
     }
 
     const fallback =

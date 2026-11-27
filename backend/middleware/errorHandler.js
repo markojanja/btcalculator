@@ -1,5 +1,6 @@
 const errorHandler = (err, req, res, next) => {
-  const statusCode = err.status || 500;
+  // multer errors (file too large, too many files) are the client's fault
+  const statusCode = err.status || (err.name === "MulterError" ? 400 : 500);
 
   return res.status(statusCode).json({
     title: "error",

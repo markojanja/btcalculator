@@ -1,17 +1,11 @@
 import multer from "multer";
-import url from "url";
-import path from "path";
 
-const __filename = url.fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "..", "uploads"));
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
+// Uploaded files stay in memory: nothing is written to disk under a name
+// chosen by the browser, and nothing needs cleaning up afterwards.
+export const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50 MB per file
+    files: 2,
   },
 });
-
-export const upload = multer({ storage: storage });
