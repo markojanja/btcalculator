@@ -170,7 +170,7 @@
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
-  --radius: 1rem;
+  --radius: 0.625rem;
   --shadow-x: 0px;
   --shadow-y: 10px;
   --shadow-blur: 40px;
@@ -240,7 +240,7 @@
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
-  --radius: 1rem;
+  --radius: 0.625rem;
   --shadow-x: 0px;
   --shadow-y: 10px;
   --shadow-blur: 40px;
