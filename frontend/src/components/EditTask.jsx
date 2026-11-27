@@ -1,38 +1,25 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { IoMdClose } from "react-icons/io";
-
+import { MessageSquare, Trash2 } from "lucide-react";
 import useKanban from "../hooks/useKanban";
-import RichTextEditor from "./RichTextEditor";
 import useCloudinary from "../hooks/useCloudinary";
-
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import useNotification from "../hooks/useNotification";
 import { getComments } from "../utils/fetchData.js";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "./PageUI";
+import TaskFields from "./TaskFields";
 import CommentInput from "./CommentInput";
 import CommentCard from "./CommentCard";
-import useNotification from "../hooks/useNotification";
-import { MdDeleteOutline } from "react-icons/md";
+
+const STATUS = ["TODO", "IN_PROGRESS", "CS_TICKET", "IT_TICKET"];
+const PRIORITY = ["LOW", "MEDIUM", "HIGH"];
 
 const EditTask = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { toggleEditTaskModal, updateTask, deleteTask, activeTask, getTasks } =
     useKanban();
-
   const { uploadImage } = useCloudinary();
-
-  const STATUS = ["TODO", "IN_PROGRESS", "CS_TICKET", "IT_TICKET"];
-  const PRIORITY = ["LOW", "MEDIUM", "HIGH"];
+  const { lastEvent } = useNotification();
 
   const [title, setTitle] = useState(activeTask?.title ?? "");
   const [content, setContent] = useState(activeTask?.description ?? "");
@@ -41,7 +28,11 @@ const EditTask = () => {
   const [client, setClient] = useState(activeTask?.clientId ?? "");
   const [activeClients, setActiveClients] = useState([]);
   const [comments, setComments] = useState([]);
-  const { lastEvent } = useNotification();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  // A completed task can still be opened; keep its status selectable
+  const statuses = STATUS.includes(status) ? STATUS : [...STATUS, status];
 
   useEffect(() => {
     const getActiveClients = async () => {
@@ -49,13 +40,11 @@ const EditTask = () => {
         const res = await axios.get(`${BACKEND_URL}/clients/active`, {
           withCredentials: true,
         });
-        console.log(res.data);
         setActiveClients(res.data);
-      } catch (error) {
-        console.error("Failed to fetch active clients:", error.response?.data);
+      } catch {
+        // the error toast (axios interceptor) shows what went wrong
       }
     };
-
     getActiveClients();
   }, [BACKEND_URL]);
 
@@ -65,7 +54,6 @@ const EditTask = () => {
 
   useEffect(() => {
     if (!lastEvent) return;
-
     if (lastEvent.type === "COMMENT" && lastEvent.taskId === activeTask?.id) {
       getComments(BACKEND_URL, activeTask.id, setComments);
     }
@@ -73,8 +61,8 @@ const EditTask = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-
     try {
+      setSaving(true);
       const updatedTask = {
         ...activeTask,
         title,
@@ -85,139 +73,112 @@ const EditTask = () => {
       };
       // optimistic update
       updateTask(updatedTask);
-
       await axios.put(`${BACKEND_URL}/tasks/edit_task`, updatedTask, {
         withCredentials: true,
       });
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // the error toast (axios interceptor) shows what went wrong
     } finally {
+      setSaving(false);
       await getTasks();
       toggleEditTaskModal();
     }
   };
 
+  const handleDelete = () => {
+    deleteTask(activeTask);
+    toggleEditTaskModal();
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-background pt-12 pb-12 overflow-y-auto">
-      <div className="relative flex flex-col w-full max-w-175 mx-4 gap-6">
-        <Card className="relative w-full">
-          <button
-            className="absolute right-4 top-4 text-muted-foreground hover:text-foreground z-10"
-            onClick={toggleEditTaskModal}
-          >
-            <IoMdClose size={22} />
-          </button>
+    <Dialog
+      title="Edit task"
+      description={activeTask?.client?.name ?? undefined}
+      onClose={toggleEditTaskModal}
+      size="lg"
+    >
+      <div className="flex flex-col gap-8">
+        <form onSubmit={handleSave} className="flex flex-col gap-6">
+          <TaskFields
+            title={title}
+            setTitle={setTitle}
+            client={client}
+            setClient={setClient}
+            clients={activeClients}
+            content={content}
+            setContent={setContent}
+            uploadImage={uploadImage}
+            status={status}
+            setStatus={setStatus}
+            statuses={statuses}
+            priority={priority}
+            setPriority={setPriority}
+            priorities={PRIORITY}
+          />
 
-          <CardTitle className="px-6 pt-6 flex justify-between items-center">
-            <h3 className="text-left font-bold">Edit task</h3>
-          </CardTitle>
-
-          <CardContent className="max-h-[70vh] overflow-y-auto flex flex-col gap-4">
-            <form onSubmit={handleSave} className="flex flex-col gap-4 w-full">
-              <FieldGroup>
-                <Field>
-                  <Label>Title</Label>
-                  <Input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                </Field>
-              </FieldGroup>
-
-              <FieldGroup className="w-full">
-                <Field>
-                  <Label>Client</Label>
-                  <Select value={client} onValueChange={setClient}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {activeClients.map((p) => (
-                        <SelectItem key={p.id} value={p.id}>
-                          {p.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-              </FieldGroup>
-
-              <FieldGroup>
-                <Field>
-                  <RichTextEditor
-                    value={content}
-                    onChange={setContent}
-                    uploadImage={uploadImage}
-                  />
-                </Field>
-              </FieldGroup>
-
-              <FieldGroup className="w-full grid grid-cols-2 gap-4">
-                <Field>
-                  <Label>Status</Label>
-                  <Select value={status} onValueChange={setStatus}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {STATUS.map((s) => (
-                        <SelectItem key={s} value={s}>
-                          {s}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-
-                <Field>
-                  <Label>Priority</Label>
-                  <Select value={priority} onValueChange={setPriority}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PRIORITY.map((p) => (
-                        <SelectItem key={p} value={p}>
-                          {p}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-              </FieldGroup>
-
-              <Button className="w-full mt-2" type="submit">
-                Save changes
-              </Button>
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
+            {/* Delete needs a second click to confirm */}
+            {confirmDelete ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  Delete this task?
+                </span>
+                <Button type="button" variant="destructive" onClick={handleDelete}>
+                  Yes, delete
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setConfirmDelete(false)}
+                >
+                  Keep
+                </Button>
+              </div>
+            ) : (
               <Button
-                variant="destructive"
-                className="flex items-center justify-center gap-1"
-                onClick={() => {
-                  (deleteTask(activeTask), toggleEditTaskModal());
-                }}
+                type="button"
+                variant="ghost"
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => setConfirmDelete(true)}
               >
-                <MdDeleteOutline size={24} />
+                <Trash2 />
+                Delete task
               </Button>
-            </form>
-          </CardContent>
-        </Card>
-        <Card className="w-full lg:w-175 relative h-auto">
-          <CardContent>
-            <CommentInput taskID={activeTask?.id} setComments={setComments} />
-            <div className="flex flex-col gap-2">
-              {comments.length === 0 && <p>This task has no comments.</p>}
+            )}
+            <div className="flex flex-col-reverse gap-2 sm:flex-row">
+              <Button type="button" variant="outline" onClick={toggleEditTaskModal}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={!title.trim() || saving}>
+                {saving ? "Saving…" : "Save changes"}
+              </Button>
+            </div>
+          </div>
+        </form>
+
+        <section className="space-y-4 border-t pt-6">
+          <h3 className="flex items-center gap-2 font-semibold">
+            <MessageSquare className="size-4" />
+            Comments
+            <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+              {comments.length}
+            </span>
+          </h3>
+          <CommentInput taskID={activeTask?.id} setComments={setComments} />
+          {comments.length === 0 ? (
+            <p className="py-4 text-center text-sm text-muted-foreground">
+              No comments yet.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-3">
               {comments.map((comm) => (
-                <CommentCard
-                  key={comm.id}
-                  comment={comm}
-                  setComments={setComments}
-                />
+                <CommentCard key={comm.id} comment={comm} setComments={setComments} />
               ))}
             </div>
-          </CardContent>
-        </Card>
+          )}
+        </section>
       </div>
-    </div>
+    </Dialog>
   );
 };
 

@@ -1,50 +1,57 @@
 import { useState } from "react";
 import axios from "axios";
+import { SendHorizontal } from "lucide-react";
 import { getComments } from "../utils/fetchData.js";
 import CommentEditor from "./CommentEditor.jsx";
 import useCloudinary from "../hooks/useCloudinary.jsx";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-import { Button } from "@/components/ui/button.jsx";
+// Quill leaves "<p><br></p>" when empty; a comment needs text or an image
+const isEmpty = (html) =>
+  !html.includes("<img") &&
+  !new DOMParser().parseFromString(html, "text/html").body.textContent?.trim();
 
 const CommentInput = ({ taskID, setComments }) => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const [comment, setComment] = useState("");
+  const [sending, setSending] = useState(false);
   const { uploadImage } = useCloudinary();
 
-  const handleComment = async (e) => {
-    e.preventDefault();
-
+  const handleComment = async () => {
     try {
+      setSending(true);
       await axios.post(
         `${BACKEND_URL}/tasks/${taskID}/comments/new`,
         { description: comment },
         { withCredentials: true },
       );
-
       setComment("");
       getComments(BACKEND_URL, taskID, setComments);
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // the error toast (axios interceptor) shows what went wrong
+    } finally {
+      setSending(false);
     }
   };
 
   return (
-    <Card className="flex flex-col gap-2 h-auto mb-2">
-      <CardHeader>
-        <CardTitle className="text-left">Comment</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <CommentEditor
-          value={comment}
-          onChange={setComment}
-          uploadImage={uploadImage}
-        />
-        <Button variant="outline" className="w-full" onClick={handleComment}>
-          Comment
-        </Button>
-      </CardContent>
-    </Card>
+    <div className="flex flex-col gap-2 text-left">
+      <CommentEditor
+        value={comment}
+        onChange={setComment}
+        uploadImage={uploadImage}
+      />
+      <Button
+        type="button"
+        size="sm"
+        className="self-end"
+        onClick={handleComment}
+        disabled={sending || isEmpty(comment)}
+      >
+        <SendHorizontal />
+        {sending ? "Posting…" : "Post comment"}
+      </Button>
+    </div>
   );
 };
 

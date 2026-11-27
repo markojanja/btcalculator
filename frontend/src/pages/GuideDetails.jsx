@@ -1,20 +1,20 @@
 import axios from "axios";
+import { format } from "date-fns";
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import DOMPurify from "dompurify";
+import { CalendarDays, FileDown, Loader2, Pencil, UserRound } from "lucide-react";
 import useAuth from "../hooks/useAuth";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Edit } from "lucide-react";
-import Loading from "../components/Loading";
+import { Card, CardContent } from "@/components/ui/card";
+import { BackLink, Page, PageLoading, Pill } from "../components/PageUI";
 
 const GuideDetails = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const [guide, setGuide] = useState({});
+  const [guide, setGuide] = useState(null);
   const { id } = useParams();
   const { user } = useAuth();
   const [downloading, setDownloading] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getGuide = async () => {
@@ -23,17 +23,12 @@ const GuideDetails = () => {
           withCredentials: true,
         });
         setGuide(res.data);
-        console.log(res.data.userId, user.id);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
+      } catch {
+        // the error toast (axios interceptor) shows what went wrong
       }
     };
     getGuide();
-  }, []);
-
-  const clean = DOMPurify.sanitize(guide.description);
+  }, [id]);
 
   const downloadPDF = async () => {
     try {
@@ -54,57 +49,61 @@ const GuideDetails = () => {
       a.remove();
 
       window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("PDF fetch failed:", err);
+    } catch {
+      // the error toast (axios interceptor) shows what went wrong
     } finally {
       setDownloading(false);
     }
   };
-  if (loading) return <Loading />;
+
+  if (!guide) return <PageLoading />;
+
+  const clean = DOMPurify.sanitize(guide.description);
 
   return (
-    <div className="flex flex-col w-full lg:w-187.5 mx-auto gap-4">
-      <div
-        className={
-          "flex justify-between items-center w-full bg-card shadow-sm p-4 rounded-md"
-        }
-      >
-        <h2 className="text-xl font-bold">{guide.title}</h2>
-        <div className="flex gap-2 items-center justify-center">
-          <Button disabled={downloading} onClick={downloadPDF}>
-            {downloading ? "Downloading" : "Download PDF"}
+    <Page size="md">
+      <BackLink to="/guides">Back to guides</BackLink>
+
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-3">
+          {!guide.published && <Pill>Draft</Pill>}
+          <h1 className="text-3xl font-bold tracking-tight">{guide.title}</h1>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5">
+              <UserRound className="size-4" />
+              {guide.user?.username ?? "—"}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <CalendarDays className="size-4" />
+              {format(new Date(guide.createdAt), "d MMM yyyy")}
+            </span>
+          </div>
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <Button variant="outline" disabled={downloading} onClick={downloadPDF}>
+            {downloading ? <Loader2 className="animate-spin" /> : <FileDown />}
+            {downloading ? "Preparing…" : "Download PDF"}
           </Button>
           {user?.id === guide.userId && (
-            <>
-              <Link
-                to={`/guides/${guide.id}/edit`}
-                className="border border-primary rounded-sm text-primary px-3.5 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
-              >
-                <Edit />
+            <Button variant="outline" asChild>
+              <Link to={`/guides/${guide.id}/edit`}>
+                <Pencil />
+                Edit
               </Link>
-            </>
+            </Button>
           )}
         </div>
       </div>
 
       <Card>
-        <div
-          className="flex flex-col overflow-y-scroll max-h-screen text-left p-4 gap-4 rte"
-          dangerouslySetInnerHTML={{ __html: clean }}
-        />
-      </Card>
-      <Card className={"text-left px-2 w-full lg:w-187.5 mx-auto"}>
-        <CardContent className={"flex flex-col"}>
-          <p>author:{guide.user?.username}</p>
-          <p>published: {guide.published ? "✅" : "❌"}</p>
-          <p>created: {new Date(guide.createdAt).toLocaleDateString()}</p>
-
-          <Link className="self-end" to={"/guides"}>
-            Back to guides
-          </Link>
+        <CardContent>
+          <div
+            className="rte flex flex-col gap-4 text-left"
+            dangerouslySetInnerHTML={{ __html: clean }}
+          />
         </CardContent>
       </Card>
-    </div>
+    </Page>
   );
 };
 

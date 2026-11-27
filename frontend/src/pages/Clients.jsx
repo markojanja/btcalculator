@@ -1,20 +1,31 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import Pagination from "../components/Pagination";
+import { Building2 } from "lucide-react";
 import usePagination from "../hooks/usePagination";
 import useAuth from "../hooks/useAuth";
-import ClientCard from "../components/ClientCard";
 import useSearch from "../hooks/useSearch";
-import SearchInput from "../components/SearchInput";
+import ClientCard from "../components/ClientCard";
+import {
+  CardGrid,
+  EmptyState,
+  ListToolbar,
+  NewButton,
+  Page,
+  PageHeader,
+  Pager,
+  SearchBox,
+  SkeletonGrid,
+} from "../components/PageUI";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const Clients = () => {
   const { user } = useAuth();
   const [clients, setClients] = useState([]);
+  const [loading, setLoading] = useState(true);
   const canEdit = user?.role === "ADMIN" || user?.role === "MANAGER";
 
-  const { query, setQuery, filtered, handleSearch } = useSearch(clients, [
+  const { query, setQuery, filtered } = useSearch(clients, [
     "name",
     "status",
     "server",
@@ -28,59 +39,62 @@ const Clients = () => {
           withCredentials: true,
         });
         setClients(response.data);
-      } catch (error) {
-        console.log(error);
+      } catch {
+        // the error toast (axios interceptor) shows what went wrong
+      } finally {
+        setLoading(false);
       }
     };
     getData();
   }, []);
+
   const { currentItems, pageCount, handlePageChange } = usePagination(
     filtered,
-    5,
+    9,
   );
 
   return (
-    <div className="flex flex-1 flex-col w-full p-6">
-      <div className="relative flex justify-between items-start border-b border-b-muted py-3">
-        <h2 className="text-2xl font-bold">Clients List</h2>
-        <SearchInput
-          value={query}
-          onChange={setQuery}
-          onSearch={handleSearch}
+    <Page>
+      <PageHeader
+        icon={Building2}
+        title="Clients"
+        description="Brokers we support, with their servers and platforms."
+        actions={canEdit && <NewButton to="/clients/new">New client</NewButton>}
+      />
+      <ListToolbar
+        search={
+          <SearchBox
+            value={query}
+            onChange={setQuery}
+            placeholder="Search name, status, server…"
+          />
+        }
+        count={filtered.length}
+        noun="client"
+      />
+
+      {loading ? (
+        <SkeletonGrid />
+      ) : currentItems.length === 0 ? (
+        <EmptyState
+          icon={Building2}
+          title={query ? "No clients match your search" : "No clients yet"}
+          description={query ? "Try a different name or server." : undefined}
         />
-        {canEdit && (
-          <Link
-            className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
-            style={{ borderRadius: "8px" }}
-            to="/clients/new"
-          >
-            Add Client
-          </Link>
-        )}
-      </div>
-      <div className="flex flex-col justify-start gap-2 py-6">
-        {currentItems && currentItems?.length > 0 ? (
-          currentItems.map((client) =>
-            canEdit ? (
-              <Link
-                key={client.id}
-                to={`${client.id}/edit`}
-                className="w-full md:1/3 lg:w-1/3 mx-auto"
-              >
-                <ClientCard client={client} />
-              </Link>
-            ) : (
-              <div key={client.id}>
-                <ClientCard client={client} />
-              </div>
-            ),
-          )
-        ) : (
-          <h2>No clients at the moment!</h2>
-        )}
-      </div>
-      <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
-    </div>
+      ) : (
+        <CardGrid>
+          {currentItems.map((client) => (
+            <ClientCard
+              key={client.id}
+              client={client}
+              to={canEdit ? `/clients/${client.id}/edit` : undefined}
+            />
+          ))}
+        </CardGrid>
+      )}
+
+      <Pager pageCount={pageCount} onPageChange={handlePageChange} />
+    </Page>
   );
 };
 

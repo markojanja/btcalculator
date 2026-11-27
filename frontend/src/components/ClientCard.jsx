@@ -1,33 +1,52 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Building2, Server, UserRound } from "lucide-react";
+import { LinkCard, Pill } from "./PageUI";
+import { ClientStatusLabel } from "./TableCells";
 
-const ClientCard = ({ client }) => {
-  return (
-    <Card className={"w-full text-left items-start justify-start mx-auto"}>
-      <CardContent className={"w-full"}>
-        <CardTitle className={"mb-2"}>
-          <h3 className="text-lg">{client.name}</h3>
-        </CardTitle>
-        <Separator className={"w-full mb-2"} />
-        <p>Status:</p>
-        <Badge variant="secondary">{client.status}</Badge>
+const Body = ({ client }) => (
+  <>
+    <div className="flex items-start gap-3">
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <Building2 className="size-5" />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-semibold">{client.name}</p>
+        <ClientStatusLabel status={client.status} />
+      </div>
+    </div>
 
-        <p>Server:</p>
-        <Badge className="bg-blue-300 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
-          {client.server[0]}
-        </Badge>
-        <p>Platform:</p>
+    <div className="flex flex-wrap items-center gap-1.5">
+      {client.platform.map((p) => (
+        <Pill key={p} tone="primary">
+          {p}
+        </Pill>
+      ))}
+    </div>
 
-        {client.platform.map((p) => (
-          <Badge className={"mr-1.5"} key={p}>
-            {p}
-          </Badge>
-        ))}
-        <p>Added: {client.user.username}</p>
-      </CardContent>
-    </Card>
+    <div className="mt-auto flex items-center justify-between gap-2 text-xs text-muted-foreground">
+      <span className="inline-flex items-center gap-1.5">
+        <Server className="size-3.5" />
+        <span className="font-mono">{client.server.join(", ") || "—"}</span>
+      </span>
+      {client.user?.username && (
+        <span className="inline-flex items-center gap-1.5 truncate">
+          <UserRound className="size-3.5" />
+          {client.user.username}
+        </span>
+      )}
+    </div>
+  </>
+);
+
+/** Links to `to` when given (staff can edit); otherwise a plain card. */
+const ClientCard = ({ client, to }) =>
+  to ? (
+    <LinkCard to={to}>
+      <Body client={client} />
+    </LinkCard>
+  ) : (
+    <div className="flex flex-col gap-3 rounded-xl border bg-card p-5 text-card-foreground shadow-sm">
+      <Body client={client} />
+    </div>
   );
-};
 
 export default ClientCard;

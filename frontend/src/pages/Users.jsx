@@ -1,62 +1,93 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Users as UsersIcon } from "lucide-react";
 import UsersCard from "../components/UsersCard";
-import { Link } from "react-router-dom";
-import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
-import SearchInput from "../components/SearchInput";
 import useSearch from "../hooks/useSearch";
+import {
+  CardGrid,
+  EmptyState,
+  ListToolbar,
+  NewButton,
+  Page,
+  PageHeader,
+  Pager,
+  SearchBox,
+  SkeletonGrid,
+} from "../components/PageUI";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  const { query, setQuery, filtered, handleSearch } = useSearch(users, [
+  const [loading, setLoading] = useState(true);
+  const { query, setQuery, filtered } = useSearch(users, [
     "firstname",
     "lastname",
     "username",
+    "email",
+    "role",
   ]);
 
   useEffect(() => {
     const getUsers = async () => {
-      const res = await axios.get(`${BACKEND_URL}/users/all`, {
-        withCredentials: true,
-      });
-      console.log(res);
-      setUsers(res.data);
+      try {
+        const res = await axios.get(`${BACKEND_URL}/users/all`, {
+          withCredentials: true,
+        });
+        setUsers(res.data);
+      } catch {
+        // the error toast (axios interceptor) shows what went wrong
+      } finally {
+        setLoading(false);
+      }
     };
-
     getUsers();
   }, []);
 
   const { currentItems, pageCount, handlePageChange } = usePagination(
     filtered,
-    4,
+    9,
   );
 
   return (
-    <div className="flex flex-1 flex-col w-full p-6">
-      <div className="relative flex flex-col md:flex-row justify-between items-start gap-1 lg:items-center border-b border-b-muted py-3">
-        <h2 className="text-2xl font-bold">Users</h2>
-        <SearchInput
-          value={query}
-          onChange={setQuery}
-          onSearch={handleSearch}
+    <Page>
+      <PageHeader
+        icon={UsersIcon}
+        title="Users"
+        description="Everyone with access to CSBoard."
+        actions={<NewButton to="/users/add">New user</NewButton>}
+      />
+      <ListToolbar
+        search={
+          <SearchBox
+            value={query}
+            onChange={setQuery}
+            placeholder="Search name, username, email…"
+          />
+        }
+        count={filtered.length}
+        noun="user"
+      />
+
+      {loading ? (
+        <SkeletonGrid />
+      ) : currentItems.length === 0 ? (
+        <EmptyState
+          icon={UsersIcon}
+          title={query ? "No users match your search" : "No users yet"}
+          description={query ? "Try a different name or email." : undefined}
         />
-        <Link
-          className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
-          to={"/users/add"}
-        >
-          New user
-        </Link>
-      </div>
-      <div className="flex flex-col flex-1 justify-start gap-2 py-6">
-        {currentItems.map((user) => (
-          <UsersCard key={user.id} user={user} />
-        ))}
-      </div>
-      <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
-    </div>
+      ) : (
+        <CardGrid>
+          {currentItems.map((user) => (
+            <UsersCard key={user.id} user={user} />
+          ))}
+        </CardGrid>
+      )}
+
+      <Pager pageCount={pageCount} onPageChange={handlePageChange} />
+    </Page>
   );
 };
 

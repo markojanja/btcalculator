@@ -1,27 +1,38 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { format } from "date-fns";
+import { CalendarDays, Rocket, UserRound } from "lucide-react";
+import { LinkCard, Pill } from "./PageUI";
 
-const FeaturesCard = ({ feature }) => {
-  return (
-    <Link to={`/features/${feature.id}`} className="w-full lg:w-1/3 mx-auto">
-      <Card className={"w-full text-left items-start justify-start mx-auto"}>
-        <CardContent>
-          <CardTitle className={"mb-2"}>
-            <h3>{feature.title}</h3>
-          </CardTitle>
-          <p>Author: {feature.user?.username}</p>
-          <p>Released:{feature.released ? "✅" : "❌"}</p>
-          <p>Published:{feature.published ? "✅" : "❌"}</p>
-          <p>
-            Release Date: {new Date(feature.releaseDate).toLocaleDateString()}
-          </p>
-          <p>
-            Created Date: {new Date(feature.createdAt).toLocaleDateString()}
-          </p>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-};
+const date = (value) => (value ? format(new Date(value), "d MMM yyyy") : "—");
+
+const FeaturesCard = ({ feature }) => (
+  <LinkCard to={`/features/${feature.id}`}>
+    <div className="flex items-start gap-3">
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-950/60 dark:text-blue-300">
+        <Rocket className="size-5" />
+      </span>
+      <p className="line-clamp-2 flex-1 font-semibold leading-snug">
+        {feature.title}
+      </p>
+    </div>
+
+    <div className="flex flex-wrap gap-1.5">
+      <Pill tone={feature.released ? "green" : "amber"}>
+        {feature.released ? "Released" : "Upcoming"}
+      </Pill>
+      {!feature.published && <Pill>Draft</Pill>}
+    </div>
+
+    <div className="mt-auto flex items-center justify-between gap-2 text-xs text-muted-foreground">
+      <span className="inline-flex items-center gap-1.5">
+        <CalendarDays className="size-3.5" />
+        {date(feature.releaseDate)}
+      </span>
+      <span className="inline-flex items-center gap-1.5 truncate">
+        <UserRound className="size-3.5" />
+        {feature.user?.username ?? "—"}
+      </span>
+    </div>
+  </LinkCard>
+);
 
 export default FeaturesCard;

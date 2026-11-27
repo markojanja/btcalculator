@@ -1,25 +1,30 @@
-import { FaPlus } from "react-icons/fa";
+import { ClipboardList, KanbanSquare, Plus } from "lucide-react";
 import Kanban from "../components/Kanban";
 import useKanban from "../hooks/useKanban";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "../components/PageUI";
 
 const Tasks = () => {
   const { toggleAddTaskModal, toggleHandoverModal } = useKanban();
   return (
-    <div className="flex flex-1 flex-col w-full p-6">
-      <div className="flex justify-between items-start border-b border-b-muted py-3">
-        <h2 className="text-2xl font-bold">MyTasks</h2>
-        <div className="flex gap-2">
-          <Button
-            onClick={() => {
-              toggleAddTaskModal();
-            }}
-          >
-            New <FaPlus size={12} />
-          </Button>
-          <Button onClick={toggleHandoverModal}>Handover</Button>
-        </div>
-      </div>
+    <div className="flex w-full flex-1 flex-col gap-6 p-4 text-left sm:p-6">
+      <PageHeader
+        icon={KanbanSquare}
+        title="My tasks"
+        description="Drag a card to another column to change its status."
+        actions={
+          <>
+            <Button variant="outline" onClick={toggleHandoverModal}>
+              <ClipboardList />
+              Handover
+            </Button>
+            <Button onClick={toggleAddTaskModal}>
+              <Plus />
+              New task
+            </Button>
+          </>
+        }
+      />
       <Kanban />
     </div>
   );

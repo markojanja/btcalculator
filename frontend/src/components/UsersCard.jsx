@@ -1,48 +1,53 @@
-import { FaUserCircle } from "react-icons/fa";
-import { IoBriefcase } from "react-icons/io5";
-import { MdOutlineEmail } from "react-icons/md";
-import { GrStatusGoodSmall } from "react-icons/gr";
-import { CiCalendarDate } from "react-icons/ci";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { CalendarDays, Mail } from "lucide-react";
+import { format } from "date-fns";
+import { LinkCard } from "./PageUI";
+import { RoleBadge } from "./TableCells";
+import { cn } from "@/lib/utils";
 
-const UsersCard = ({ user }) => {
-  return (
-    <Link to={`/users/edit/${user.id}`} className="w-full lg:w-1/3 mx-auto">
-      <Card className={"w-full text-left items-start justify-start mx-auto"}>
-        <CardContent>
-          <CardTitle className={"mb-2"}>
-            <h3>
-              {user.firstname} {user.lastname}
-            </h3>
-          </CardTitle>
+const initials = (user) =>
+  [user.firstname, user.lastname]
+    .filter(Boolean)
+    .map((n) => n[0].toUpperCase())
+    .join("") || "?";
 
-          <div className="flex gap-1.5 items-center">
-            <MdOutlineEmail />
-            <p>{user.email}</p>
-          </div>
-          <div className="flex gap-1.5 items-center">
-            <FaUserCircle />
-            <p>{user.username}</p>
-          </div>
-          <div className="flex gap-1.5 items-center">
-            <IoBriefcase />
-            <p>{user.role}</p>
-          </div>
-          <div className="flex gap-1.5 items-center">
-            <GrStatusGoodSmall
-              className={user.active ? "text-lime-400" : "text-red-400"}
-            />
-            <p>{user?.active ? "active" : "inactive"}</p>
-          </div>
-          <div className="flex gap-1.5 items-center">
-            <CiCalendarDate />
-            <p>{new Date(user.createdAt).toLocaleString()}</p>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-};
+const UsersCard = ({ user }) => (
+  <LinkCard to={`/users/edit/${user.id}`}>
+    <div className="flex items-start gap-3">
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
+        {initials(user)}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-semibold">
+          {user.firstname} {user.lastname}
+        </p>
+        <p className="truncate text-sm text-muted-foreground">
+          @{user.username}
+        </p>
+      </div>
+      <RoleBadge role={user.role} />
+    </div>
+
+    <div className="space-y-1.5 text-sm text-muted-foreground">
+      <p className="flex items-center gap-2 truncate">
+        <Mail className="size-4 shrink-0" />
+        <span className="truncate">{user.email}</span>
+      </p>
+      <p className="flex items-center gap-2">
+        <CalendarDays className="size-4 shrink-0" />
+        Joined {format(new Date(user.createdAt), "d MMM yyyy")}
+      </p>
+    </div>
+
+    <div className="mt-auto flex items-center gap-1.5 text-xs font-medium">
+      <span
+        className={cn(
+          "size-2 rounded-full",
+          user.active ? "bg-emerald-500" : "bg-red-500",
+        )}
+      />
+      {user.active ? "Active" : "Inactive"}
+    </div>
+  </LinkCard>
+);
 
 export default UsersCard;

@@ -66,30 +66,26 @@ const Kanban = () => {
     }
   };
 
-  if (taskModal) {
-    return <AddTaskModal />;
-  }
-
-  if (editModal && activeTask) {
-    return <EditTask />;
-  }
-  if (handoverModal) {
-    return <HandoverModal />;
-  }
-
   return (
-    <div className="flex flex-row flex-1 justify-evenly w-full h-screen p-6 gap-6 overflow-x-auto bg-background">
-      {columns.map((col) => (
-        <KanbanColumn
-          key={col.colStatus}
-          column={col}
-          name={col.title}
-          tasks={col.tasks}
-          onDragStart={handleDragStart}
-          onDrop={handleDrop}
-        />
-      ))}
-    </div>
+    <>
+      {/* Dialogs open on top of the board */}
+      {taskModal && <AddTaskModal />}
+      {editModal && activeTask && <EditTask />}
+      {handoverModal && <HandoverModal />}
+
+      <div className="flex min-h-[65vh] w-full flex-1 flex-row gap-4 overflow-x-auto pb-2">
+        {columns.map((col) => (
+          <KanbanColumn
+            key={col.colStatus}
+            column={col}
+            name={col.title}
+            tasks={col.tasks}
+            onDragStart={handleDragStart}
+            onDrop={handleDrop}
+          />
+        ))}
+      </div>
+    </>
   );
 };
 

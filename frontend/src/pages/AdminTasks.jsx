@@ -1,8 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useState } from "react";
-import Pagination from "../components/Pagination";
+import { ListChecks } from "lucide-react";
 import usePagination from "../hooks/usePagination";
 import useNotification from "../hooks/useNotification";
 import { TableCell } from "@/components/ui/table";
@@ -15,16 +14,34 @@ import {
   PriorityLabel,
   TaskStatusBadge,
 } from "../components/TableCells";
-import SearchInput from "../components/SearchInput";
 import useSearch from "../hooks/useSearch";
+import {
+  ListToolbar,
+  Page,
+  PageHeader,
+  Pager,
+  SearchBox,
+} from "../components/PageUI";
+
+// Page titles for the task list filters (see adminData.controller.js)
+const TITLES = {
+  ALL: ["All tasks", "Every task on the board."],
+  pending: ["Pending tasks", "To do and in progress."],
+  priority: ["Open tasks by priority", "To do and in progress, highest priority first."],
+  JIRA_TICKET: ["Jira tickets", "Tasks escalated as CS or IT tickets."],
+  TODO: ["To do", "Tasks waiting to be picked up."],
+  IN_PROGRESS: ["In progress", "Tasks being worked on."],
+  CS_TICKET: ["CS tickets", "Tasks escalated to customer support."],
+  IT_TICKET: ["IT tickets", "Tasks escalated to IT."],
+  COMPLETED: ["Completed", "Finished tasks."],
+};
 
 const AdminTasks = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { type } = useParams();
-  const [title, setTitle] = useState("");
   const [tasks, setTasks] = useState([]);
 
-  const { query, setQuery, filtered, handleSearch } = useSearch(tasks, [
+  const { query, setQuery, filtered } = useSearch(tasks, [
     "title",
     "status",
     "priority",
@@ -47,35 +64,36 @@ const AdminTasks = () => {
           withCredentials: true,
         },
       );
-      setTitle(response.data.page_title);
       setTasks(response.data.tasks);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // the error toast (axios interceptor) shows what went wrong
     }
   };
 
+  // Reload when the filter in the URL changes or a notification arrives
   useEffect(() => {
     getData();
-  }, []);
+  }, [type, lastEvent]);
 
-  useEffect(() => {
-    getData();
-  }, [lastEvent]);
+  const [title, description] = TITLES[type] ?? [type, ""];
 
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-1 flex-col w-full p-6">
-      <div className="flex justify-between items-start border-b border-b-muted py-3">
-        <h2 className="text-2xl font-bold">Tasks ({title})</h2>
-        <SearchInput
-          value={query}
-          onChange={setQuery}
-          onSearch={handleSearch}
-        />
-      </div>
-      <div className="flex flex-col flex-1 items-center">
+    <Page>
+      <PageHeader icon={ListChecks} title={title} description={description} />
+      <ListToolbar
+        search={
+          <SearchBox
+            value={query}
+            onChange={setQuery}
+            placeholder="Search task, client, assignee…"
+          />
+        }
+        count={filtered.length}
+        noun="task"
+      />
+      <div>
         <div className="w-full">
           <DataTable
             columns={[
@@ -121,8 +139,8 @@ const AdminTasks = () => {
           </DataTable>
         </div>
       </div>
-      <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
-    </div>
+      <Pager pageCount={pageCount} onPageChange={handlePageChange} />
+    </Page>
   );
 };
 

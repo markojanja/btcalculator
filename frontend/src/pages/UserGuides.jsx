@@ -1,19 +1,27 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { BookOpen } from "lucide-react";
 import GuidesCard from "../components/GuidesCard";
-import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
 import useSearch from "../hooks/useSearch";
-import SearchInput from "../components/SearchInput";
-import Loading from "../components/Loading";
+import {
+  CardGrid,
+  EmptyState,
+  ListToolbar,
+  NewButton,
+  Page,
+  PageHeader,
+  Pager,
+  SearchBox,
+  SkeletonGrid,
+} from "../components/PageUI";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const UserGuides = () => {
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { query, setQuery, filtered, handleSearch } = useSearch(guides, [
+  const { query, setQuery, filtered } = useSearch(guides, [
     "title",
     "description",
     "user.username",
@@ -25,10 +33,9 @@ const UserGuides = () => {
         const response = await axios.get(`${BACKEND_URL}/guides`, {
           withCredentials: true,
         });
-        // console.log(response.data[0]);
         setGuides(response.data);
-      } catch (error) {
-        console.log(error);
+      } catch {
+        // the error toast (axios interceptor) shows what went wrong
       } finally {
         setLoading(false);
       }
@@ -38,41 +45,49 @@ const UserGuides = () => {
 
   const { currentItems, pageCount, handlePageChange } = usePagination(
     filtered,
-    5,
+    9,
   );
 
-  if (loading) return <Loading />;
-
   return (
-    <div className="flex flex-1 flex-col w-full p-6">
-      <div className="relative flex flex-col md:flex-row justify-between items-start gap-1 lg:items-center border-b border-b-muted py-3">
-        <h2 className="text-2xl font-bold">UserGuides</h2>
-        <SearchInput
-          value={query}
-          onChange={setQuery}
-          onSearch={handleSearch}
+    <Page>
+      <PageHeader
+        icon={BookOpen}
+        title="Guides"
+        description="How-tos and procedures written by the team."
+        actions={<NewButton to="/guides/new">New guide</NewButton>}
+      />
+      <ListToolbar
+        search={
+          <SearchBox
+            value={query}
+            onChange={setQuery}
+            placeholder="Search guides…"
+          />
+        }
+        count={filtered.length}
+        noun="guide"
+      />
+
+      {loading ? (
+        <SkeletonGrid />
+      ) : currentItems.length === 0 ? (
+        <EmptyState
+          icon={BookOpen}
+          title={query ? "No guides match your search" : "No guides yet"}
+          action={
+            !query && <NewButton to="/guides/new">Write the first guide</NewButton>
+          }
         />
-        <Link
-          className="border border-primary rounded-sm text-primary px-4 py-1.5 hover:bg-primary/20 transition-all duration-150 text-sm"
-          style={{ borderRadius: "8px" }}
-          to="/guides/new"
-        >
-          New Guide
-        </Link>
-      </div>
-      <div className="flex flex-col justify-start gap-2 py-6">
-        {currentItems?.length > 0 ? (
-          currentItems.map((guide) => (
+      ) : (
+        <CardGrid>
+          {currentItems.map((guide) => (
             <GuidesCard key={guide.id} guide={guide} />
-          ))
-        ) : (
-          <div className="flex flex-col items-center justify-center">
-            <h2 className="text-2xl font-bold">No new guides yet</h2>
-          </div>
-        )}
-      </div>
-      <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
-    </div>
+          ))}
+        </CardGrid>
+      )}
+
+      <Pager pageCount={pageCount} onPageChange={handlePageChange} />
+    </Page>
   );
 };
 
