@@ -4,18 +4,18 @@ import DashCard from "../components/DashCard";
 import useNotification from "../hooks/useNotification";
 import { useNavigate } from "react-router-dom";
 
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  LinearScale,
-  BarElement,
-} from "chart.js/auto";
-import { Pie, Bar } from "react-chartjs-2";
+import { DonutChart, HorizontalBarChart } from "../components/Charts";
+import { PRIORITY_COLORS } from "../utils/chartColors";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -58,8 +58,6 @@ const STATUS_CARDS = [
   },
 ];
 
-ChartJS.register(ArcElement, Tooltip, Legend, LinearScale, BarElement);
-
 const Dashboard = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const [dataCard, setDataCard] = useState([]);
@@ -77,7 +75,6 @@ const Dashboard = () => {
         const response = await axios.get(`${BACKEND_URL}/admindata/`, {
           withCredentials: true,
         });
-        console.log(response);
         setDataCard(response.data.tasksByStatus);
         setBarChartData(response.data.tasksByPriority);
         setPieChartData(response.data.rawByUser);
@@ -92,96 +89,24 @@ const Dashboard = () => {
     getData();
   }, [lastEvent]);
 
-  const labels1 = pieChartdata.map((obj) => obj.firstname);
-  const data = {
-    labels: labels1,
-    datasets: [
-      {
-        label: "Pending Tasks",
-        data: pieChartdata.map((obj) => obj.count),
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.5)",
-          "rgba(54, 162, 235, 0.5)",
-          "rgba(255, 206, 86, 0.5)",
-          "rgba(75, 192, 192, 0.5)",
-          "rgba(153, 102, 255, 0.5)",
-        ],
-        borderColor: [
-          "rgba(255, 99, 132, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
+  // Chart data: [{ label, value, color? }]
+  const tasksByUser = pieChartdata.map((row) => ({
+    label: row.firstname,
+    value: row.count,
+  }));
 
-  console.log("this is data", data.datasets[0]["data"]);
-  const labels2 = pieChartdataCli.map((obj) => obj.name);
-  const clientsTasksData = {
-    labels: labels2,
-    datasets: [
-      {
-        label: "Pending Tasks by Client",
-        data: pieChartdataCli?.map((obj) => obj.count),
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.5)",
-          "rgba(54, 162, 235, 0.5)",
-          "rgba(255, 206, 86, 0.5)",
-          "rgba(75, 192, 192, 0.5)",
-          "rgba(153, 102, 255, 0.5)",
-        ],
-        borderColor: [
-          "rgba(255, 99, 132, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
+  const tasksByClient = pieChartdataCli.map((row) => ({
+    label: row.name,
+    value: row.count,
+  }));
 
-  const priorityOrder = ["HIGH", "MEDIUM", "LOW"];
-  const colors = [
-    { bg: "rgba(255, 99, 132, 0.5)", border: "rgba(255, 99, 132, 1)" },
-    { bg: "rgba(54, 162, 235, 0.5)", border: "rgba(54, 162, 235, 1)" },
-    { bg: "rgba(75, 192, 192, 0.5)", border: "rgba(75, 192, 192, 1)" },
-  ];
-
-  const datasets = priorityOrder
-    .map((priority, i) => {
-      const match = barChartData.find((d) => d.priority === priority);
-      const count = match ? match._count.priority : 0;
-
-      if (count === 0) return null;
-      return {
-        label: priority,
-        data: [count],
-        backgroundColor: colors[i].bg,
-        borderColor: colors[i].border,
-        borderWidth: 1,
-      };
-    })
-    .filter(Boolean);
-
-  const barData = {
-    labels: [""],
-    datasets,
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: window.innerWidth < 767 ? "bottom" : "left",
-      },
-    },
-  };
+  const tasksByPriority = ["HIGH", "MEDIUM", "LOW"].map((priority) => ({
+    label: priority.charAt(0) + priority.slice(1).toLowerCase(),
+    value:
+      barChartData.find((row) => row.priority === priority)?._count
+        ?.priority ?? 0,
+    color: PRIORITY_COLORS[priority],
+  }));
 
   const navigate = useNavigate();
 
@@ -207,53 +132,41 @@ const Dashboard = () => {
             />
           ))}
         </div>
-        <div className="grid lg:grid-cols-6 w-full gap-2 py-4">
-          <Card className={"col-span-2 min-w-0"}>
-            <CardTitle className={"text-left px-6"}>
-              <h3>Pending Tasks by User</h3>
-            </CardTitle>
+        <div className="grid w-full gap-4 py-4 lg:grid-cols-3">
+          <Card className="min-w-0">
+            <CardHeader>
+              <CardTitle>Pending tasks by user</CardTitle>
+              <CardDescription>Open tasks per support agent</CardDescription>
+            </CardHeader>
             <CardContent>
-              {data.datasets[0].data.length > 0 ? (
-                <div className="relative flex p-2 h-75 w-full">
-                  <Pie data={data} options={options} />
-                </div>
-              ) : (
-                <div className="relative flex p-2 h-75 w-full items-center justify-center">
-                  <h2>No Pending Tasks at the moment</h2>
-                </div>
-              )}
+              <DonutChart
+                items={tasksByUser}
+                emptyMessage="No pending tasks at the moment"
+              />
             </CardContent>
           </Card>
-          <Card className={"col-span-2 min-w-0"}>
-            <CardTitle className={"text-left px-6"}>
-              <h3>Pending Tasks by Priority</h3>
-            </CardTitle>
+          <Card className="min-w-0">
+            <CardHeader>
+              <CardTitle>Pending tasks by priority</CardTitle>
+              <CardDescription>Open tasks, highest priority first</CardDescription>
+            </CardHeader>
             <CardContent>
-              {barData.datasets.length > 0 ? (
-                <div className="relative flex p-2 h-75 w-full">
-                  <Bar data={barData} options={options} />
-                </div>
-              ) : (
-                <div className="relative flex p-2 h-75 w-full items-center justify-center">
-                  <h2>No Pending Tasks at the moment</h2>
-                </div>
-              )}
+              <HorizontalBarChart
+                items={tasksByPriority}
+                emptyMessage="No pending tasks at the moment"
+              />
             </CardContent>
           </Card>
-          <Card className={"col-span-2 min-w-0"}>
-            <CardTitle className={"text-left px-6"}>
-              <h3>Pending Tasks by Clients</h3>
-            </CardTitle>
+          <Card className="min-w-0">
+            <CardHeader>
+              <CardTitle>Pending tasks by client</CardTitle>
+              <CardDescription>Open tasks per client</CardDescription>
+            </CardHeader>
             <CardContent>
-              {clientsTasksData.datasets[0].data.length > 0 ? (
-                <div className="flex p-2 h-75 w-full">
-                  <Pie data={clientsTasksData} options={options} />
-                </div>
-              ) : (
-                <div className="relative flex p-2 h-75 w-full items-center justify-center">
-                  <h2>No Pending Tasks at the moment</h2>
-                </div>
-              )}
+              <DonutChart
+                items={tasksByClient}
+                emptyMessage="No pending tasks at the moment"
+              />
             </CardContent>
           </Card>
         </div>

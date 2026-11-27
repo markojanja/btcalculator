@@ -10,10 +10,8 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 
-import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { DonutChart } from "../components/Charts";
+import { STATUS_COLORS } from "../utils/chartColors";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -43,20 +41,23 @@ const Profile = () => {
     setModal(!modal);
   };
 
-  const chartData = {
-    labels: ["Completed", "CS Ticket", "IT Ticket"],
-    datasets: [
-      {
-        data: [
-          stats?.completed || 0,
-          stats?.csTicket || 0,
-          stats?.itTicket || 0,
-        ],
-        backgroundColor: ["#22C55E", "#F97316", "#EF4444"],
-        borderWidth: 1,
-      },
-    ],
-  };
+  const chartItems = [
+    {
+      label: "Completed",
+      value: stats?.completed || 0,
+      color: STATUS_COLORS.COMPLETED,
+    },
+    {
+      label: "CS tickets",
+      value: stats?.csTicket || 0,
+      color: STATUS_COLORS.CS_TICKET,
+    },
+    {
+      label: "IT tickets",
+      value: stats?.itTicket || 0,
+      color: STATUS_COLORS.IT_TICKET,
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-4 p-2">
@@ -122,7 +123,7 @@ const Profile = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex items-center justify-center">
                 <div className="w-full max-w-sm">
-                  <Doughnut data={chartData} />
+                  <DonutChart items={chartItems} emptyMessage="No tasks yet" />
                 </div>
               </div>
 
