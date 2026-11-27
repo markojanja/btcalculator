@@ -84,7 +84,7 @@ const LoginForm = () => {
   return (
     <div className="grid min-h-screen w-full lg:grid-cols-2">
       {/* Brand panel — large screens only */}
-      <aside className="relative hidden overflow-hidden bg-primary text-primary-foreground lg:flex lg:flex-col lg:justify-between lg:p-12">
+      <aside className="relative hidden overflow-hidden bg-primary text-left text-primary-foreground lg:flex lg:flex-col lg:justify-between lg:p-12">
         <div
           aria-hidden
           className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-primary-foreground/10 blur-3xl"
@@ -128,7 +128,7 @@ const LoginForm = () => {
 
       {/* Sign-in form */}
       <main className="flex items-center justify-center bg-background px-6 py-12">
-        <div className="w-full max-w-sm space-y-8">
+        <div className="w-full max-w-sm space-y-8 text-left">
           <Brand className="block text-center text-3xl text-primary lg:hidden" />
 
           <div className="space-y-2">
