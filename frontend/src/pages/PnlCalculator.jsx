@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import Modal from "../components/Modal";
 import {
   allCurrencyPairs,
@@ -8,6 +7,7 @@ import {
   pnlHowTo,
 } from "../utils/helpers";
 import { calculateProfitAndLoss } from "../utils/calculations";
+import { fetchConversionRate } from "../utils/fetchData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -35,16 +35,6 @@ const PnlCalculator = () => {
   const [conversionRate, setConverisonRate] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [contractSize, setContractSize] = useState(100000);
-
-  const API_KEY = import.meta.env.VITE_API_KEY;
-
-  const fetchData = async (pair) => {
-    const res = await axios.get(
-      `https://api.twelvedata.com/exchange_rate?symbol=${pair}&apikey=${API_KEY}`,
-    );
-
-    return res.data.rate;
-  };
 
   const handleChange = (setter) => (e) => {
     setter(e.target.value);
@@ -74,10 +64,9 @@ const PnlCalculator = () => {
       if (!allCurrencyPairs.includes(pair)) {
         pair = `${depositCurrency}/${quote}`;
       }
-      let conversion = await fetchData(pair);
-      if (conversionRate) {
-        conversion = conversionRate;
-      }
+      // A rate typed in by the user wins; otherwise fetch it.
+      const conversion = conversionRate || (await fetchConversionRate(pair));
+      if (conversion === null) return; // fetch failed; a toast shows why
 
       result = result * conversion;
       setPnl(parseFloat(result).toFixed(2));

@@ -54,8 +54,6 @@ const MarginCalculator = () => {
   const [deposit, setDeposit] = useState("EUR");
   const [showModal, setShowModal] = useState(false);
 
-  const API_KEY = import.meta.env.VITE_API_KEY;
-
   const handleChange = (setter) => (e) => {
     setter(e.target.value);
   };
@@ -139,7 +137,7 @@ const MarginCalculator = () => {
     const conversionPair = `${base}/${value}`;
 
     try {
-      const conversionPrice = await fetchExchangeRate(conversionPair, API_KEY);
+      const conversionPrice = await fetchExchangeRate(conversionPair, conversion);
       setConversion(conversionPrice);
     } catch (err) {
       console.error("Conversion fetch failed", err);

@@ -40,8 +40,6 @@ const PipCalculator = () => {
   const [editMode, setEditMode] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const API_KEY = import.meta.env.VITE_API_KEY;
-
   useEffect(() => {
     const handleFetchData = async () => {
       if (!editMode) {
@@ -52,7 +50,7 @@ const PipCalculator = () => {
             pair = `${quote}/${depositCurrency}`;
           }
           setConversionPair(pair);
-          const rate = await fetchConversionRate(pair, API_KEY);
+          const rate = await fetchConversionRate(pair);
           if (rate !== null) {
             setExchangeRate(1);
             setConversionRate(parseFloat(rate.toFixed(5)));
@@ -61,7 +59,6 @@ const PipCalculator = () => {
           setExchangeRate(parseFloat(prevExchangeRate));
           const rate = await fetchExchangeRate(
             currencyPair,
-            API_KEY,
             prevExchangeRate,
           );
           if (rate !== null) {

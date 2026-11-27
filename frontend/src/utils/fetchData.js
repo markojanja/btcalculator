@@ -1,30 +1,30 @@
 import axios from "axios";
 
-export const fetchExchangeRate = async (pair, API_KEY, prevExchangeRate) => {
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+// Rates come from our backend (GET /rates), which holds the TwelveData key.
+// Errors are shown as toasts by the axios interceptor.
+const fetchRate = async (pair) => {
+  const res = await axios.get(`${BACKEND_URL}/rates`, {
+    params: { symbol: pair },
+    withCredentials: true,
+  });
+  return res.data.rate;
+};
+
+export const fetchExchangeRate = async (pair, prevExchangeRate) => {
   try {
-    const res = await axios.get(
-      `https://api.twelvedata.com/exchange_rate?symbol=${pair}&apikey=${API_KEY}`,
-    );
-    if (res.data.rate) {
-      return parseFloat(res.data.rate);
-    }
-  } catch (error) {
-    console.error("Error fetching exchange rate:", error);
-    return prevExchangeRate; // Return previous rate in case of failure
+    return await fetchRate(pair);
+  } catch {
+    return prevExchangeRate; // keep the previous rate if the request fails
   }
 };
 
-export const fetchConversionRate = async (pair, API_KEY) => {
+export const fetchConversionRate = async (pair) => {
   try {
-    const res = await axios.get(
-      `https://api.twelvedata.com/exchange_rate?symbol=${pair}&apikey=${API_KEY}`,
-    );
-    if (res.data.rate) {
-      return parseFloat(res.data.rate);
-    }
-  } catch (error) {
-    console.error("Error fetching conversion rate:", error);
-    return null; // Return null if the request fails
+    return await fetchRate(pair);
+  } catch {
+    return null;
   }
 };
 

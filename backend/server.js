@@ -19,6 +19,7 @@ import AdminData from "./routes/adminData.route.js";
 import UserGuidesRouter from "./routes/guides.route.js";
 import UserStatsRouter from "./routes/userStats.route.js";
 import ClientRouter from "./routes/clients.route.js";
+import RatesRouter from "./routes/rates.route.js";
 import { createFolders } from "./utils/createFolders.js";
 
 import { createPDF, sanitize, wrapHTML } from "./services/pdf.service.js";
@@ -123,6 +124,7 @@ app.use("/", isAuth, AdminData);
 app.use("/", isAuth, UserGuidesRouter);
 app.use("/", isAuth, ClientRouter);
 app.use("/", isAuth, UserStatsRouter);
+app.use("/", isAuth, RatesRouter);
 app.get("/guides/:id/pdf", async (req, res) => {
   try {
     const { id } = req.params;
