@@ -33,40 +33,64 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = createServer(app);
 
+// One session middleware, shared by Express and Socket.IO, so both see the
+// same logged-in user.
+const sessionMiddleware = session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: new PrismaSessionStore(prisma, {
+    checkPeriod: 2 * 60 * 1000, // Check for expired sessions every 2 minutes
+    dbRecordIdIsSessionId: true, // Make sure the session ID is used as the record ID
+  }),
+  cookie: {
+    maxAge: 7 * 60 * 60 * 1000, // 7hours
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  },
+});
+
 export const io = new Server(server, {
   cors: {
     origin: [`${process.env.CORS}`],
     methods: ["GET", "POST"],
+    credentials: true, // let the browser send the session cookie
   },
 });
 
-io.on("connection", (socket) => {
+// Run a middleware only on the first request of a Socket.IO connection (the
+// handshake). Later requests carry a session id (`sid`) and are skipped.
+const onlyForHandshake = (middleware) => (req, res, next) => {
+  const isHandshake = req._query.sid === undefined;
+  if (isHandshake) {
+    middleware(req, res, next);
+  } else {
+    next();
+  }
+};
 
-  socket.on("join", ({ userId, role }) => {
-    socket.join(`user:${userId}`); // personal room
-    socket.join(role); // e.g., "role:ADMIN"
-
-  });
-});
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: new PrismaSessionStore(prisma, {
-      checkPeriod: 2 * 60 * 1000, // Check for expired sessions every 2 minutes
-      dbRecordIdIsSessionId: true, // Make sure the session ID is used as the record ID
-    }),
-    cookie: {
-      maxAge: 7 * 60 * 60 * 1000, // 7hours
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    },
+io.engine.use(onlyForHandshake(sessionMiddleware));
+io.engine.use(onlyForHandshake(passport.session()));
+io.engine.use(
+  onlyForHandshake((req, res, next) => {
+    if (req.user) {
+      next();
+    } else {
+      res.writeHead(401);
+      res.end();
+    }
   }),
 );
 
+// Rooms come from the logged-in user on the server, never from the client.
+io.on("connection", (socket) => {
+  const user = socket.request.user;
+  socket.join(`user:${user.id}`);
+  socket.join(`role:${user.role}`);
+});
+
+app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 

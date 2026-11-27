@@ -17,14 +17,9 @@ const NotificationProvider = ({ children }) => {
 
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-    const newSocket = io(`${BACKEND_URL}`);
+    // The session cookie identifies the user; the server picks the rooms.
+    const newSocket = io(`${BACKEND_URL}`, { withCredentials: true });
     setSocket(newSocket);
-
-    // Join personal room + role room (prepend "role:" to match backend)
-    const roleRoom = `role:${user.role}`;
-    newSocket.emit("join", { userId: user.id, role: roleRoom });
-
-    console.log("Socket emitted join for user:", user.id, "role:", roleRoom);
 
     newSocket.on("notification", (data) => {
       // console.log("Notification received on frontend:", data);
