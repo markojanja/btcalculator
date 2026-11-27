@@ -130,6 +130,11 @@ export const editUserPut = async (req, res, next) => {
         message: "Only an admin can modify admin or manager accounts.",
       });
     }
+    if ((role && role !== target.role) || active === false) {
+      return res
+        .status(403)
+        .json({ message: "You can't edit your own account!" });
+    }
 
     await prisma.user.update({
       where: {
