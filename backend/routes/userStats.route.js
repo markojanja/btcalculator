@@ -1,10 +1,16 @@
 import express from "express";
 import prisma from "../db/prisma.js";
+import { canAccess } from "../utils/helpers.js";
 
 const router = express.Router();
 
 router.get("/stats/users/:id", async (req, res, next) => {
   const { id } = req.params;
+  if (!canAccess(req.user, id)) {
+    return res
+      .status(403)
+      .json({ message: "You can only view your own stats." });
+  }
 
   try {
     const result = await prisma.$queryRaw`
@@ -29,7 +35,6 @@ router.get("/stats/users/:id", async (req, res, next) => {
 
     return res.json(result[0]);
   } catch (error) {
-    console.log("FULL ERROR:", error);
     next(error);
   }
 });

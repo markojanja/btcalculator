@@ -15,3 +15,7 @@ export const getShiftDayRange = () => {
 
   return { startOfDay: start, endOfDay: end };
 };
+
+export const isStaff = (user) => ["ADMIN", "MANAGER"].includes(user.role);
+export const canAccess = (user, ownerId) =>
+  ownerId === user.id || isStaff(user);

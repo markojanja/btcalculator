@@ -6,7 +6,7 @@ import {
   notifyTaskUpdatedAdmin,
   notifyTaskUpdatedSupport,
 } from "../services/notification.services.js";
-import { getShiftDayRange } from "../utils/helpers.js";
+import { canAccess, getShiftDayRange, isStaff } from "../utils/helpers.js";
 
 export const myTasks = async (req, res, next) => {
   const user = req.user;
@@ -106,7 +106,6 @@ export const addTask = async (req, res, next) => {
 export const editTask = async (req, res, next) => {
   const { id, title, description, status, priority, userId, client } = req.body;
 
-
   try {
     const oldTask = await prisma.tasks.findUnique({
       where: { id },
@@ -116,6 +115,20 @@ export const editTask = async (req, res, next) => {
         },
       },
     });
+
+    if (oldTask === null) {
+      return res.status(404).json({ message: "Task no longer exists." });
+    }
+    if (!canAccess(req.user, oldTask.userId)) {
+      return res
+        .status(403)
+        .json({ message: "You do not have enough permissions." });
+    }
+    if (userId && userId !== oldTask.userId && !isStaff(req.user)) {
+      return res
+        .status(403)
+        .json({ message: "Only admin and manager can reassign tasks." });
+    }
 
     const updatedFields = {
       ...(title && { title }),
@@ -156,7 +169,20 @@ export const editTask = async (req, res, next) => {
 
 export const deleteTask = async (req, res, next) => {
   const { id } = req.params;
+
   try {
+    const task = await prisma.tasks.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+    if (task === null) {
+      return res.status(404).json({ message: "Task no longer exists." });
+    }
+    if (!canAccess(req.user, task.userId)) {
+      return res
+        .status(403)
+        .json({ message: "You do not have enough permissions." });
+    }
     await prisma.$transaction([
       prisma.taskComments.deleteMany({
         where: { taskId: id },
