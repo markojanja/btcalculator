@@ -1,24 +1,133 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import axios from "axios";
-import Modal from "../components/Modal";
+import {
+  AlertTriangle,
+  ArrowLeftRight,
+  CheckCircle2,
+  FileJson,
+  FileSpreadsheet,
+  Loader2,
+  Upload,
+  X,
+} from "lucide-react";
 import DownloadButton from "../components/DownloadButton";
-import { ImSpinner9 } from "react-icons/im";
 import { converterHowTo } from "../utils/helpers";
-import SymbolList from "../components/SymbolList";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {
+  CalculatorPage,
+  FormCard,
+  FormSection,
+  HelpDialog,
+  ResultCard,
+} from "../components/CalculatorUI";
+import { cn } from "@/lib/utils";
 
-import { Field, FieldGroup, FieldSeparator } from "@/components/ui/field";
-import { FaRegQuestionCircle } from "react-icons/fa";
+const formatSize = (bytes) =>
+  bytes < 1024 * 1024
+    ? `${(bytes / 1024).toFixed(1)} KB`
+    : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 
-import FileInput from "../components/FileInput";
+/** Click or drag a file onto the box. */
+const FileDropZone = ({ label, description, accept, icon: Icon, file, onFile }) => {
+  const inputRef = useRef(null);
+  const [dragging, setDragging] = useState(false);
+
+  const pick = (fileList) => {
+    const picked = fileList?.[0];
+    if (picked) onFile(picked);
+  };
+
+  return (
+    <div className="space-y-1.5">
+      <p className="text-sm font-medium">{label}</p>
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragging(false);
+          pick(e.dataTransfer.files);
+        }}
+        className={cn(
+          "flex cursor-pointer items-center gap-4 rounded-xl border-2 border-dashed p-4 transition",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          dragging
+            ? "border-primary bg-primary/5"
+            : file
+              ? "border-emerald-300 bg-emerald-50/50 dark:border-emerald-900 dark:bg-emerald-950/20"
+              : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/40",
+        )}
+      >
+        <span
+          className={cn(
+            "flex size-11 shrink-0 items-center justify-center rounded-lg",
+            file
+              ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-300"
+              : "bg-muted text-muted-foreground",
+          )}
+        >
+          {file ? <Icon className="size-5" /> : <Upload className="size-5" />}
+        </span>
+        <div className="min-w-0 flex-1">
+          {file ? (
+            <>
+              <p className="truncate text-sm font-medium">{file.name}</p>
+              <p className="text-xs text-muted-foreground">
+                {formatSize(file.size)} · click to replace
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-sm font-medium">
+                Drop file here or <span className="text-primary">browse</span>
+              </p>
+              <p className="text-xs text-muted-foreground">{description}</p>
+            </>
+          )}
+        </div>
+        {file && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onFile(null);
+              if (inputRef.current) inputRef.current.value = "";
+            }}
+            aria-label={`Remove ${file.name}`}
+          >
+            <X />
+          </Button>
+        )}
+        <input
+          ref={inputRef}
+          type="file"
+          accept={accept}
+          className="hidden"
+          onChange={(e) => pick(e.target.files)}
+        />
+      </div>
+    </div>
+  );
+};
 
 const Converter = () => {
   const [jsonFile, setJsonFile] = useState(null);
   const [excelFile, setExcelFile] = useState(null);
   const [success, setSuccess] = useState("");
-  const [message, setMessage] = useState("");
   const [symbols, setSymbols] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -26,20 +135,8 @@ const Converter = () => {
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-  // const handleFileChange = (e) => {
-  //   if (e.target.name === "jsonFile") {
-  //     setJsonFile(e.target.files[0]); // Use `files[0]`
-  //   }
-  //   if (e.target.name === "excelFile") {
-  //     setExcelFile(e.target.files[0]); // Use `files[0]`
-  //   }
-  // };
-
   const handleUpload = async () => {
-    if (!jsonFile || !excelFile) {
-      alert("Please select both files before uploading.");
-      return;
-    }
+    if (!jsonFile || !excelFile) return;
 
     const formData = new FormData();
     formData.append("jsonFile", jsonFile);
@@ -48,6 +145,7 @@ const Converter = () => {
       setLoading(true);
       setSuccess("");
       setDownloadId(null);
+      setSymbols([]);
       const response = await axios.post(`${BACKEND_URL}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -56,7 +154,6 @@ const Converter = () => {
       });
 
       setSuccess(response.data.message);
-      setMessage(response.data.noMatch.message);
       setSymbols(response.data.noMatch.symbols);
       setDownloadId(response.data.downloadId);
     } catch {
@@ -66,79 +163,114 @@ const Converter = () => {
     }
   };
 
-  const handleToggleModal = () => {
-    setShowModal(!showModal);
-  };
+  const bothSelected = jsonFile && excelFile;
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4 p-2">
+    <CalculatorPage
+      icon={ArrowLeftRight}
+      title="Swap converter"
+      description="Update the swaps in an MT5 symbols JSON from an Excel swap sheet."
+      onHelp={() => setShowModal(true)}
+    >
       {showModal && (
-        <Modal setShowModal={setShowModal} content={converterHowTo} />
+        <HelpDialog
+          title="Swap converter"
+          content={converterHowTo.content}
+          onClose={() => setShowModal(false)}
+        />
       )}
-      <Card className={`w-full lg:w-1/3 p-4`}>
-        <CardHeader>
-          <div className="flex gap-1">
-            <h3 className="text-lg font-bold">Excel to JSON Swap converter</h3>
-            <div
-              className="flex items-center justify-center mt-1"
-              onClick={handleToggleModal}
-            >
-              <FaRegQuestionCircle style={{ cursor: "pointer" }} />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          <FieldGroup>
-            <Field>
-              <Label>Upload valid JSON</Label>
-              <FileInput
-                label="Upload valid JSON"
-                accept=".json"
-                fileName={jsonFile?.name}
-                onChange={(e) => setJsonFile(e.target.files[0])}
-              />
-            </Field>
-          </FieldGroup>
-          <FieldGroup>
-            <Field>
-              <Label>Upload valid Excel</Label>
-              <FileInput
-                label="Upload valid Excel"
-                accept=".xlsx"
-                fileName={excelFile?.name}
-                onChange={(e) => setExcelFile(e.target.files[0])}
-              />
-            </Field>
-            <FieldSeparator />
-          </FieldGroup>
-          <Button onClick={handleUpload}>
-            {loading ? "Loading..." : "Upload and Update"}
-          </Button>
-          {success && downloadId && (
+
+      <FormCard
+        onSubmit={handleUpload}
+        submitting={!bothSelected || loading}
+        submitLabel={
+          loading ? (
             <>
-              <p>{success}</p>
-              <DownloadButton downloadId={downloadId} jsonFile={jsonFile} />
+              <Loader2 className="animate-spin" />
+              Converting…
             </>
-          )}
-        </CardContent>
-        <div
-          className="flex-col"
-          style={{
-            alignItems: "center",
-            position: "relative",
-            padding: "2rem 0",
-          }}
-        >
-          {loading && (
-            <div className="loading-container">
-              <ImSpinner9 className="spinner" size={36} />
+          ) : (
+            "Convert"
+          )
+        }
+      >
+        <FormSection title="Files" columns={1}>
+          <FileDropZone
+            label="1. MT5 symbols export"
+            description="JSON file exported from MT5 (UTF-16)"
+            accept=".json"
+            icon={FileJson}
+            file={jsonFile}
+            onFile={setJsonFile}
+          />
+          <FileDropZone
+            label="2. Swap sheet"
+            description="Excel file with Symbol, Long Value and Short Value columns"
+            accept=".xlsx"
+            icon={FileSpreadsheet}
+            file={excelFile}
+            onFile={setExcelFile}
+          />
+        </FormSection>
+      </FormCard>
+
+      <ResultCard
+        empty={
+          loading ? (
+            <>
+              <Loader2 className="size-6 animate-spin" />
+              Converting your files…
+            </>
+          ) : (
+            <>
+              <ArrowLeftRight className="size-6" />
+              Select both files and press Convert.
+            </>
+          )
+        }
+      >
+        {success && downloadId && (
+          <div className="space-y-4">
+            <div className="flex items-start gap-3 rounded-xl bg-emerald-50 p-4 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+              <CheckCircle2 className="mt-0.5 size-5 shrink-0" />
+              <div>
+                <p className="font-medium">{success}</p>
+                <p className="text-sm opacity-80">
+                  The file is kept for 1 hour.
+                </p>
+              </div>
             </div>
-          )}
-          {message && <h3 className="list-heading">{message}</h3>}
-          {symbols.length > 0 && <SymbolList symbols={symbols} />}
-        </div>
-      </Card>
-    </div>
+
+            <DownloadButton downloadId={downloadId} jsonFile={jsonFile} />
+
+            {symbols.length > 0 ? (
+              <div className="space-y-2">
+                <p className="flex items-center gap-2 text-sm font-medium text-amber-700 dark:text-amber-400">
+                  <AlertTriangle className="size-4" />
+                  {symbols.length}{" "}
+                  {symbols.length === 1 ? "symbol was" : "symbols were"} not in
+                  the swap sheet
+                </p>
+                <div className="flex max-h-64 flex-wrap gap-1.5 overflow-y-auto rounded-lg bg-muted/50 p-3">
+                  {symbols.map((symbol) => (
+                    <span
+                      key={symbol}
+                      className="rounded-md bg-background px-2 py-0.5 font-mono text-xs"
+                    >
+                      {symbol}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Every symbol was found in the swap sheet.
+              </p>
+            )}
+          </div>
+        )}
+      </ResultCard>
+    </CalculatorPage>
   );
 };
 

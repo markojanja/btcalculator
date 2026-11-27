@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // downloadId comes from the upload response; the server stores the converted
@@ -28,7 +29,12 @@ const DownloadButton = ({ downloadId, jsonFile }) => {
       // the error toast (axios interceptor) shows what went wrong
     }
   };
-  return <Button onClick={handleDownload}>Download</Button>;
+  return (
+    <Button type="button" className="w-full" onClick={handleDownload}>
+      <Download />
+      Download converted file
+    </Button>
+  );
 };
 
 export default DownloadButton;

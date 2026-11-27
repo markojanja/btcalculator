@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Modal from "../components/Modal";
+import { Percent, Trash2 } from "lucide-react";
 import {
   marginCalculationCFD,
   marginCalculationForex,
@@ -11,33 +11,22 @@ import {
   tradeTypeList,
   marginHowTo,
 } from "../utils/helpers";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { fetchExchangeRate } from "../utils/fetchData";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { FaRegQuestionCircle } from "react-icons/fa";
-import { MdDeleteForever } from "react-icons/md";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-import { fetchExchangeRate } from "../utils/fetchData";
+  CalculatorPage,
+  FormCard,
+  FormField,
+  FormSection,
+  HelpDialog,
+  NumberInput,
+  ResultCard,
+  SegmentedControl,
+  SelectInput,
+} from "../components/CalculatorUI";
 
 const MarginCalculator = () => {
   const [activeType, setActveType] = useState("forex");
@@ -70,7 +59,6 @@ const MarginCalculator = () => {
     //test
     if (activeType === "forex") {
       setMargin("-");
-      console.log("conversion", conversion);
       res = marginCalculationForex(
         contractSize,
         lotSize,
@@ -93,7 +81,6 @@ const MarginCalculator = () => {
       };
     } else if (activeType === "cfd") {
       setLeverage("-");
-      console.log("conversion cfd", conversion);
 
       res = marginCalculationCFD(
         contractSize,
@@ -116,7 +103,6 @@ const MarginCalculator = () => {
         marginRequired: parseFloat(res) * conversion,
       };
     } else {
-      console.log("error");
       return;
     }
 
@@ -155,248 +141,216 @@ const MarginCalculator = () => {
   };
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4 p-2">
-      {showModal && <Modal setShowModal={setShowModal} content={marginHowTo} />}
-      <Card className="w-full lg:w-1/3 p-4">
-        <CardHeader className="flex justify-between items-center">
-          <div className="flex gap-1">
-            <h3 className="text-lg font-bold">Margin Calculator</h3>
-            <div
-              className="flex items-center justify-center mt-1"
-              onClick={handleToggleModal}
-            >
-              <FaRegQuestionCircle style={{ cursor: "pointer" }} />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          <FieldGroup>
-            <Field>
-              <Label>Type Of Calculation</Label>
-              <ToggleGroup
-                type="single"
-                value={activeType}
-                onValueChange={handleTypeSelect}
-                className="justify-start border-secondary"
-              >
-                {calcType.map((item) => (
-                  <ToggleGroupItem
-                    className="data-[state=on]:bg-primary data-[state=on]:text-white transition-all duration-150"
-                    key={item}
-                    value={item}
-                  >
-                    {item}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            </Field>
-          </FieldGroup>
-          <FieldGroup className="flex flex-row">
-            <Field>
-              <Label>Symbol</Label>
-              <Select value={pair} onValueChange={handleSelect(setPair)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select symbol" />
-                </SelectTrigger>
-                <SelectContent>
-                  {allCurrencyPairs.map((pair) => (
-                    <SelectItem key={pair} value={pair}>
-                      {pair}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <Label>Order Type</Label>
-              <Select
-                value={tradeType}
-                onValueChange={handleSelect(setTradeType)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {tradeTypeList.map((item) => (
-                    <SelectItem key={item} value={item}>
-                      {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
-          <FieldGroup className="flex flex-row">
-            <Field>
-              <Label>Contract Size</Label>
-              <Input
-                className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                type="number"
-                inputMode="decimal"
-                placeholder={"set contact size..."}
+    <CalculatorPage
+      icon={Percent}
+      title="Margin"
+      description="Margin required to open positions. Add several to see the total."
+      onHelp={handleToggleModal}
+    >
+      {showModal && (
+        <HelpDialog
+          title="Margin"
+          content={marginHowTo.content}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+
+      <FormCard onSubmit={handleCalculate} submitLabel="Add calculation">
+        <FormSection title="Instrument">
+          <FormField label="Instrument type" className="sm:col-span-2">
+            <SegmentedControl
+              value={activeType}
+              onChange={handleTypeSelect}
+              options={calcType}
+              format={(t) => t.toUpperCase()}
+            />
+          </FormField>
+          <FormField label="Symbol">
+            {(id) => (
+              <SelectInput
+                id={id}
+                value={pair}
+                onChange={handleSelect(setPair)}
+                options={allCurrencyPairs}
+                placeholder="Select symbol"
+              />
+            )}
+          </FormField>
+          <FormField label="Direction">
+            <SegmentedControl
+              value={tradeType}
+              onChange={setTradeType}
+              options={tradeTypeList}
+            />
+          </FormField>
+        </FormSection>
+
+        <FormSection title="Position">
+          <FormField label="Contract size">
+            {(id) => (
+              <NumberInput
+                id={id}
+                placeholder="e.g. 100000"
                 value={contractSize}
                 onChange={handleChange(setContractSize)}
               />
-            </Field>
-            <Field>
-              <Label>Lot Size</Label>
-              <Input
-                className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                type="number"
-                inputMode="decimal"
-                placeholder={"set lot size..."}
+            )}
+          </FormField>
+          <FormField label="Volume">
+            {(id) => (
+              <NumberInput
+                id={id}
+                placeholder="e.g. 1"
                 value={lotSize}
                 onChange={handleChange(setLotSize)}
+                unit="lots"
               />
-            </Field>
-          </FieldGroup>
-          <FieldGroup className="flex flex-row">
-            <Field>
-              <Label>Price</Label>
-              <Input
-                className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                type="number"
-                inputMode="decimal"
-                placeholder={"set instrument price..."}
+            )}
+          </FormField>
+          <FormField label="Price">
+            {(id) => (
+              <NumberInput
+                id={id}
+                placeholder="Current price"
                 value={price}
                 onChange={handleChange(setPrice)}
               />
-            </Field>
-            <Field>
-              {activeType === "forex" && (
-                <>
-                  <Label>Leverage</Label>
-                  <Input
-                    className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    type="number"
-                    inputMode="decimal"
-                    placeholder={"set leverage..."}
-                    value={leverage}
-                    onChange={handleChange(setLeverage)}
-                  />
-                </>
-              )}
-              {activeType === "cfd" && (
-                <>
-                  <Label>Margin (%)</Label>
-                  <Input
-                    className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    type="number"
-                    inputMode="decimal"
-                    placeholder={"set margin percentage..."}
-                    value={margin}
-                    onChange={handleChange(setMargin)}
-                  />
-                </>
-              )}
-            </Field>
-          </FieldGroup>
-          <FieldGroup>
-            <Field>
-              <Label>Select Account Currency</Label>
-              <Select value={deposit} onValueChange={handleDepositSelect}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {uniqueCurrencies.map((item) => (
-                    <SelectItem key={item} value={item}>
-                      {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
-          <FieldGroup className="max-w-sm">
-            <Field orientation="horizontal">
-              <Checkbox
-                id="conversion-change"
-                name="conversion-change"
-                checked={showConversion}
-                onCheckedChange={handleCheckbox}
-              />
-              <Label htmlFor="converision-change">show conversion rate</Label>
-            </Field>
-          </FieldGroup>
-          {showConversion && (
-            <Input
-              placeholder={"base/deposit e.q EUR/AUD"}
-              value={conversion}
-              onChange={handleChange(setConversion)}
-            />
-          )}
-          <Button onClick={handleCalculate}>Calculate</Button>
-        </CardContent>
-      </Card>
-      {calculations.length > 0 && (
-        <Table className="lg:max-w-[50%] mx-auto">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Symbol</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Lot Size</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Margin (%)</TableHead>
-              <TableHead>Leverage</TableHead>
-              <TableHead className="text-right">Margin Required</TableHead>
-              <TableHead className="text-center">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {calculations.map((calc) => (
-              <TableRow key={calc.id}>
-                <TableCell>{calc.pair}</TableCell>
-                <TableCell>{calc.tradeType}</TableCell>
-                <TableCell>{calc.lotSize}</TableCell>
-                <TableCell>{calc.price}</TableCell>
-                <TableCell>{calc.margin}</TableCell>
-                <TableCell>{calc.leverage}</TableCell>
-                <TableCell className="text-right font-medium">
-                  {Number(calc.marginRequired).toFixed(2)}
-                </TableCell>
-                <TableCell className="text-center">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(calc.id)}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <MdDeleteForever size={20} />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-
-            {calculations.length === 0 && (
-              <TableRow>
-                <TableCell
-                  colSpan={8}
-                  className="text-center text-muted-foreground"
-                >
-                  No calculations yet
-                </TableCell>
-              </TableRow>
             )}
-          </TableBody>
-          <TableFooter className="w-full">
-            <TableRow>
-              <TableCell
-                colSpan={8}
-                className="text-right text-base font-medium"
-              >
-                Total margin:{" "}
-                <span className="ml-2 text-xl font-bold text-primary">
-                  {Number(totalPrice).toFixed(2)}
-                </span>{" "}
-                {deposit}
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
-      )}
-    </div>
+          </FormField>
+          {activeType === "forex" ? (
+            <FormField label="Leverage">
+              {(id) => (
+                <NumberInput
+                  id={id}
+                  placeholder="e.g. 100"
+                  value={leverage}
+                  onChange={handleChange(setLeverage)}
+                  unit=": 1"
+                />
+              )}
+            </FormField>
+          ) : (
+            <FormField label="Margin">
+              {(id) => (
+                <NumberInput
+                  id={id}
+                  placeholder="e.g. 5"
+                  value={margin}
+                  onChange={handleChange(setMargin)}
+                  unit="%"
+                />
+              )}
+            </FormField>
+          )}
+        </FormSection>
+
+        <FormSection title="Account">
+          <FormField label="Account currency">
+            {(id) => (
+              <SelectInput
+                id={id}
+                value={deposit}
+                onChange={handleDepositSelect}
+                options={uniqueCurrencies}
+                placeholder="Select currency"
+              />
+            )}
+          </FormField>
+          <div className="flex items-center gap-2 sm:pt-7">
+            <Checkbox
+              id="conversion-change"
+              checked={showConversion}
+              onCheckedChange={handleCheckbox}
+            />
+            <Label htmlFor="conversion-change" className="font-normal">
+              Show conversion rate
+            </Label>
+          </div>
+          {showConversion && (
+            <FormField
+              label="Conversion rate"
+              hint="Base currency to account currency, e.g. EUR/AUD."
+              className="sm:col-span-2"
+            >
+              {(id) => (
+                <Input
+                  id={id}
+                  className="h-10"
+                  placeholder="e.g. 1.65"
+                  value={conversion}
+                  onChange={handleChange(setConversion)}
+                />
+              )}
+            </FormField>
+          )}
+        </FormSection>
+      </FormCard>
+
+      <ResultCard
+        title="Calculations"
+        empty={
+          <>
+            <Percent className="size-6" />
+            Added calculations appear here.
+          </>
+        }
+      >
+        {calculations.length > 0 && (
+          <div className="space-y-4">
+            <ul className="divide-y">
+              {calculations.map((calc) => (
+                <li key={calc.id} className="flex items-center gap-3 py-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium">
+                      {calc.pair}{" "}
+                      <span
+                        className={
+                          calc.tradeType === "BUY"
+                            ? "text-xs font-semibold text-emerald-600 dark:text-emerald-400"
+                            : "text-xs font-semibold text-red-600 dark:text-red-400"
+                        }
+                      >
+                        {calc.tradeType}
+                      </span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {calc.lotSize} lots @ {calc.price} ·{" "}
+                      {calc.leverage !== "-"
+                        ? `1:${calc.leverage}`
+                        : `${calc.margin}% margin`}
+                    </p>
+                  </div>
+                  <p className="font-semibold tabular-nums">
+                    {Number(calc.marginRequired).toFixed(2)}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => handleDelete(calc.id)}
+                    className="text-muted-foreground hover:text-destructive"
+                    aria-label={`Remove ${calc.pair}`}
+                  >
+                    <Trash2 />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+            <div className="flex items-baseline justify-between rounded-xl bg-primary/10 p-4">
+              <span className="text-sm text-muted-foreground">
+                Total margin
+              </span>
+              <span className="text-2xl font-bold tabular-nums text-primary">
+                {Number(totalPrice).toFixed(2)}{" "}
+                <span className="text-base font-semibold text-muted-foreground">
+                  {deposit}
+                </span>
+              </span>
+            </div>
+          </div>
+        )}
+      </ResultCard>
+    </CalculatorPage>
   );
 };
 

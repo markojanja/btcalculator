@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Modal from "../components/Modal";
+import { DollarSign } from "lucide-react";
 import {
   allCurrencyPairs,
   uniqueCurrencies,
@@ -8,20 +8,21 @@ import {
 } from "../utils/helpers";
 import { calculateProfitAndLoss } from "../utils/calculations";
 import { fetchConversionRate } from "../utils/fetchData";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { FaRegQuestionCircle } from "react-icons/fa";
-import SettingsButton from "../components/SettingsButton";
+import {
+  CalculatorPage,
+  FormCard,
+  FormField,
+  FormSection,
+  HelpDialog,
+  NumberInput,
+  RateModeToggle,
+  ResultCard,
+  ResultDetails,
+  ResultValue,
+  SegmentedControl,
+  SelectInput,
+} from "../components/CalculatorUI";
 
 const PnlCalculator = () => {
   const [currencyPair, setCurrnecyPair] = useState("EUR/USD");
@@ -42,7 +43,6 @@ const PnlCalculator = () => {
 
   const handleSelect = (setter) => (value) => {
     setter(value);
-    console.log(uniqueCurrencies);
   };
 
   const calculatePnl = async () => {
@@ -76,182 +76,157 @@ const PnlCalculator = () => {
   const handleToggleModal = () => {
     setShowModal(true);
   };
+  const pnlNumber = Number(pnl);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center w-full h-screen gap-4 p-2">
-      {showModal && <Modal setShowModal={setShowModal} content={pnlHowTo} />}
-      <Card
-        className={`w-full lg:w-1/3 p-4  ${editMode ? "border-primary border" : ""}`}
-      >
-        <CardHeader className="flex justify-between items-center">
-          <div className="flex gap-1">
-            <h3 className="text-lg font-bold">PnL Calculator</h3>
-            <div
-              className="flex items-center justify-center mt-1"
-              onClick={handleToggleModal}
-            >
-              <FaRegQuestionCircle style={{ cursor: "pointer" }} />
-            </div>
-          </div>
-          <SettingsButton editMode={editMode} setEditMode={setEditMode} />
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          {editMode ? (
-            <FieldGroup>
-              <Field>
-                <Label>Symbol</Label>
+    <CalculatorPage
+      icon={DollarSign}
+      title="Profit & loss"
+      description="Result of a closed trade, converted to your account currency."
+      onHelp={handleToggleModal}
+      action={<RateModeToggle manual={editMode} onChange={setEditMode} />}
+    >
+      {showModal && (
+        <HelpDialog
+          title="Profit & loss"
+          content={pnlHowTo.content}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+
+      <FormCard onSubmit={calculatePnl}>
+        <FormSection title="Instrument">
+          <FormField
+            label="Symbol"
+            hint={editMode ? "Type any symbol, e.g. XAU/USD." : undefined}
+          >
+            {(id) =>
+              editMode ? (
                 <Input
-                  type="text"
+                  id={id}
+                  className="h-10"
                   value={currencyPair}
                   onChange={handleChange(setCurrnecyPair)}
                 />
-              </Field>
-            </FieldGroup>
-          ) : (
-            <FieldGroup>
-              <Field>
-                <Label>Symbol</Label>
-                <Select
+              ) : (
+                <SelectInput
+                  id={id}
                   value={currencyPair}
-                  onValueChange={handleSelect(setCurrnecyPair)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select symbol" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {allCurrencyPairs.map((pair) => (
-                      <SelectItem key={pair} value={pair}>
-                        {pair}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Field>
-            </FieldGroup>
-          )}
-
-          <FieldGroup>
-            <Field>
-              <Label>Contract Size</Label>
-              <Input
-                className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                type="number"
-                inputMode="decimal"
-                placeholder="set contract size..."
+                  onChange={handleSelect(setCurrnecyPair)}
+                  options={allCurrencyPairs}
+                  placeholder="Select symbol"
+                />
+              )
+            }
+          </FormField>
+          <FormField label="Contract size">
+            {(id) => (
+              <NumberInput
+                id={id}
+                placeholder="e.g. 100000"
                 value={contractSize}
                 onChange={handleChange(setContractSize)}
               />
-            </Field>
-          </FieldGroup>
+            )}
+          </FormField>
+        </FormSection>
 
-          <FieldGroup>
-            <Field>
-              <Label>Order type</Label>
-              <Select
-                value={tradeType}
-                onValueChange={handleSelect(setTradeType)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Symbol" />
-                </SelectTrigger>
-                <SelectContent>
-                  {tradeTypeList.map((pair) => (
-                    <SelectItem key={pair} value={pair}>
-                      {pair}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
-
-          <FieldGroup>
-            <Field>
-              <Label>Open Price</Label>
-              <Input
-                className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                type="number"
-                inputMode="decimal"
-                placeholder={"set close price"}
+        <FormSection title="Trade">
+          <FormField label="Direction" className="sm:col-span-2">
+            <SegmentedControl
+              value={tradeType}
+              onChange={setTradeType}
+              options={tradeTypeList}
+            />
+          </FormField>
+          <FormField label="Open price">
+            {(id) => (
+              <NumberInput
+                id={id}
+                placeholder="e.g. 1.08500"
                 value={openPrice}
                 onChange={handleChange(setOpenPrice)}
               />
-            </Field>
-          </FieldGroup>
-
-          <FieldGroup>
-            <Field>
-              <Label>Close Price</Label>
-              <Input
-                className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                type="number"
-                inputMode="decimal"
-                placeholder={"set close price"}
+            )}
+          </FormField>
+          <FormField label="Close price">
+            {(id) => (
+              <NumberInput
+                id={id}
+                placeholder="e.g. 1.09000"
                 value={closePrice}
                 onChange={handleChange(setClosePrice)}
               />
-            </Field>
-          </FieldGroup>
-          <FieldGroup>
-            <Field>
-              <Label>Lots</Label>
-              <Input
-                className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                type="number"
-                inputMode="decimal"
-                label={"trade size(lots)"}
-                placeholder={"set lots..."}
+            )}
+          </FormField>
+          <FormField label="Volume">
+            {(id) => (
+              <NumberInput
+                id={id}
+                placeholder="e.g. 1"
                 value={tradeSize}
                 onChange={handleChange(setTradeSize)}
+                unit="lots"
               />
-            </Field>
-          </FieldGroup>
-          <FieldGroup>
-            <Field>
-              <Label>Account Currency</Label>
-              <Select
+            )}
+          </FormField>
+          <FormField label="Account currency">
+            {(id) => (
+              <SelectInput
+                id={id}
                 value={depositCurrency}
-                onValueChange={handleSelect(setDepositCurrency)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select deposit currency" />
-                </SelectTrigger>
-                <SelectContent>
-                  {uniqueCurrencies.map((item) => (
-                    <SelectItem key={item} value={item}>
-                      {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
-
+                onChange={handleSelect(setDepositCurrency)}
+                options={uniqueCurrencies}
+                placeholder="Select currency"
+              />
+            )}
+          </FormField>
           {editMode && (
-            <FieldGroup>
-              <Field>
-                <Label>Conversion pair price</Label>
-                <Input
-                  className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  type="number"
-                  inputMode="decimal"
-                  placeholder={"example price of USD/JPY"}
+            <FormField
+              label="Conversion rate"
+              hint="Price of the pair between the quote and account currency, e.g. USD/JPY."
+              className="sm:col-span-2"
+            >
+              {(id) => (
+                <NumberInput
+                  id={id}
+                  placeholder="e.g. 151.20"
                   onChange={handleChange(setConverisonRate)}
                 />
-              </Field>
-            </FieldGroup>
+              )}
+            </FormField>
           )}
-          <Button onClick={calculatePnl}>Calculate</Button>
-        </CardContent>
-      </Card>
-      {pnl && (
-        <Card className="w-full lg:w-1/3">
-          <CardContent>
-            <CardTitle>{`PNL: ${pnl} ${depositCurrency}`}</CardTitle>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+        </FormSection>
+      </FormCard>
+
+      <ResultCard
+        empty={
+          <>
+            <DollarSign className="size-6" />
+            Fill in the trade and press Calculate.
+          </>
+        }
+      >
+        {pnl && (
+          <>
+            <ResultValue
+              label={pnlNumber >= 0 ? "Profit" : "Loss"}
+              value={pnlNumber > 0 ? `+${pnl}` : pnl}
+              unit={depositCurrency}
+              tone={pnlNumber >= 0 ? "positive" : "negative"}
+            />
+            <ResultDetails
+              rows={[
+                ["Symbol", currencyPair],
+                ["Direction", tradeType],
+                ["Open → close", `${openPrice} → ${closePrice}`],
+                ["Volume", `${tradeSize} lots`],
+              ]}
+            />
+          </>
+        )}
+      </ResultCard>
+    </CalculatorPage>
   );
 };
 

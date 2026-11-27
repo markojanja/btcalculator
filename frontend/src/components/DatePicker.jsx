@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -22,7 +23,10 @@ function DatePicker({
         <Button
           variant="outline"
           data-empty={!value}
-          className={`data-[empty=true]:text-muted-foreground w-auto justify-start text-left font-normal ${className || ""}`}
+          className={cn(
+            "data-[empty=true]:text-muted-foreground w-auto justify-start text-left font-normal",
+            className,
+          )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {value ? format(value, "dd/MM/yyyy") : <span>{placeholder}</span>}
