@@ -2,11 +2,14 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-function Table({ className, ...props }) {
+function Table({ className, containerClassName, ...props }) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto text-left py-4"
+      className={cn(
+        "relative w-full overflow-x-auto text-left py-4",
+        containerClassName,
+      )}
     >
       <table
         data-slot="table"

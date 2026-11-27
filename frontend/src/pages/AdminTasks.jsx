@@ -5,15 +5,16 @@ import { useState } from "react";
 import Pagination from "../components/Pagination";
 import usePagination from "../hooks/usePagination";
 import useNotification from "../hooks/useNotification";
+import { TableCell } from "@/components/ui/table";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+  ClickableRow,
+  DataTable,
+  DateCell,
+  EmptyRow,
+  PersonCell,
+  PriorityLabel,
+  TaskStatusBadge,
+} from "../components/TableCells";
 import SearchInput from "../components/SearchInput";
 import useSearch from "../hooks/useSearch";
 
@@ -75,44 +76,50 @@ const AdminTasks = () => {
         />
       </div>
       <div className="flex flex-col flex-1 items-center">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead>Assigne</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        <div className="w-full">
+          <DataTable
+            columns={[
+              "Task",
+              "Client",
+              "Status",
+              "Priority",
+              "Created",
+              "Assignee",
+            ]}
+          >
+            {currentItems.length === 0 && (
+              <EmptyRow colSpan={6}>No tasks found</EmptyRow>
+            )}
             {currentItems.map((task) => (
-              <TableRow
-                onClick={() => navigate(`/dashboard/task/${task.id}`)}
+              <ClickableRow
                 key={task.id}
-                className={"cursor-pointer"}
+                onOpen={() => navigate(`/dashboard/task/${task.id}`)}
               >
-                <TableCell>{task.title}</TableCell>
-                <TableCell>
-                  <Badge>{task.client?.name}</Badge>
+                <TableCell className="max-w-72 truncate font-medium">
+                  {task.title}
                 </TableCell>
-                <TableCell>{task.status}</TableCell>
-                <TableCell>{task.priority}</TableCell>
-                <TableCell>
-                  {new Date(task.createdAt).toLocaleDateString("en-GB", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                  })}
+                <TableCell className="text-muted-foreground">
+                  {task.client?.name ?? "—"}
                 </TableCell>
                 <TableCell>
-                  {task.user.firstname} {task.user.lastname}
+                  <TaskStatusBadge status={task.status} />
                 </TableCell>
-              </TableRow>
+                <TableCell>
+                  <PriorityLabel priority={task.priority} />
+                </TableCell>
+                <TableCell>
+                  <DateCell value={task.createdAt} />
+                </TableCell>
+                <TableCell>
+                  <PersonCell
+                    firstname={task.user.firstname}
+                    lastname={task.user.lastname}
+                  />
+                </TableCell>
+              </ClickableRow>
             ))}
-          </TableBody>
-        </Table>
+          </DataTable>
+        </div>
       </div>
       <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
     </div>

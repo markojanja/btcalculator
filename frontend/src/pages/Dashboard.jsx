@@ -1,4 +1,10 @@
-import { CircleCheckBig, ListTodo, Loader, Ticket } from "lucide-react";
+import {
+  ArrowRight,
+  CircleCheckBig,
+  ListTodo,
+  Loader,
+  Ticket,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import DashCard from "../components/DashCard";
 import useNotification from "../hooks/useNotification";
@@ -12,18 +18,21 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { TableCell } from "@/components/ui/table";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  ClickableRow,
+  ClientStatusLabel,
+  DataTable,
+  DateCell,
+  EmptyRow,
+  PersonCell,
+  PriorityLabel,
+  RoleBadge,
+  TaskStatusBadge,
+} from "../components/TableCells";
 import { Badge } from "@/components/ui/badge";
 
 // Status cards at the top of the dashboard; colours match the task board.
@@ -57,6 +66,26 @@ const STATUS_CARDS = [
     tone: "emerald",
   },
 ];
+
+// Card with a title, description and a "view all" link in the header.
+const TableCard = ({ title, description, href, linkText, children }) => (
+  <Card className="w-full min-w-0 gap-4">
+    <CardHeader className="flex flex-row items-start justify-between gap-4 text-left">
+      <div className="space-y-1">
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </div>
+      <Link
+        to={href}
+        className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
+      >
+        {linkText}
+        <ArrowRight className="size-4" />
+      </Link>
+    </CardHeader>
+    <CardContent>{children}</CardContent>
+  </Card>
+);
 
 const Dashboard = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -134,7 +163,7 @@ const Dashboard = () => {
         </div>
         <div className="grid w-full gap-4 py-4 lg:grid-cols-3">
           <Card className="min-w-0">
-            <CardHeader>
+            <CardHeader className="text-left">
               <CardTitle>Pending tasks by user</CardTitle>
               <CardDescription>Open tasks per support agent</CardDescription>
             </CardHeader>
@@ -146,7 +175,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           <Card className="min-w-0">
-            <CardHeader>
+            <CardHeader className="text-left">
               <CardTitle>Pending tasks by priority</CardTitle>
               <CardDescription>Open tasks, highest priority first</CardDescription>
             </CardHeader>
@@ -158,7 +187,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           <Card className="min-w-0">
-            <CardHeader>
+            <CardHeader className="text-left">
               <CardTitle>Pending tasks by client</CardTitle>
               <CardDescription>Open tasks per client</CardDescription>
             </CardHeader>
@@ -170,132 +199,114 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
-        <div className="grid lg:grid-cols-4 w-full gap-2 py-4 mx-auto">
-          <Card className={"lg:col-span-4 w-full overflow-auto"}>
-            <CardTitle className={"text-left px-6"}>
-              <h4>Recent tasks</h4>
-            </CardTitle>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead>Created At</TableHead>
-                    <TableHead>Assigne</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {latestTasks.map((task) => (
-                    <TableRow
-                      onClick={() => navigate(`/dashboard/task/${task.id}`)}
-                      key={task.id}
-                      className={"cursor-pointer"}
-                    >
-                      <TableCell>{task.title}</TableCell>
-                      <TableCell>{task.status}</TableCell>
-                      <TableCell>{task.priority}</TableCell>
-                      <TableCell>
-                        {new Date(task.createdAt).toLocaleDateString("en-GB", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })}
-                      </TableCell>
-                      <TableCell>
-                        {task.user.firstname} {task.user.lastname}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter className={"mb-0 mt-auto"}>
-              <Link to="tasks/ALL">view all tasks</Link>
-            </CardFooter>
-          </Card>
-        </div>
-        <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
-          <Card className={"col-span-2 overflow-auto"}>
-            <CardTitle className={"text-left px-6"}>
-              <h4>Recent Clients</h4>
-            </CardTitle>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Server</TableHead>
-                    <TableHead>Platform</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentClients.map((client) => (
-                    <TableRow
-                      onClick={() => navigate(`/clients/${client.id}/edit`)}
-                      key={client.id}
-                      className={"cursor-pointer"}
-                    >
-                      <TableCell>{client.name}</TableCell>
-                      <TableCell>{client.status}</TableCell>
-                      <TableCell>{client.server[0]}</TableCell>
-                      <TableCell>
-                        {client.platform.map((p, idx) => (
-                          <Badge
-                            variant="secondary"
-                            size="s"
-                            className={"mr-1"}
-                            key={idx}
-                          >
-                            {p}
-                          </Badge>
-                        ))}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter className={"mb-0 mt-auto"}>
-              <Link to="/clients">view all clients</Link>
-            </CardFooter>
-          </Card>
-          <Card className={"col-span-2 overflow-auto"}>
-            <CardTitle className={"text-left px-6"}>
-              <h4>Recent Users</h4>
-            </CardTitle>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentUsers.map((user) => (
-                    <TableRow
-                      onClick={() => navigate(`/users/edit/${user.id}`)}
-                      key={user.id}
-                      className={"cursor-pointer"}
-                    >
-                      <TableCell>{user.firstname}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell className="capitalize">
-                        {user.role.toLowerCase()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter className={"mb-0 mt-auto"}>
-              <Link to="/users">view all users</Link>
-            </CardFooter>
-          </Card>
+        <TableCard
+          title="Recent tasks"
+          description="The latest tasks across all agents"
+          href="tasks/ALL"
+          linkText="View all tasks"
+        >
+          <DataTable
+            columns={["Task", "Status", "Priority", "Created", "Assignee"]}
+          >
+            {latestTasks.length === 0 && (
+              <EmptyRow colSpan={5}>No tasks yet</EmptyRow>
+            )}
+            {latestTasks.map((task) => (
+              <ClickableRow
+                key={task.id}
+                onOpen={() => navigate(`/dashboard/task/${task.id}`)}
+              >
+                <TableCell className="max-w-72 truncate font-medium">
+                  {task.title}
+                </TableCell>
+                <TableCell>
+                  <TaskStatusBadge status={task.status} />
+                </TableCell>
+                <TableCell>
+                  <PriorityLabel priority={task.priority} />
+                </TableCell>
+                <TableCell>
+                  <DateCell value={task.createdAt} />
+                </TableCell>
+                <TableCell>
+                  <PersonCell
+                    firstname={task.user.firstname}
+                    lastname={task.user.lastname}
+                  />
+                </TableCell>
+              </ClickableRow>
+            ))}
+          </DataTable>
+        </TableCard>
+
+        <div className="grid w-full gap-4 py-4 lg:grid-cols-2">
+          <TableCard
+            title="Recent clients"
+            description="Newest clients and where they trade"
+            href="/clients"
+            linkText="View all clients"
+          >
+            <DataTable columns={["Client", "Status", "Server", "Platforms"]}>
+              {recentClients.length === 0 && (
+                <EmptyRow colSpan={4}>No clients yet</EmptyRow>
+              )}
+              {recentClients.map((client) => (
+                <ClickableRow
+                  key={client.id}
+                  onOpen={() => navigate(`/clients/${client.id}/edit`)}
+                >
+                  <TableCell className="font-medium">{client.name}</TableCell>
+                  <TableCell>
+                    <ClientStatusLabel status={client.status} />
+                  </TableCell>
+                  <TableCell>
+                    <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+                      {client.server[0]}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {client.platform.map((p) => (
+                        <Badge key={p} variant="outline" className="font-normal">
+                          {p}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                </ClickableRow>
+              ))}
+            </DataTable>
+          </TableCard>
+
+          <TableCard
+            title="Recent users"
+            description="Newest team members"
+            href="/users"
+            linkText="View all users"
+          >
+            <DataTable columns={["User", "Role"]}>
+              {recentUsers.length === 0 && (
+                <EmptyRow colSpan={2}>No users yet</EmptyRow>
+              )}
+              {recentUsers.map((user) => (
+                <ClickableRow
+                  key={user.id}
+                  onOpen={() => navigate(`/users/edit/${user.id}`)}
+                >
+                  <TableCell>
+                    <PersonCell
+                      firstname={user.firstname}
+                      lastname={user.lastname}
+                      subtitle={user.email}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <RoleBadge role={user.role} />
+                  </TableCell>
+                </ClickableRow>
+              ))}
+            </DataTable>
+          </TableCard>
         </div>
       </div>
     </div>
