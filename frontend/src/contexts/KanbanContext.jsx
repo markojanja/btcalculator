@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import useNotification from "../hooks/useNotification";
+import useAuth from "../hooks/useAuth";
 
 const KanbanContext = createContext(null);
 
@@ -12,18 +13,30 @@ const KanbanContextProvider = ({ children }) => {
   const [handoverModal, setHandoverModal] = useState(false);
   const [activeTask, setActiveTask] = useState("");
   const { lastEvent } = useNotification();
+  const { user } = useAuth();
+  // The board belongs to SUPPORT users; nobody else (or a logged-out
+  // visitor) should request it.
+  const hasBoard = user?.role === "SUPPORT";
 
   const getTasks = async () => {
-    const res = await axios.get(`${BACKEND_URL}/tasks/my_tasks`, {
-      withCredentials: true,
-    });
-    console.log(res.data);
-    setColumns(res.data);
+    if (!hasBoard) return;
+    try {
+      const res = await axios.get(`${BACKEND_URL}/tasks/my_tasks`, {
+        withCredentials: true,
+      });
+      setColumns(res.data);
+    } catch {
+      // the error toast (axios interceptor) shows what went wrong
+    }
   };
 
   useEffect(() => {
-    getTasks();
-  }, []);
+    if (hasBoard) {
+      getTasks();
+    } else {
+      setColumns([]);
+    }
+  }, [hasBoard, user?.id]);
 
   useEffect(() => {
     if (!lastEvent) return;
@@ -31,10 +44,9 @@ const KanbanContextProvider = ({ children }) => {
     if (
       lastEvent.type === "TASK_UPDATED" ||
       lastEvent.type === "TASK_CREATED" ||
-      lastEvent.tpe === "TASK_ASSIGNED"
+      lastEvent.type === "TASK_ASSIGNED"
     ) {
-      console.log("Refreshing kanban because of notification");
-      getTasks(); // your existing function
+      getTasks();
     }
   }, [lastEvent]);
 

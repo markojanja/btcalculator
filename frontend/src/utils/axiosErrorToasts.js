@@ -28,9 +28,15 @@ axios.interceptors.response.use(
     let { data } = error.response;
     const url = error.config?.url ?? "";
 
-    // /auth/status returns 401 on every page load when logged out, and the
-    // login page shows its own error message
-    if (url.endsWith("/auth/status") || url.endsWith("/auth/login")) {
+    // The login page shows its own error message
+    if (url.endsWith("/auth/login")) {
+      return Promise.reject(error);
+    }
+
+    // 401 means "not logged in"; the app sends people to the login page for
+    // that, so a toast would only confuse. Exception: password change uses
+    // 401 for "current password incorrect".
+    if (status === 401 && !url.endsWith("/auth/passwordchange")) {
       return Promise.reject(error);
     }
 
