@@ -23,7 +23,7 @@ passport.use(
       const { password: passwordHash, ...safeUser } = user;
       return done(null, safeUser);
     } catch (error) {
-      console.log(error);
+      return done(error);
     }
   }),
 );
@@ -32,20 +32,25 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
+// Runs on every request (and socket handshake) that has a session.
 passport.deserializeUser(async (id, done) => {
+  let user;
   try {
-    const user = await prisma.user.findUnique({
-      omit: {
-        password: true,
-      },
+    user = await prisma.user.findUnique({
       where: {
         id: id,
       },
     });
-    done(null, user);
   } catch (error) {
-    console.log(error);
+    return done(error);
   }
+
+  // Deleted or deactivated users are treated as logged out from their next
+  // request on, not only at their next login.
+  if (!user || !user.active) {
+    return done(null, false);
+  }
+  return done(null, user);
 });
 
 export default passport;

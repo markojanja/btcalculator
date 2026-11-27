@@ -4,9 +4,7 @@ import prisma from "../db/prisma.js";
 
 export const login = async (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      console.log(err);
-    }
+    if (err) return next(err);
 
     if (!user) {
       return res.status(400).json({ errors: [{ message: info.message }] });
@@ -46,49 +44,54 @@ export const status = async (req, res) => {
   res.status(401).json({ user: null });
 };
 
-export const passwordChange = async (req, res) => {
+export const passwordChange = async (req, res, next) => {
   const userID = req.user.id;
   const { currentPassword, newPassword } = req.body;
-  const user = await prisma.user.findUnique({
-    where: { id: userID },
-    omit: { password: false },
-  });
-  // compare pwd
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userID },
+      omit: { password: false },
+    });
+    // compare pwd
 
-  const isMatch = await bcrypt.compare(currentPassword, user.password);
-  if (!isMatch) {
-    return res.status(401).json({ message: "Current password incorrect" });
-  }
-  //validate new pwd
-
-  if (newPassword.length < 8)
-    return res
-      .status(401)
-      .json({ message: "Password must be at least 8 characters long!" });
-  //update pwd
-
-  const SALT = 10;
-  const newHashedPassword = await bcrypt.hash(newPassword, SALT);
-  // update user
-
-  await prisma.user.update({
-    where: { id: userID },
-    data: {
-      password: newHashedPassword,
-    },
-  });
-
-  req.logout((err) => {
-    if (err) {
-      return res
-        .status(500)
-        .json({ message: "Password changed but logout failed" });
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Current password incorrect" });
     }
+    //validate new pwd
 
-    req.session.destroy(() => {
-      res.status(200).json({
-        message: "Password changed. Please log in again.",
+    if (newPassword.length < 8)
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 8 characters long!" });
+    //update pwd
+
+    const SALT = 10;
+    const newHashedPassword = await bcrypt.hash(newPassword, SALT);
+    // update user
+
+    await prisma.user.update({
+      where: { id: userID },
+      data: {
+        password: newHashedPassword,
+      },
+    });
+
+    // Only reached when the password was really changed
+    req.logout((err) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Password changed but logout failed" });
+      }
+
+      req.session.destroy(() => {
+        res.status(200).json({
+          message: "Password changed. Please log in again.",
+        });
       });
     });
-  });
+  } catch (error) {
+    next(error);
+  }
 };
