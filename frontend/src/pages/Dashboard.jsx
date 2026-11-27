@@ -1,7 +1,4 @@
-import { FaBusinessTime } from "react-icons/fa";
-import { RiProgress2Line } from "react-icons/ri";
-import { SiJirasoftware } from "react-icons/si";
-import { IoCheckmarkDoneCircle } from "react-icons/io5";
+import { CircleCheckBig, ListTodo, Loader, Ticket } from "lucide-react";
 import { Link } from "react-router-dom";
 import DashCard from "../components/DashCard";
 import useNotification from "../hooks/useNotification";
@@ -28,6 +25,38 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+
+// Status cards at the top of the dashboard; colours match the task board.
+const STATUS_CARDS = [
+  {
+    status: "TODO",
+    title: "To do",
+    description: "Waiting to be picked up",
+    icon: ListTodo,
+    tone: "red",
+  },
+  {
+    status: "IN_PROGRESS",
+    title: "In progress",
+    description: "Being worked on",
+    icon: Loader,
+    tone: "blue",
+  },
+  {
+    status: "JIRA_TICKET",
+    title: "Jira tickets",
+    description: "CS and IT tickets",
+    icon: Ticket,
+    tone: "amber",
+  },
+  {
+    status: "COMPLETED",
+    title: "Completed",
+    description: "Done",
+    icon: CircleCheckBig,
+    tone: "emerald",
+  },
+];
 
 ChartJS.register(ArcElement, Tooltip, Legend, LinearScale, BarElement);
 
@@ -162,55 +191,21 @@ const Dashboard = () => {
         <h2 className="text-2xl font-bold">Dashboard</h2>
       </div>
       <div className="flex flex-col items-center">
-        <div className="grid lg:grid-cols-4 w-full gap-2 py-4">
-          <DashCard
-            title={"Todo"}
-            value={
-              dataCard.find((item) => item.status === "TODO")?._count?.status ||
-              0
-            }
-            linkText={"view more"}
-            linkHref={"tasks/TODO"}
-            Icon={FaBusinessTime}
-            bg="bg-red-500/20"
-            clr={"text-red-500/80"}
-          />
-          <DashCard
-            title={"In Progress"}
-            value={
-              dataCard.find((item) => item.status === "IN_PROGRESS")?._count
-                ?.status || 0
-            }
-            linkText={"view more"}
-            linkHref={"tasks/IN_PROGRESS"}
-            Icon={RiProgress2Line}
-            bg="bg-yellow-500/20"
-            clr={"text-yellow-500/80"}
-          />
-          <DashCard
-            title={"Jira Ticket"}
-            value={
-              dataCard.find((item) => item.status === "JIRA_TICKET")?._count
-                ?.status || 0
-            }
-            linkText={"view more"}
-            linkHref={"tasks/JIRA_TICKET"}
-            Icon={SiJirasoftware}
-            bg="bg-teal-500/20"
-            clr={"text-teal-500/80"}
-          />
-          <DashCard
-            title={"Completed"}
-            value={
-              dataCard.find((item) => item.status === "COMPLETED")?._count
-                ?.status || 0
-            }
-            linkText={"view more"}
-            linkHref={"tasks/COMPLETED"}
-            Icon={IoCheckmarkDoneCircle}
-            bg="bg-green-500/20"
-            clr={"text-green-500/80"}
-          />
+        <div className="grid w-full gap-4 py-4 sm:grid-cols-2 lg:grid-cols-4">
+          {STATUS_CARDS.map((card) => (
+            <DashCard
+              key={card.status}
+              title={card.title}
+              description={card.description}
+              value={
+                dataCard.find((item) => item.status === card.status)?._count
+                  ?.status || 0
+              }
+              href={`tasks/${card.status}`}
+              Icon={card.icon}
+              tone={card.tone}
+            />
+          ))}
         </div>
         <div className="grid lg:grid-cols-6 w-full gap-2 py-4">
           <Card className={"col-span-2 min-w-0"}>
