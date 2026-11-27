@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
-import { useLocation } from "react-router-dom";
 import { NavContextProvider } from "../contexts/NavContext";
 import Sidebar from "./Sidebar";
 import { KanbanContextProvider } from "../contexts/KanbanContext";
@@ -11,9 +10,6 @@ import { AuthProvider } from "../contexts/AuthContext";
 import AppBreadcrumb from "./AppBreadcrumb";
 
 const Root = () => {
-  const location = useLocation();
-  const hideBreadcrumb = location.pathname === "/"; // ✅ hide on index/redirect
-  console.log("hideBreadcrumb:", hideBreadcrumb, location.pathname);
   return (
     <>
       <AuthProvider>
@@ -29,13 +25,18 @@ const Root = () => {
           />
           <NavContextProvider>
             <KanbanContextProvider>
-              <Header />
-              <main className="flex flex-col flex-1">
+              {/* Sidebar is a slide-in drawer, opened from the topbar */}
+              <div className="flex min-h-screen w-full">
                 <Sidebar />
-                <AppBreadcrumb />
-                <Outlet />
-              </main>
-              <Footer />
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <Header />
+                  <main className="flex flex-1 flex-col pt-4">
+                    <AppBreadcrumb />
+                    <Outlet />
+                  </main>
+                  <Footer />
+                </div>
+              </div>
             </KanbanContextProvider>
           </NavContextProvider>
         </NotificationProvider>

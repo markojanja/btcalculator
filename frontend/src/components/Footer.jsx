@@ -2,13 +2,18 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="flex items-center justify-center w-full p-4">
+    <footer className="mt-auto flex flex-col items-center justify-between gap-1 px-6 py-4 text-xs text-muted-foreground sm:flex-row">
+      <p>© {year} CSBoard. All rights reserved.</p>
       <p>
-        &copy; {year}{" "}
-        <a href="https://github.com/markojanja/btcalculator" target="_blank">
+        Built by{" "}
+        <a
+          href="https://github.com/markojanja/btcalculator"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-foreground underline-offset-4 hover:underline"
+        >
           Marko Janjic
-        </a>{" "}
-        All rights reserved.
+        </a>
       </p>
     </footer>
   );
